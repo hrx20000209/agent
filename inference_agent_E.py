@@ -82,12 +82,13 @@ def run_single_step_agent(
         w, h = Image.open(screenshot_path).size
 
         tree = parse_a11y_tree(xml_path=xml_path)
-        print_tree(tree)
+        # print_tree(tree)
 
         info_pool = InfoPool(
             instruction=instruction,
             width=w,
             height=h,
+            tree=tree
         )
 
         print("[Perception] Captured screenshot:", screenshot_path, f"size=({w},{h})")

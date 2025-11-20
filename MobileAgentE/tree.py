@@ -147,6 +147,43 @@ def print_tree(node, level=0, max_depth=None, max_children=None):
         print(f"{indent}  ...(+{len(node.children)-max_children} more)")
 
 
+def find_app_icon(tree, app_name):
+    """
+    在 XML tree 中查找与 app_name 匹配的节点。
+    匹配策略：
+      1) 完整匹配 text 或 content-desc
+      2) 部分匹配（lowercase contains）
+    """
+    if not app_name:
+        return None
+
+    name = app_name.lower()
+    results = []
+
+    def dfs(node):
+        t = (node.text or "").lower()
+        c = (node.content_desc or "").lower()
+
+        # 完整匹配
+        if t == name or c == name:
+            results.append(node)
+            return
+
+        # 模糊匹配（例如 "note" 匹配 "Notes"）
+        if name in t or name in c:
+            results.append(node)
+
+        for child in node.children:
+            dfs(child)
+
+    dfs(tree)
+
+    if results:
+        return results[0]   # 只取第一个最相似的
+
+    return None
+
+
 if __name__ == "__main__":
     tree = parse_a11y_tree("../screenshot/a11y.xml")
     print_tree(tree)

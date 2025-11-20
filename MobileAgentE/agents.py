@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+
 from PIL import Image
 import time
 import os
@@ -6,7 +7,9 @@ import copy
 import re
 import json
 
+from MobileAgentE.tree import Node
 from MobileAgentE.api import encode_image
+from MobileAgentE.tree import find_app_icon
 from MobileAgentE.controller import tap, swipe, type, back, home, switch_app, enter, save_screenshot_to_file
 from MobileAgentE.action_parser import parse_action_to_structure_output
 from MobileAgentE.prompt import MOBILE_USE_PROMPT
@@ -20,6 +23,7 @@ class InfoPool:
     instruction: str = ""
     width: int = 1080
     height: int = 2340
+    tree: Node = None
 
 
 # -----------------------------------------
@@ -98,8 +102,25 @@ class OneStepAgent:
 
         print(f"[EXEC] {action_type}: {args}")
 
+        if action_type == "open_app":
+            app_name = action_obj.get("app_name") or action_obj.get("text") or action_obj.get("target", "")
+            print(f"[Matcher] Trying to open app: {app_name}")
+
+            node = find_app_icon(info_pool.tree, app_name)
+
+            if node:
+                # bounds 格式: "[x1,y1][x2,y2]"
+                b = node.bounds
+                x = (b[0] + b[2]) // 2
+                y = (b[1] + b[3]) // 2
+                print(f"[Matcher] Found app icon at bounds: {b}, tap=({x},{y})")
+                return self.tap(x, y)
+
+            print("[Matcher] No matching app icon found in XML tree.")
+            return None
+
         # ---------- Tap ----------
-        if action_type == "click":
+        elif action_type == "click":
             x, y = eval(args["start_box"])
             tap(self.adb, int(x * info_pool.width), int(y * info_pool.height))
             # time.sleep(2)
