@@ -103,6 +103,7 @@ class OneStepAgent:
         print(f"[EXEC] {action_type}: {args}")
 
         if action_type == "open_app":
+            start_time = time.time()
             app_name = action_obj.get("app_name") or action_obj.get("text") or action_obj.get("target", "")
             print(f"[Matcher] Trying to open app: {app_name}")
 
@@ -114,9 +115,15 @@ class OneStepAgent:
                 x = (b[0] + b[2]) // 2
                 y = (b[1] + b[3]) // 2
                 print(f"[Matcher] Found app icon at bounds: {b}, tap=({x},{y})")
+                end_time = time.time()
+                searching_latency = (end_time - start_time) * 1000
+                print(f"[LOG] searching latency: {searching_latency:.3f} ms")
                 return self.tap(x, y)
 
             print("[Matcher] No matching app icon found in XML tree.")
+            end_time = time.time()
+            searching_latency = (end_time - start_time) * 1000
+            print(f"[LOG] searching latency: {searching_latency:.3f} ms")
             return None
 
         # ---------- Tap ----------
