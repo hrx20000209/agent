@@ -1,0 +1,134 @@
+import os
+import time
+import json
+from PIL import Image
+
+from MobileAgentE.controller import get_screenshot, get_a11y_tree
+from MobileAgentE.api import (
+    inference_chat,
+    inference_chat_ollama,
+    inference_chat_llama_cpp,
+)
+from MobileAgentE.tree import parse_a11y_tree, print_tree
+from MobileAgentE.agents import OneStepAgent, InfoPool  # ✅ 换成新的 Agent 和 InfoPool
+
+########################################
+#              CONFIG
+########################################
+ADB_PATH = os.environ.get("ADB_PATH", "adb")
+REASONING_MODEL = "qwen-vl-plus"
+SLEEP_BETWEEN_STEPS = 3
+SCREENSHOT_DIR = "screenshot"
+xml_path = os.path.join(SCREENSHOT_DIR, "a11y.xml")
+LOG_DIR = "./logs/single_step_agent"
+
+### LLM ###
+API_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
+API_KEY = "sk-1aa21ba323d044a092e3579753ec1548"
+USAGE_TRACKING_JSONL = None
+
+os.makedirs(LOG_DIR, exist_ok=True)
+os.makedirs(SCREENSHOT_DIR, exist_ok=True)
+
+
+########################################
+#        LLM CALL FUNCTION
+########################################
+def get_reasoning_response(chat, model=REASONING_MODEL):
+    """唯一的 LLM 调用"""
+    temperature = 0.0
+    return inference_chat_llama_cpp(chat, temperature=temperature)
+    # 如果你改回 qwen2.5vl / dashscope，就把上面这一行替换成下方分支即可
+    # if model == "qwen2.5vl:3b":
+    #     return inference_chat_ollama(chat, model=model, temperature=0.0)
+    # else:
+    #     return inference_chat(chat, model, API_URL, API_KEY,
+    #                           usage_tracking_jsonl=USAGE_TRACKING_JSONL,
+    #                           temperature=temperature)
+
+
+########################################
+#         SINGLE-STEP MAIN LOOP
+########################################
+def run_single_step_agent(
+        instruction: str,
+        max_itr: int = 20,
+        run_name: str = "single_step",
+):
+    """
+    单步 Agent 框架：
+    每一轮都只做一次 LLM 调用 -> 输出动作 -> 执行 -> 再截图。
+    """
+    print("### Running Single-Step Agent ###")
+
+    # Init dirs
+    run_dir = f"{LOG_DIR}/{run_name}-{time.strftime('%Y%m%d-%H%M%S')}"
+    os.makedirs(run_dir, exist_ok=True)
+    log_json_path = os.path.join(run_dir, "steps.json")
+
+    # Initialize unified agent
+    agent = OneStepAgent(adb_path=ADB_PATH)
+
+    steps = []
+
+    for itr in range(1, max_itr + 1):
+        print(f"\n================ Iteration {itr} ================\n")
+
+        # --- Perception ---
+        screenshot_path = os.path.join(SCREENSHOT_DIR, "screenshot.jpg")
+        get_screenshot(ADB_PATH)
+        get_a11y_tree(ADB_PATH)
+        w, h = Image.open(screenshot_path).size
+
+        tree = parse_a11y_tree(xml_path=xml_path)
+        print_tree(tree)
+
+        info_pool = InfoPool(
+            instruction=instruction,
+            width=w,
+            height=h,
+        )
+
+        print("[Perception] Captured screenshot:", screenshot_path, f"size=({w},{h})")
+
+        # --- Single-step reasoning ---
+        action_obj = agent.run_step(
+            instruction,
+            screenshot_path,
+            w, h,
+            llm_api_func=get_reasoning_response
+        )
+
+        print("[Reasoning] Parsed action:", action_obj)
+
+        # --- Finish condition ---
+        if action_obj:
+            action_type = action_obj.get("action_type", "")
+            if isinstance(action_type, str) and action_type.lower() in ["finish", "done", "exit", "stop"]:
+                print("✅ Task finished by model (by action_type).")
+                break
+
+        # --- Execution ---
+        executed_action = agent.execute_action(action_obj, info_pool)
+
+        steps.append({
+            "step": itr,
+            "operation": "execution",
+            "executed_action": executed_action
+        })
+        print("[Execution] Action done:", executed_action)
+
+        # --- Logging ---
+        with open(log_json_path, "w") as f:
+            json.dump(steps, f, indent=4)
+
+        # time.sleep(SLEEP_BETWEEN_STEPS)
+
+    print("\n=== Finished all iterations ===")
+    with open(log_json_path, "w") as f:
+        json.dump(steps, f, indent=4)
+    return steps
+
+
+if __name__ == "__main__":
+    run_single_step_agent("Open the Notes app and create a new note.")
