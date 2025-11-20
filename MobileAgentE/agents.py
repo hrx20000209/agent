@@ -9,7 +9,7 @@ import json
 
 from MobileAgentE.tree import Node
 from MobileAgentE.api import encode_image
-from MobileAgentE.tree import find_app_icon
+from MobileAgentE.tree import find_app_icon_embedding
 from MobileAgentE.controller import tap, swipe, type, back, home, switch_app, enter, save_screenshot_to_file
 from MobileAgentE.action_parser import parse_action_to_structure_output
 from MobileAgentE.prompt import MOBILE_USE_PROMPT
@@ -107,7 +107,7 @@ class OneStepAgent:
             app_name = action_obj.get("app_name") or action_obj.get("text") or action_obj.get("target", "")
             print(f"[Matcher] Trying to open app: {app_name}")
 
-            node = find_app_icon(info_pool.tree, app_name)
+            node = find_app_icon_embedding(info_pool.tree, app_name)
 
             if node:
                 # bounds 格式: "[x1,y1][x2,y2]"

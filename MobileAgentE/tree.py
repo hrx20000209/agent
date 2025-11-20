@@ -1,4 +1,8 @@
 import xml.etree.ElementTree as ET
+from sentence_transformers import SentenceTransformer
+import numpy as np
+
+embed_model = SentenceTransformer("sentence-transformers/paraphrase-MiniLM-L6-v2")
 
 
 class Node:
@@ -182,6 +186,70 @@ def find_app_icon(tree, app_name):
         return results[0]   # 只取第一个最相似的
 
     return None
+
+
+_embedding_cache = {}
+
+def embed_text(text: str):
+    """高性能 embedding + 缓存，避免重复计算"""
+    if text in _embedding_cache:
+        return _embedding_cache[text]
+
+    emb = embed_model.encode([text])[0]  # shape (384,)
+    emb = emb.astype(np.float32)
+
+    _embedding_cache[text] = emb
+    return emb
+
+def cosine_sim(a, b):
+    denom = (np.linalg.norm(a) * np.linalg.norm(b))
+    if denom == 0:
+        return 0.0
+    return float(np.dot(a, b) / denom)
+
+
+def find_app_icon_embedding(tree, app_name: str, threshold=0.25):
+    """
+    使用 paraphrase-MiniLM-L6-v2 做语义匹配。
+    threshold: 最低接受相似度，避免匹配到错误图标。
+    """
+    if not app_name:
+        return None
+
+    query_emb = embed_text(app_name)
+    candidates = []
+
+    def dfs(node):
+        texts = []
+        if node.text:
+            texts.append(node.text.strip())
+        if node.content_desc:
+            texts.append(node.content_desc.strip())
+
+        for t in texts:
+            emb = embed_text(t)
+            sim = cosine_sim(query_emb, emb)
+            candidates.append((sim, node, t))
+
+        for child in node.children:
+            dfs(child)
+
+    dfs(tree)
+
+    if not candidates:
+        return None
+
+    # 排序
+    candidates.sort(key=lambda x: x[0], reverse=True)
+    best_sim, best_node, best_text = candidates[0]
+
+    print(f"[EmbeddingMatcher] Best match: '{best_text}' (sim={best_sim:.3f})")
+
+    if best_sim < threshold:
+        print("[EmbeddingMatcher] similarity too low → no reliable match.")
+        return None
+
+    return best_node
 
 
 if __name__ == "__main__":
