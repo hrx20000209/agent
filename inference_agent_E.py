@@ -72,6 +72,7 @@ def run_single_step_agent(
     steps = []
 
     for itr in range(1, max_itr + 1):
+        start_time = time.time()
         print(f"\n================ Iteration {itr} ================\n")
 
         # --- Perception ---
@@ -118,9 +119,9 @@ def run_single_step_agent(
         })
         print("[Execution] Action done:", executed_action)
 
-        # --- Logging ---
-        with open(log_json_path, "w") as f:
-            json.dump(steps, f, indent=4)
+        end_time = time.time()
+        step_latency = (end_time - start_time) * 1000
+        print(f"Step latency: {step_latency:.3f} ms",)
 
         # time.sleep(SLEEP_BETWEEN_STEPS)
 
