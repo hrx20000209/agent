@@ -8,10 +8,10 @@ from time import sleep
 def get_screenshot(adb_path):
     command = adb_path + " shell rm /sdcard/screenshot.png"
     subprocess.run(command, capture_output=True, text=True, shell=True)
-    time.sleep(0.5)
+    # time.sleep(0.5)
     command = adb_path + " shell screencap -p /sdcard/screenshot.png"
     subprocess.run(command, capture_output=True, text=True, shell=True)
-    time.sleep(0.5)
+    # time.sleep(0.5)
     command = adb_path + " pull /sdcard/screenshot.png ./screenshot"
     subprocess.run(command, capture_output=True, text=True, shell=True)
     image_path = "./screenshot/screenshot.png"

@@ -1,4 +1,5 @@
 import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 import time
 import json
 from PIL import Image
@@ -37,14 +38,14 @@ os.makedirs(SCREENSHOT_DIR, exist_ok=True)
 def get_reasoning_response(chat, model=REASONING_MODEL):
     """唯一的 LLM 调用"""
     temperature = 0.0
-    # return inference_chat_llama_cpp(chat, temperature=temperature)
+    return inference_chat_llama_cpp(chat, temperature=temperature)
     # 如果你改回 qwen2.5vl / dashscope，就把上面这一行替换成下方分支即可
     # if model == "qwen2.5vl:3b":
     #     return inference_chat_ollama(chat, model=model, temperature=0.0)
     # else:
-    return inference_chat(chat, model, API_URL, API_KEY,
-                          usage_tracking_jsonl=USAGE_TRACKING_JSONL,
-                          temperature=temperature)
+    # return inference_chat(chat, model, API_URL, API_KEY,
+    #                       usage_tracking_jsonl=USAGE_TRACKING_JSONL,
+    #                       temperature=temperature)
 
 
 ########################################
@@ -70,6 +71,7 @@ def run_single_step_agent(
     agent = OneStepAgent(adb_path=ADB_PATH)
 
     steps = []
+    history = []
 
     for itr in range(1, max_itr + 1):
         start_time = time.time()
@@ -98,6 +100,7 @@ def run_single_step_agent(
             instruction,
             screenshot_path,
             w, h,
+            history=history,
             llm_api_func=get_reasoning_response
         )
 
@@ -112,6 +115,10 @@ def run_single_step_agent(
 
         # --- Execution ---
         executed_action = agent.execute_action(action_obj, info_pool)
+
+        history.append(str(executed_action))
+
+        print(f"Executing action: {executed_action}")
 
         steps.append({
             "step": itr,

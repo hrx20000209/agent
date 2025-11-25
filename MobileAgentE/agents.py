@@ -25,6 +25,7 @@ class InfoPool:
     width: int = 1080
     height: int = 2340
     tree: Node = None
+    history: [] = None
 
 
 # -----------------------------------------
@@ -69,7 +70,7 @@ class OneStepAgent:
     # 构建 prompt（你要求的一步 agent）
     # -----------------------------
     def build_prompt(self, info_pool: InfoPool):
-        return MOBILE_USE_PROMPT.format(language="English", instruction=info_pool.instruction)
+        return MOBILE_USE_PROMPT.format(language="English", history=InfoPool.history, instruction=info_pool.instruction)
 
     # -----------------------------
     # 解析 LLM 输出 → action
@@ -182,16 +183,16 @@ class OneStepAgent:
         else:
             print(f"⚠️ Unsupported action_type={action_type}")
 
-        return action_obj
+        return f"{action_type}: {args}"
 
     # -----------------------------
     # 主入口：单步代理
     # -----------------------------
-    def run_step(self, instruction, screenshot_img, width, height, llm_api_func):
+    def run_step(self, instruction, screenshot_img, width, height, history, llm_api_func):
         """
         llm_api_func(prompt, image) → LLM输出字符串
         """
-        info = InfoPool(instruction=instruction, width=width, height=height)
+        info = InfoPool(instruction=instruction, width=width, height=height, history=history)
 
         chat = self.init_chat()
         user_prompt = self.build_prompt(info)
