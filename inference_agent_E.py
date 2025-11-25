@@ -37,14 +37,14 @@ os.makedirs(SCREENSHOT_DIR, exist_ok=True)
 def get_reasoning_response(chat, model=REASONING_MODEL):
     """唯一的 LLM 调用"""
     temperature = 0.0
-    return inference_chat_llama_cpp(chat, temperature=temperature)
+    # return inference_chat_llama_cpp(chat, temperature=temperature)
     # 如果你改回 qwen2.5vl / dashscope，就把上面这一行替换成下方分支即可
     # if model == "qwen2.5vl:3b":
     #     return inference_chat_ollama(chat, model=model, temperature=0.0)
     # else:
-    #     return inference_chat(chat, model, API_URL, API_KEY,
-    #                           usage_tracking_jsonl=USAGE_TRACKING_JSONL,
-    #                           temperature=temperature)
+    return inference_chat(chat, model, API_URL, API_KEY,
+                          usage_tracking_jsonl=USAGE_TRACKING_JSONL,
+                          temperature=temperature)
 
 
 ########################################
@@ -133,4 +133,4 @@ def run_single_step_agent(
 
 
 if __name__ == "__main__":
-    run_single_step_agent("Open the Notes app and create a new note.")
+    run_single_step_agent("Open Chrome and search for newest paper about GUI agent.")

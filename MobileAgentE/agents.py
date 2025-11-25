@@ -12,6 +12,7 @@ from MobileAgentE.api import encode_image
 from MobileAgentE.tree import find_app_icon_embedding
 from MobileAgentE.controller import tap, swipe, type, back, home, switch_app, enter, save_screenshot_to_file
 from MobileAgentE.action_parser import parse_action_to_structure_output
+from MobileAgentE.utils import parse_bounds
 from MobileAgentE.prompt import MOBILE_USE_PROMPT
 
 
@@ -111,14 +112,19 @@ class OneStepAgent:
 
             if node:
                 # bounds 格式: "[x1,y1][x2,y2]"
-                b = node.bounds
+                b = parse_bounds(node.bounds)
+                if b is None:
+                    print("[Matcher] Invalid bounds format.")
+                    return None
+
                 x = (b[0] + b[2]) // 2
                 y = (b[1] + b[3]) // 2
+
                 print(f"[Matcher] Found app icon at bounds: {b}, tap=({x},{y})")
                 end_time = time.time()
                 searching_latency = (end_time - start_time) * 1000
                 print(f"[LOG] searching latency: {searching_latency:.3f} ms")
-                return self.tap(x, y)
+                return tap(self.adb, x, y)
 
             print("[Matcher] No matching app icon found in XML tree.")
             end_time = time.time()

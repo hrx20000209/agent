@@ -160,6 +160,8 @@ def parse_action_to_structure_output(text,
         text = text.replace("end_point=", "end_box=")
     if "point=" in text:
         text = text.replace("point=", "start_box=")
+    if "\"Action\":" in text:
+        text = text.replace("\"Action\":", "\"Action:\"")
 
     if model_type == "qwen25vl":
         smart_resize_height, smart_resize_width = smart_resize(
@@ -194,11 +196,13 @@ def parse_action_to_structure_output(text,
     action_str = text.split("Action: ")[-1]
 
     tmp_all_action = action_str.split(")\n\n")
+    print(tmp_all_action)
     all_action = []
     for action_str in tmp_all_action:
         if "type(content" in action_str:
             if not action_str.strip().endswith(")"):
                 action_str = action_str.strip() + ")"
+
             # 正则表达式匹配 content 中的字符串并转义单引号
             def escape_quotes(match):
                 content = match.group(1)  # 获取 content 的值
@@ -223,6 +227,7 @@ def parse_action_to_structure_output(text,
         for action in all_action
     ]
     actions = []
+
     for action_instance, raw_str in zip(parsed_actions, all_action):
         if action_instance == None:
             print(f"Action can't parse: {raw_str}")

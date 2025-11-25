@@ -2,6 +2,24 @@ import json
 import re
 
 
+def parse_bounds(bounds):
+    """
+    支持 "[x1,y1][x2,y2]" 或 "x1,y1,x2,y2" 或其它常见格式。
+    始终返回 [x1, y1, x2, y2] (int)
+    """
+    if bounds is None:
+        return None
+
+    # 提取所有数字（包括负数）
+    nums = list(map(int, re.findall(r"-?\d+", str(bounds))))
+
+    if len(nums) == 4:
+        return nums
+    else:
+        print(f"[WARN] Unexpected bounds format: {bounds}")
+        return None
+
+
 def safe_json_parse(response: str):
     """
     Parse LLM output into normalized structure:
