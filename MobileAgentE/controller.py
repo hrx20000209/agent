@@ -6,8 +6,8 @@ from time import sleep
 
 
 def get_screenshot(adb_path):
-    command = adb_path + " shell rm /sdcard/screenshot.png"
-    subprocess.run(command, capture_output=True, text=True, shell=True)
+    # command = adb_path + " shell rm /sdcard/screenshot.png"
+    # subprocess.run(command, capture_output=True, text=True, shell=True)
     # time.sleep(0.5)
     command = adb_path + " shell screencap -p /sdcard/screenshot.png"
     subprocess.run(command, capture_output=True, text=True, shell=True)
@@ -27,11 +27,11 @@ def get_a11y_tree(adb_path):
     Save it to ./screenshot/a11y.xml
     """
     # 确保目标目录存在
-    os.makedirs("./screenshot", exist_ok=True)
-
-    # 删除旧文件（防止残留）
-    command = adb_path + " shell rm /sdcard/a11y.xml"
-    subprocess.run(command, capture_output=True, text=True, shell=True)
+    # os.makedirs("./screenshot", exist_ok=True)
+    #
+    # # 删除旧文件（防止残留）
+    # command = adb_path + " shell rm /sdcard/a11y.xml"
+    # subprocess.run(command, capture_output=True, text=True, shell=True)
 
     # 等待设备稳定
     # time.sleep(0.5)
