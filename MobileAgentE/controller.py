@@ -9,8 +9,8 @@ def get_screenshot(adb_path):
     command = adb_path + " shell screencap -p /sdcard/screenshot.png"
     subprocess.run(command, capture_output=True, text=True, shell=True)
 
-    command = adb_path + " pull /sdcard/screenshot.png ./screenshot"
-    subprocess.run(command, capture_output=True, text=True, shell=True)
+    # command = adb_path + " pull /sdcard/screenshot.png ./screenshot"
+    # subprocess.run(command, capture_output=True, text=True, shell=True)
     # image_path = "./screenshot/screenshot.png"
     # save_path = "./screenshot/screenshot.jpg"
     # image = Image.open(image_path)
@@ -23,8 +23,8 @@ def get_a11y_tree(adb_path):
     subprocess.run(command, capture_output=True, text=True, shell=True)
 
 
-    command = adb_path + " pull /sdcard/a11y.xml ./screenshot/"
-    subprocess.run(command, capture_output=True, text=True, shell=True)
+    # command = adb_path + " pull /sdcard/a11y.xml ./screenshot/"
+    # subprocess.run(command, capture_output=True, text=True, shell=True)
     #
     # # 设置路径
     # xml_path = "./screenshot/a11y.xml"

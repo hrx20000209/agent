@@ -19,7 +19,7 @@ from MobileAgentE.agents import OneStepAgent, InfoPool  # ✅ 换成新的 Agent
 ADB_PATH = os.environ.get("ADB_PATH", "adb")
 REASONING_MODEL = "qwen-vl-plus"
 SLEEP_BETWEEN_STEPS = 3
-SCREENSHOT_DIR = "./screenshot"
+SCREENSHOT_DIR = "/sdcard"
 xml_path = os.path.join(SCREENSHOT_DIR, "a11y.xml")
 LOG_DIR = "./logs/single_step_agent"
 
