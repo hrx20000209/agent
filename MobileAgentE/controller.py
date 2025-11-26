@@ -56,7 +56,7 @@ def get_a11y_tree(adb_path):
     #     raise FileNotFoundError("Failed to retrieve window_dump.xml from device.")
     #
     # print(f"✅ Accessibility tree saved to {xml_path}")
-    return xml_path
+    # return xml_path
 
 
 def start_recording(adb_path):
