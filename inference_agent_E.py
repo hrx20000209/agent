@@ -53,7 +53,7 @@ def get_reasoning_response(chat, model=REASONING_MODEL):
 ########################################
 def run_single_step_agent(
         instruction: str,
-        max_itr: int = 20,
+        max_itr: int = 10,
         run_name: str = "single_step",
 ):
     """
@@ -85,6 +85,7 @@ def run_single_step_agent(
         # --- Perception ---
         screenshot_path = os.path.join(SCREENSHOT_DIR, "screenshot.jpg")
         get_screenshot(ADB_PATH)
+
         get_a11y_tree(ADB_PATH)
         w, h = Image.open(screenshot_path).size
 
