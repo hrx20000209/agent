@@ -12,13 +12,13 @@ def get_screenshot(adb_path):
     command = adb_path + " shell screencap -p /sdcard/screenshot.png"
     subprocess.run(command, capture_output=True, text=True, shell=True)
     # time.sleep(0.5)
-    command = adb_path + " pull /sdcard/screenshot.png ./screenshot"
-    subprocess.run(command, capture_output=True, text=True, shell=True)
-    image_path = "./screenshot/screenshot.png"
-    save_path = "./screenshot/screenshot.jpg"
-    image = Image.open(image_path)
-    image.convert("RGB").save(save_path, "JPEG")
-    os.remove(image_path)
+    # command = adb_path + " pull /sdcard/screenshot.png ./screenshot"
+    # subprocess.run(command, capture_output=True, text=True, shell=True)
+    # image_path = "./screenshot/screenshot.png"
+    # save_path = "./screenshot/screenshot.jpg"
+    # image = Image.open(image_path)
+    # image.convert("RGB").save(save_path, "JPEG")
+    # os.remove(image_path)
 
 
 def get_a11y_tree(adb_path):
@@ -34,7 +34,7 @@ def get_a11y_tree(adb_path):
     subprocess.run(command, capture_output=True, text=True, shell=True)
 
     # 等待设备稳定
-    time.sleep(0.5)
+    # time.sleep(0.5)
 
     # 导出当前UI层次结构
     # 这会生成 /sdcard/window_dump.xml 文件
@@ -42,20 +42,20 @@ def get_a11y_tree(adb_path):
     subprocess.run(command, capture_output=True, text=True, shell=True)
 
     # 稍作等待，防止写入未完成
-    time.sleep(0.5)
+    # time.sleep(0.5)
 
     # 从设备中拉取到本地
-    command = adb_path + " pull /sdcard/a11y.xml ./screenshot/"
-    subprocess.run(command, capture_output=True, text=True, shell=True)
-
-    # 设置路径
-    xml_path = "./screenshot/a11y.xml"
-
-    # 检查是否成功
-    if not os.path.exists(xml_path):
-        raise FileNotFoundError("Failed to retrieve window_dump.xml from device.")
-
-    print(f"✅ Accessibility tree saved to {xml_path}")
+    # command = adb_path + " pull /sdcard/a11y.xml ./screenshot/"
+    # subprocess.run(command, capture_output=True, text=True, shell=True)
+    #
+    # # 设置路径
+    # xml_path = "./screenshot/a11y.xml"
+    #
+    # # 检查是否成功
+    # if not os.path.exists(xml_path):
+    #     raise FileNotFoundError("Failed to retrieve window_dump.xml from device.")
+    #
+    # print(f"✅ Accessibility tree saved to {xml_path}")
     return xml_path
 
 
