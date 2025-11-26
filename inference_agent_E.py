@@ -74,6 +74,8 @@ def run_single_step_agent(
     history = []
 
     perception_latency_list = []
+    screenshot_latency_list = []
+    a11y_tree_latency_list = []
     planning_latency_list = []
     operation_latency_list = []
     end_to_end_latency_list = []
@@ -85,8 +87,14 @@ def run_single_step_agent(
         # --- Perception ---
         screenshot_path = os.path.join(SCREENSHOT_DIR, "screenshot.jpg")
         get_screenshot(ADB_PATH)
+        screenshot_time = time.time()
+        screenshot_latency = (screenshot_time - start_time) * 1000
+        screenshot_latency_list.append(screenshot_latency)
 
         get_a11y_tree(ADB_PATH)
+        a11y_tree_time = time.time()
+        a11y_tree_latency = (a11y_tree_time - screenshot_time) * 1000
+        a11y_tree_latency_list.append(a11y_tree_latency)
         w, h = Image.open(screenshot_path).size
 
         tree = parse_a11y_tree(xml_path=xml_path)
@@ -145,6 +153,7 @@ def run_single_step_agent(
         step_latency = (end_time - start_time) * 1000
         end_to_end_latency_list.append(step_latency)
         print(f"Perception latency: {perception_latency:.3f} ms, "
+              f"Screenshot latency: {screenshot_latency:.3f} ms, A11Y Tree latency: {a11y_tree_latency:.3f} ms"
               f"Planning latency: {planning_latency:.3f} ms, "
               f"Operation latency: {operation_latency:.3f} ms",)
         print(f"Step latency: {step_latency:.3f} ms",)
@@ -152,12 +161,15 @@ def run_single_step_agent(
         # time.sleep(SLEEP_BETWEEN_STEPS)
 
     avg_perception_latency = sum(perception_latency_list) / len(perception_latency_list)
+    avg_screenshot_latency = sum(screenshot_latency_list) / len(screenshot_latency_list)
+    avg_a11y_tree_latency = sum(a11y_tree_latency_list) / len(a11y_tree_latency_list)
     avg_planning_latency = sum(planning_latency_list) / len(planning_latency_list)
     avg_operation_latency = sum(operation_latency_list) / len(operation_latency_list)
     avg_end_to_end_latency = sum(end_to_end_latency_list) / len(end_to_end_latency_list)
 
     print("\n=== Finished all iterations ===")
     print(f"Perception latency: {avg_perception_latency:.3f} ms, "
+          f"Screenshot latency: {avg_screenshot_latency:.3f} ms, A11Y Tree latency: {avg_a11y_tree_latency:.3f} ms"
           f"Planning Latency: {avg_planning_latency:.3f} ms, "
           f"Operation Latency: {avg_operation_latency:.3f} ms, "
           f"End-to-end latency: {avg_end_to_end_latency:.3f} ms")
