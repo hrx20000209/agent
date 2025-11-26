@@ -85,7 +85,7 @@ def run_single_step_agent(
         print(f"\n================ Iteration {itr} ================\n")
 
         # --- Perception ---
-        screenshot_path = os.path.join(SCREENSHOT_DIR, "screenshot.jpg")
+        screenshot_path = os.path.join(SCREENSHOT_DIR, "screenshot.png")
         get_screenshot(ADB_PATH)
         screenshot_time = time.time()
         screenshot_latency = (screenshot_time - start_time) * 1000
