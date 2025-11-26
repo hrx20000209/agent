@@ -113,7 +113,7 @@ def run_single_step_agent(
         )
 
         planning_end_time = time.time()
-        planning_latency = (planning_end_time - start_time) * 1000
+        planning_latency = (planning_end_time - perception_end_time) * 1000
         planning_latency_list.append(planning_latency)
         print("[Reasoning] Parsed action:", action_obj)
 
@@ -136,7 +136,7 @@ def run_single_step_agent(
         })
 
         operation_end_time = time.time()
-        operation_latency = (operation_end_time - start_time) * 1000
+        operation_latency = (operation_end_time - planning_end_time) * 1000
         operation_latency_list.append(operation_latency)
         print("[Execution] Action done:", executed_action)
 
