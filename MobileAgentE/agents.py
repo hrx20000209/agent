@@ -25,7 +25,6 @@ class InfoPool:
     width: int = 1080
     height: int = 2340
     tree: Node = None
-    history: [] = None
 
 
 # -----------------------------------------
@@ -69,8 +68,8 @@ class OneStepAgent:
     # -----------------------------
     # 构建 prompt（你要求的一步 agent）
     # -----------------------------
-    def build_prompt(self, info_pool: InfoPool):
-        return MOBILE_USE_PROMPT.format(language="English", history=InfoPool.history, instruction=info_pool.instruction)
+    def build_prompt(self, info_pool: InfoPool, history):
+        return MOBILE_USE_PROMPT.format(language="English", history=history, instruction=info_pool.instruction)
 
     # -----------------------------
     # 解析 LLM 输出 → action
@@ -125,18 +124,34 @@ class OneStepAgent:
                 end_time = time.time()
                 searching_latency = (end_time - start_time) * 1000
                 print(f"[LOG] searching latency: {searching_latency:.3f} ms")
-                return tap(self.adb, x, y)
+                tap(self.adb, x, y)
+                return f"{action_type}: {args}"
 
             print("[Matcher] No matching app icon found in XML tree.")
             end_time = time.time()
             searching_latency = (end_time - start_time) * 1000
             print(f"[LOG] searching latency: {searching_latency:.3f} ms")
-            return None
+            return f"{action_type}: {args}"
 
         # ---------- Tap ----------
         elif action_type == "click":
-            x, y = eval(args["start_box"])
-            tap(self.adb, int(x * info_pool.width), int(y * info_pool.height))
+            box = eval(args["start_box"])  # box = [x1, y1, x2, y2]
+
+            if len(box) == 2:
+                # 兼容旧格式 (x, y)
+                x_norm, y_norm = box
+            elif len(box) == 4:
+                # 计算 bounding box 中心点
+                x_norm = (box[0] + box[2]) / 2
+                y_norm = (box[1] + box[3]) / 2
+            else:
+                raise ValueError(f"Invalid start_box format: {box}")
+
+            x = int(x_norm * info_pool.width)
+            y = int(y_norm * info_pool.height)
+
+            tap(self.adb, x, y)
+
             # time.sleep(2)
 
         # ---------- type ----------
@@ -192,10 +207,12 @@ class OneStepAgent:
         """
         llm_api_func(prompt, image) → LLM输出字符串
         """
-        info = InfoPool(instruction=instruction, width=width, height=height, history=history)
+        info = InfoPool(instruction=instruction, width=width, height=height)
 
         chat = self.init_chat()
-        user_prompt = self.build_prompt(info)
+        user_prompt = self.build_prompt(info, history)
+
+        print(f"Prompt: {user_prompt}")
 
         chat = add_chat("user", user_prompt, chat, image=screenshot_img)
 

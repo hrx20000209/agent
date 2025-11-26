@@ -73,6 +73,11 @@ def run_single_step_agent(
     steps = []
     history = []
 
+    perception_latency_list = []
+    planning_latency_list = []
+    operation_latency_list = []
+    end_to_end_latency_list = []
+
     for itr in range(1, max_itr + 1):
         start_time = time.time()
         print(f"\n================ Iteration {itr} ================\n")
@@ -93,6 +98,9 @@ def run_single_step_agent(
             tree=tree
         )
 
+        perception_end_time = time.time()
+        perception_latency = (perception_end_time - start_time) * 1000
+        perception_latency_list.append(perception_latency)
         print("[Perception] Captured screenshot:", screenshot_path, f"size=({w},{h})")
 
         # --- Single-step reasoning ---
@@ -104,6 +112,9 @@ def run_single_step_agent(
             llm_api_func=get_reasoning_response
         )
 
+        planning_end_time = time.time()
+        planning_latency = (planning_end_time - start_time) * 1000
+        planning_latency_list.append(planning_latency)
         print("[Reasoning] Parsed action:", action_obj)
 
         # --- Finish condition ---
@@ -118,22 +129,38 @@ def run_single_step_agent(
 
         history.append(str(executed_action))
 
-        print(f"Executing action: {executed_action}")
-
         steps.append({
             "step": itr,
             "operation": "execution",
             "executed_action": executed_action
         })
+
+        operation_end_time = time.time()
+        operation_latency = (operation_end_time - start_time) * 1000
+        operation_latency_list.append(operation_latency)
         print("[Execution] Action done:", executed_action)
 
         end_time = time.time()
         step_latency = (end_time - start_time) * 1000
+        end_to_end_latency_list.append(step_latency)
+        print(f"Perception latency: {perception_latency:.3f} ms, "
+              f"Planning latency: {planning_latency:.3f} ms, "
+              f"Operation latency: {operation_latency:.3f} ms",)
         print(f"Step latency: {step_latency:.3f} ms",)
 
         # time.sleep(SLEEP_BETWEEN_STEPS)
 
+    avg_perception_latency = sum(perception_latency_list) / len(perception_latency_list)
+    avg_planning_latency = sum(planning_latency_list) / len(planning_latency_list)
+    avg_operation_latency = sum(operation_latency_list) / len(operation_latency_list)
+    avg_end_to_end_latency = sum(end_to_end_latency_list) / len(end_to_end_latency_list)
+
     print("\n=== Finished all iterations ===")
+    print(f"Perception latency: {avg_perception_latency:.3f} ms, "
+          f"Planning Latency: {avg_planning_latency:.3f} ms, "
+          f"Operation Latency: {avg_operation_latency:.3f} ms, "
+          f"End-to-end latency: {avg_end_to_end_latency:.3f} ms")
+
     with open(log_json_path, "w") as f:
         json.dump(steps, f, indent=4)
     return steps
