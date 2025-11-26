@@ -153,7 +153,7 @@ def run_single_step_agent(
         step_latency = (end_time - start_time) * 1000
         end_to_end_latency_list.append(step_latency)
         print(f"Perception latency: {perception_latency:.3f} ms, "
-              f"Screenshot latency: {screenshot_latency:.3f} ms, A11Y Tree latency: {a11y_tree_latency:.3f} ms"
+              f"Screenshot latency: {screenshot_latency:.3f} ms, A11Y Tree latency: {a11y_tree_latency:.3f} ms, "
               f"Planning latency: {planning_latency:.3f} ms, "
               f"Operation latency: {operation_latency:.3f} ms",)
         print(f"Step latency: {step_latency:.3f} ms",)
@@ -169,7 +169,7 @@ def run_single_step_agent(
 
     print("\n=== Finished all iterations ===")
     print(f"Perception latency: {avg_perception_latency:.3f} ms, "
-          f"Screenshot latency: {avg_screenshot_latency:.3f} ms, A11Y Tree latency: {avg_a11y_tree_latency:.3f} ms"
+          f"Screenshot latency: {avg_screenshot_latency:.3f} ms, A11Y Tree latency: {avg_a11y_tree_latency:.3f} ms, "
           f"Planning Latency: {avg_planning_latency:.3f} ms, "
           f"Operation Latency: {avg_operation_latency:.3f} ms, "
           f"End-to-end latency: {avg_end_to_end_latency:.3f} ms")
