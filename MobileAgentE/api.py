@@ -205,39 +205,73 @@ def inference_chat_ollama(
     return res_json["message"]["content"]
 
 
-def inference_chat_llama_cpp(chat, api_url="http://localhost:8080/v1/chat/completions", temperature=1.0, num_predict=1):
+def inference_chat_llama_cpp(
+        chat,
+        api_url="http://localhost:8080/v1/chat/completions",
+        temperature=0.0,
+        max_tokens=200
+):
+    import requests
+
     headers = {"Content-Type": "application/json"}
     messages = []
 
-    def embed_qwen_image(b64):
-        return f"<img>\n{b64}\n</img>\n"
-
+    # 遍历 chat 历史
     for role, content_items in chat:
-        final_text = ""
+        content_list = []
 
         for item in content_items:
+            # 1. 处理文本
             if item["type"] == "text":
-                final_text += item["text"] + "\n"
+                content_list.append({
+                    "type": "text",
+                    "text": item["text"]
+                })
 
+            # 2. 处理图像 (关键修改部分)
             elif item["type"] == "image_url":
                 url = item["image_url"]["url"]
-                if url.startswith("data:image"):
-                    b64 = url.split(",")[1]
-                    final_text += embed_qwen_image(b64)
-                else:
-                    raise ValueError("llama.cpp only supports base64 image for Qwen-VL")
 
-        messages.append({"role": role, "content": final_text})
+                # 确保格式是 data:image 开头 (add_chat 已经保证了这点，这里做个保险)
+                if not url.startswith("data:image"):
+                    # 如果不是标准格式，可能需要这里做额外处理，或者抛错
+                    pass
 
+                    # 【重要】llama.cpp server 需要标准的 OpenAI 格式
+                # 不要改成 "type": "image"
+                # 不要去掉 "data:image...base64," 前缀
+                content_list.append({
+                    "type": "image_url",
+                    "image_url": {
+                        "url": url  # 直接传完整的 data uri
+                    }
+                })
+
+        messages.append({
+            "role": role,
+            "content": content_list
+        })
+
+    # 构建请求体
     data = {
         "messages": messages,
-        "stream": False,
-        "options": {"num_predict": 200, "temperature": 0.0}
+        "temperature": temperature,
+        "max_tokens": max_tokens,
+        "stream": False
     }
 
+    # 发送请求
+
     res = requests.post(api_url, headers=headers, json=data)
+
+    # 如果出错，打印服务器返回的具体信息，而不是笼统的 500
+    if res.status_code != 200:
+        print(f"\n[Error] Server Response: {res.text}\n")
+
     res.raise_for_status()
     js = res.json()
-    print(js["choices"][0])  # debug
+
+    # print(js["choices"][0])  # debug
+
     return js["choices"][0]["message"]["content"]
 

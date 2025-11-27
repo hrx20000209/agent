@@ -212,8 +212,6 @@ class OneStepAgent:
         chat = self.init_chat()
         user_prompt = self.build_prompt(info, history)
 
-        print(f"Prompt: {user_prompt}")
-
         chat = add_chat("user", user_prompt, chat, image=screenshot_img)
 
         # 1) 调 LLM

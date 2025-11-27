@@ -5,12 +5,13 @@ from PIL import Image
 from time import sleep
 
 
-def get_screenshot(adb_path):
-    command = adb_path + " shell screencap -p /sdcard/screenshot.png"
+def get_screenshot(args, screenshot_path):
+    command = args.adb_path + " shell screencap -p /sdcard/screenshot.png"
     subprocess.run(command, capture_output=True, text=True, shell=True)
 
-    # command = adb_path + " pull /sdcard/screenshot.png ./screenshot"
-    # subprocess.run(command, capture_output=True, text=True, shell=True)
+    if not args.on_device:
+        command = args.adb_path + f" pull /sdcard/screenshot.png {screenshot_path}"
+        subprocess.run(command, capture_output=True, text=True, shell=True)
     # image_path = "./screenshot/screenshot.png"
     # save_path = "./screenshot/screenshot.jpg"
     # image = Image.open(image_path)
@@ -18,13 +19,13 @@ def get_screenshot(adb_path):
     # os.remove(image_path)
 
 
-def get_a11y_tree(adb_path):
-    command = adb_path + " shell uiautomator dump /sdcard/a11y.xml"
+def get_a11y_tree(args, xml_path):
+    command = args.adb_path + " shell uiautomator dump /sdcard/a11y.xml"
     subprocess.run(command, capture_output=True, text=True, shell=True)
 
-
-    # command = adb_path + " pull /sdcard/a11y.xml ./screenshot/"
-    # subprocess.run(command, capture_output=True, text=True, shell=True)
+    if not args.on_device:
+        command = args.adb_path + f" pull /sdcard/a11y.xml {xml_path}"
+        subprocess.run(command, capture_output=True, text=True, shell=True)
     #
     # # 设置路径
     # xml_path = "./screenshot/a11y.xml"
