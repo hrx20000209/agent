@@ -205,65 +205,39 @@ def inference_chat_ollama(
     return res_json["message"]["content"]
 
 
-def inference_chat_llama_cpp(
-        chat,
-        api_url="http://localhost:8080/v1/chat/completions",
-        temperature=0.0,
-        stream=False,
-        num_predict=100
-):
+def inference_chat_llama_cpp(chat, api_url="http://localhost:8080/v1/chat/completions"):
     headers = {"Content-Type": "application/json"}
     messages = []
 
-    for role, content in chat:
-        text_parts = []
-        image_list = []
+    def embed_qwen_image(b64):
+        return f"<img>\n{b64}\n</img>\n"
 
-        for item in content:
+    for role, content_items in chat:
+        final_text = ""
+
+        for item in content_items:
             if item["type"] == "text":
-                text_parts.append(item["text"])
+                final_text += item["text"] + "\n"
 
             elif item["type"] == "image_url":
                 url = item["image_url"]["url"]
-                if os.path.exists(url):
-                    image_list.append(url)  # 本地文件路径
-                elif url.startswith("data:image"):
-                    image_list.append(url.split(",")[1])  # 去掉 data:image/...;base64, 前缀
+                if url.startswith("data:image"):
+                    b64 = url.split(",")[1]
+                    final_text += embed_qwen_image(b64)
                 else:
-                    raise ValueError(f"Ollama only supports local path or base64, got: {url}")
+                    raise ValueError("llama.cpp only supports base64 image for Qwen-VL")
 
-            elif item["type"] == "image":
-                # 如果是 PIL.Image 类型，保存成临时文件
-                temp_path = "./temp_image.png"
-                item["image"].save(temp_path)
-                image_list.append(temp_path)
+        messages.append({"role": role, "content": final_text})
 
-        msg = {
-            "role": role,
-            "content": "\n".join(text_parts) if text_parts else " "
-        }
-        if image_list:
-            msg["images"] = image_list
-
-        messages.append(msg)
-
-    # === 构造请求体 ===
     data = {
         "messages": messages,
-        "stream": stream,
-        "options": {
-            "temperature": temperature,
-            "num_predict": num_predict
-        }
+        "stream": False,
+        "options": {"num_predict": 200, "temperature": 0.0}
     }
-
-    # 调试用
-    # print("👉 请求数据:", json.dumps(data, indent=2, ensure_ascii=False)[:500])
 
     res = requests.post(api_url, headers=headers, json=data)
     res.raise_for_status()
-    res_json = res.json()
+    js = res.json()
+    print(js["choices"][0])  # debug
+    return js["choices"][0]["message"]["content"]
 
-    # Ollama /api/chat 返回格式: {"message": {"role": "...", "content": "..."}}
-    print(res_json["choices"][0])
-    return res_json["choices"][0]["message"]["content"]
