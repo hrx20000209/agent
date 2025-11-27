@@ -205,7 +205,7 @@ def inference_chat_ollama(
     return res_json["message"]["content"]
 
 
-def inference_chat_llama_cpp(chat, api_url="http://localhost:8080/v1/chat/completions"):
+def inference_chat_llama_cpp(chat, api_url="http://localhost:8080/v1/chat/completions", temperature=1.0, num_predict=1):
     headers = {"Content-Type": "application/json"}
     messages = []
 
