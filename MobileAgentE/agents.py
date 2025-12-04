@@ -13,7 +13,7 @@ from MobileAgentE.tree import find_app_icon_embedding
 from MobileAgentE.controller import tap, swipe, type, back, home, switch_app, enter, save_screenshot_to_file
 from MobileAgentE.action_parser import parse_action_to_structure_output
 from MobileAgentE.utils import parse_bounds
-from MobileAgentE.prompt import MOBILE_USE_PROMPT
+from MobileAgentE.prompt import MOBILE_USE_PROMPT, XML_PROMPT
 
 
 # -----------------------------------------
@@ -70,6 +70,7 @@ class OneStepAgent:
     # -----------------------------
     def build_prompt(self, info_pool: InfoPool, history):
         return MOBILE_USE_PROMPT.format(language="English", history=history, instruction=info_pool.instruction)
+        # return XML_PROMPT.format(language="English", history=history, instruction=info_pool.instruction)
 
     # -----------------------------
     # 解析 LLM 输出 → action
@@ -218,6 +219,160 @@ class OneStepAgent:
         llm_output = llm_api_func(chat)
 
         # 2) 解析
+        action = self.parse_action(llm_output, info.width, info.height)
+
+        return action
+
+
+# -----------------------------------------
+# Pixel-Coordinate Text-Only Agent
+# -----------------------------------------
+class OneStepAgent_XML:
+
+    def __init__(self, adb_path):
+        self.adb = adb_path
+
+    # -----------------------------
+    # 初始化 system prompt
+    # -----------------------------
+    def init_chat(self):
+        system_prompt = (
+            "You are a mobile UI control agent. "
+            "Each step, you receive a user instruction and the current UI XML accessibility tree. "
+            "Your task is to output ONE atomic GUI action in JSON. "
+            "Coordinates MUST be pixel coordinates directly on a 1080x2400 screen. "
+            "No normalization. No bounding boxes. Output pixel values directly."
+        )
+        return [["system", [{"type": "text", "text": system_prompt}]]]
+
+    # -----------------------------
+    # 构建 prompt
+    # -----------------------------
+    def build_prompt(self, info_pool: InfoPool, history, xml_str=""):
+        return MOBILE_USE_PROMPT.format(
+            language="English",
+            history=history,
+            instruction=info_pool.instruction,
+            xml=xml_str,
+        )
+
+    # -----------------------------
+    # 解析 LLM 输出 → action (pixel-based)
+    # -----------------------------
+    def parse_action(self, llm_output: str, width: int, height: int):
+        """
+        这里你应该让 LLM 直接输出 JSON，例如：
+
+        {
+            "action_type": "click",
+            "x": 500,
+            "y": 1300
+        }
+
+        或：
+
+        {
+            "action_type": "drag",
+            "start_x": 300, "start_y": 1400,
+            "end_x": 300, "end_y": 400
+        }
+        """
+        clean = llm_output.strip()
+
+        try:
+            parsed = json.loads(clean)
+        except Exception as e:
+            print("[ERROR] Invalid JSON:", e, clean)
+            return None
+
+        return parsed
+
+    # -----------------------------
+    # 执行动作（pixel-based）
+    # -----------------------------
+    def execute_action(self, action_obj, info_pool: InfoPool):
+        if not action_obj:
+            print("⚠️ No valid action parsed.")
+            return None
+
+        action_type = action_obj.get("action_type")
+        print(f"[EXEC] {action_type}: {action_obj}")
+
+        # ---------------- click ----------------
+        if action_type == "click":
+            x = int(action_obj.get("x", -1))
+            y = int(action_obj.get("y", -1))
+            tap(self.adb, x, y)
+            return f"click({x},{y})"
+
+        # ---------------- drag / swipe ----------------
+        elif action_type in ["drag", "swipe"]:
+            sx = int(action_obj.get("start_x", -1))
+            sy = int(action_obj.get("start_y", -1))
+            ex = int(action_obj.get("end_x", -1))
+            ey = int(action_obj.get("end_y", -1))
+            swipe(self.adb, sx, sy, ex, ey)
+            return f"{action_type}({sx},{sy})->({ex},{ey})"
+
+        # ---------------- type ----------------
+        elif action_type == "type":
+            text = action_obj.get("content", "")
+            type(self.adb, text)
+            return f"type({text})"
+
+        elif action_type == "press_back":
+            back(self.adb)
+            return "press_back"
+
+        elif action_type == "press_home":
+            home(self.adb)
+            return "press_home"
+
+        elif action_type == "enter":
+            enter(self.adb)
+            return "enter"
+
+        elif action_type == "switch_app":
+            switch_app(self.adb)
+            return "switch_app"
+
+        elif action_type == "wait":
+            time.sleep(1)
+            return "wait"
+
+        # ---------------- finish ----------------
+        elif action_type == "finished":
+            return "finished"
+
+        else:
+            print(f"⚠️ Unsupported action_type={action_type}")
+            return None
+
+    # -----------------------------
+    # 主入口：单步代理
+    # -----------------------------
+    def run_step(self, instruction, screenshot_img, width, height, history, llm_api_func, xml_str=""):
+        """
+        与旧版保持完全一致，包括参数顺序，但完全忽略 screenshot。
+        """
+
+        info = InfoPool(
+            instruction=instruction,
+            width=width,
+            height=height,
+            tree=None
+        )
+
+        # 1）构建 chat
+        chat = self.init_chat()
+        user_prompt = self.build_prompt(info, history, xml_str=xml_str)
+
+        chat.append(["user", [{"type": "text", "text": user_prompt}]])
+
+        # 2）调用 LLM
+        llm_output = llm_api_func(chat)
+
+        # 3）解析 → 直接 pixel 坐标
         action = self.parse_action(llm_output, info.width, info.height)
 
         return action

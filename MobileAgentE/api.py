@@ -275,3 +275,59 @@ def inference_chat_llama_cpp(
 
     return js["choices"][0]["message"]["content"]
 
+
+def inference_chat_llama_cpp_xml_only(
+        chat,
+        api_url="http://localhost:8080/v1/chat/completions",
+        temperature=0.0,
+        max_tokens=200
+):
+    """
+    chat: list of tuples (role, content_items)
+           where content_items = [{"type": "text", "text": "..."}]
+
+    全部作为纯文本输入，完全不支持 image。
+    """
+
+    headers = {"Content-Type": "application/json"}
+    messages = []
+
+    # 遍历 chat 历史
+    for role, content_items in chat:
+        content_list = []
+
+        for item in content_items:
+            # 只允许 text 输入
+            if item["type"] == "text":
+                content_list.append({
+                    "type": "text",
+                    "text": item["text"]
+                })
+            else:
+                # 遇到 image_url 或未知类型，全部忽略
+                continue
+
+        messages.append({
+            "role": role,
+            "content": content_list
+        })
+
+    # 构建请求体
+    data = {
+        "messages": messages,
+        "temperature": temperature,
+        "max_tokens": max_tokens,
+        "stream": False
+    }
+
+    # 发送请求
+    res = requests.post(api_url, headers=headers, json=data)
+
+    # 错误提示
+    if res.status_code != 200:
+        print(f"\n[Error] Server Response: {res.text}\n")
+
+    res.raise_for_status()
+    js = res.json()
+
+    return js["choices"][0]["message"]["content"]
