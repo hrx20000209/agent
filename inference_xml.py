@@ -6,7 +6,7 @@ import argparse
 
 from MobileAgentE.controller import get_screenshot, get_a11y_tree
 from MobileAgentE.api import inference_chat_llama_cpp_xml_only
-from MobileAgentE.tree import parse_a11y_tree
+from MobileAgentE.tree import parse_a11y_tree, print_tree
 from MobileAgentE.agents import OneStepAgent_XML, InfoPool
 
 
@@ -75,6 +75,8 @@ def run_single_step_agent(args):
 
         xml_str = open(xml_path, "r", encoding="utf-8").read()
         tree = parse_a11y_tree(xml_path=xml_path)
+        # print_tree(tree)
+        # print(xml_str)
 
         # fake width/height
         info_pool = InfoPool(
@@ -96,7 +98,7 @@ def run_single_step_agent(args):
             width=0, height=0,
             history=history,
             llm_api_func=get_reasoning_response,
-            xml_str=tree
+            xml_str=xml_str
         )
         llm_end = time.time()
 
