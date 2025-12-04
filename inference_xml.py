@@ -7,7 +7,7 @@ import argparse
 from MobileAgentE.controller import get_screenshot, get_a11y_tree
 from MobileAgentE.api import inference_chat_llama_cpp_xml_only
 from MobileAgentE.tree import parse_a11y_tree
-from MobileAgentE.agents import OneStepAgent, InfoPool
+from MobileAgentE.agents import OneStepAgent_XML, InfoPool
 
 
 ########################################
@@ -44,7 +44,7 @@ def run_single_step_agent(args):
 
     print("### Running Single-Step Agent (XML-only mode) ###")
 
-    agent = OneStepAgent(args.adb_path)
+    agent = OneStepAgent_XML(args.adb_path)
 
     steps = []
     history = []
@@ -88,26 +88,20 @@ def run_single_step_agent(args):
         perception_latency = (perception_end_time - start_time) * 1000
         perception_latency_list.append(perception_latency)
 
-        # --- Prepare LLM input ---
-        chat = {
-            "instruction": args.task,
-            "xml": xml_str,
-            "history": history
-        }
 
         # --- Reasoning ---
         llm_start = time.time()
-        response = get_reasoning_response(chat)
+        action_obj = agent.run_step(
+            args.task,
+            width=0, height=0,
+            history=history,
+            llm_api_func=get_reasoning_response,
+            xml_str=tree
+        )
         llm_end = time.time()
 
         planning_latency = (llm_end - llm_start) * 1000
         planning_latency_list.append(planning_latency)
-
-        try:
-            action_obj = json.loads(response)
-        except:
-            print("❌ LLM did not output valid JSON:", response)
-            continue
 
         print("[Reasoning] Parsed action:", action_obj)
 

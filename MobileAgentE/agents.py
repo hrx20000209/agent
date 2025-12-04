@@ -351,7 +351,7 @@ class OneStepAgent_XML:
     # -----------------------------
     # 主入口：单步代理
     # -----------------------------
-    def run_step(self, instruction, screenshot_img, width, height, history, llm_api_func, xml_str=""):
+    def run_step(self, instruction, width, height, history, llm_api_func, xml_str=""):
         """
         与旧版保持完全一致，包括参数顺序，但完全忽略 screenshot。
         """
