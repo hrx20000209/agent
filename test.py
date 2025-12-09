@@ -5,7 +5,14 @@ from transformers import AutoProcessor, AutoModelForVision2Seq
 # ================================================================
 # Load model (按照你给的方式)
 # ================================================================
-processor = AutoProcessor.from_pretrained("ByteDance-Seed/UI-TARS-2B-SFT")
+processor = AutoProcessor.from_pretrained(
+    "ByteDance-Seed/UI-TARS-2B-SFT",
+    trust_remote_code=True,
+    use_fast=False,
+    local_files_only=True,
+    ignore_mismatched_sizes=True,
+)
+
 model = AutoModelForVision2Seq.from_pretrained(
     "ByteDance-Seed/UI-TARS-2B-SFT",
     torch_dtype=torch.float16,
