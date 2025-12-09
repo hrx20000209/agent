@@ -1,134 +1,104 @@
 import time
 import torch
-import base64
 from transformers import AutoProcessor, AutoModelForVision2Seq
 
 # ================================================================
-# Load model
+# Load model (按照你给的方式)
 # ================================================================
-model_path = "../models/ui_tars_2B"
-
-processor = AutoProcessor.from_pretrained(
-    model_path,
-    trust_remote_code=True,
-    local_files_only=True
-)
-
+processor = AutoProcessor.from_pretrained("ByteDance-Seed/UI-TARS-2B-SFT")
 model = AutoModelForVision2Seq.from_pretrained(
-    model_path,
-    trust_remote_code=True,
-    local_files_only=True,
-    device_map="auto",
-    dtype=torch.float16
+    "ByteDance-Seed/UI-TARS-2B-SFT",
+    torch_dtype=torch.float16,
+    device_map="auto"
 )
 model.eval()
 
 # ================================================================
-# Base64 image
-# ================================================================
-image_path = "./screenshot/screenshot.png"
-with open(image_path, "rb") as f:
-    b64 = base64.b64encode(f.read()).decode()
-
-data_url = f"data:image/png;base64,{b64}"
-
-# ================================================================
-# Build chat messages
+# Build messages
 # ================================================================
 messages = [
     {
         "role": "user",
         "content": [
-            {"type": "image", "url": data_url},
-            {"type": "text", "text": "Describe what is in the screenshot?"}
+            {"type": "image", "url": "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/p-blog/candy.JPG"},
+            {"type": "text", "text": "What animal is on the candy?"}
         ]
-    }
+    },
 ]
 
 # ================================================================
-# Convert to model inputs
+# Convert to inputs
 # ================================================================
 inputs = processor.apply_chat_template(
     messages,
     add_generation_prompt=True,
     tokenize=True,
     return_dict=True,
-    return_tensors="pt"
-).to(model.device)
+    return_tensors="pt",
+)
 
-input_ids = inputs["input_ids"]
-num_prefill_tokens = input_ids.shape[-1]     # ← prefill 的 token 数
+inputs = inputs.to(model.device)
+prefill_tokens = inputs["input_ids"].numel()
 
 # ================================================================
-# Prefill latency: 单次 forward
+# 1. Prefill latency (generate 只做 prefill + first token)
 # ================================================================
 torch.cuda.synchronize()
 t0 = time.time()
 
 with torch.no_grad():
-    _ = model(
+    out = model.generate(
         **inputs,
-        use_cache=True
+        max_new_tokens=1,
+        use_cache=True,
+        return_dict_in_generate=True,
+        output_logits=True
     )
 
 torch.cuda.synchronize()
 prefill_latency = time.time() - t0
-prefill_tokens_per_sec = num_prefill_tokens / prefill_latency
 
-print(f"\n=== Prefill ===")
-print(f"Prefill latency: {prefill_latency:.4f} s")
-print(f"Prefill tokens:  {num_prefill_tokens}")
-print(f"Prefill speed:   {prefill_tokens_per_sec:.2f} tokens/s")
+prefill_speed = prefill_tokens / prefill_latency
+
+print("\n=== PREFILL ===")
+print(f"Prefill tokens:  {prefill_tokens}")
+print(f"Prefill latency: {prefill_latency:.4f}s")
+print(f"Prefill speed:   {prefill_speed:.2f} tokens/s")
+
 
 # ================================================================
-# Generation
+# 2. Decode latency（多生成一些 token）
 # ================================================================
+decode_steps = 20
+
 torch.cuda.synchronize()
 t1 = time.time()
 
 with torch.no_grad():
-    output_ids = model.generate(
+    out2 = model.generate(
         **inputs,
-        max_new_tokens=100,
-        use_cache=True
+        max_new_tokens=decode_steps,
+        use_cache=True,
     )
 
 torch.cuda.synchronize()
-gen_total_latency = time.time() - t1
+decode_latency = time.time() - t1
 
-# 计算 decode token 数（真实生成量）
-generated_tokens = output_ids.shape[-1] - num_prefill_tokens
-generated_tokens = max(generated_tokens, 0)
+decode_speed = decode_steps / decode_latency
 
-decode_latency = max(gen_total_latency - prefill_latency, 0)
-avg_decode_latency = decode_latency / generated_tokens if generated_tokens > 0 else float("nan")
-decode_tokens_per_sec = generated_tokens / decode_latency if decode_latency > 0 else float("inf")
+print("\n=== DECODE ===")
+print(f"Decode tokens:   {decode_steps}")
+print(f"Decode latency:  {decode_latency:.4f}s")
+print(f"Decode speed:    {decode_speed:.2f} tokens/s")
 
-print(f"\n=== Decode ===")
-print(f"Generated tokens: {generated_tokens}")
-print(f"Decode total latency: {decode_latency:.4f} s")
-print(f"Decode avg latency/token: {avg_decode_latency:.4f} s")
-print(f"Decode speed: {decode_tokens_per_sec:.2f} tokens/s")
 
 # ================================================================
 # Decode text
 # ================================================================
-generated_text = processor.decode(
-    output_ids[0][num_prefill_tokens:],
+decoded = processor.decode(
+    out2[0][inputs["input_ids"].shape[-1]:],
     skip_special_tokens=True
 )
 
-print("\n=== Model Output ===")
-print(generated_text)
-
-# ================================================================
-# Summary
-# ================================================================
-print("\n=== Summary ===")
-print(f"Prefill latency: {prefill_latency:.4f} s")
-print(f"Prefill tokens: {num_prefill_tokens}")
-print(f"Prefill speed: {prefill_tokens_per_sec:.2f} tokens/s")
-
-print(f"\nGeneration latency (total): {gen_total_latency:.4f} s")
-print(f"Generated tokens: {generated_tokens}")
-print(f"Decode speed: {decode_tokens_per_sec:.2f} tokens/s")
+print("\n=== MODEL OUTPUT ===")
+print(decoded)
