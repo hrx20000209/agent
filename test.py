@@ -1,56 +1,111 @@
-import os
-from MobileAgentE.api import inference_chat_llama_cpp_xml_only
-from MobileAgentE.agents import OneStepAgent_XML
-from MobileAgentE.tree import parse_a11y_tree
-from MobileAgentE.agents import InfoPool
+import time
+import torch
+from transformers import AutoProcessor, AutoModelForVision2Seq
 
+# ================================================================
+# Load model (按照你给的方式)
+# ================================================================
+processor = AutoProcessor.from_pretrained(
+    "ByteDance-Seed/UI-TARS-2B-SFT",
+    trust_remote_code=True,
+    use_fast=False,
+    local_files_only=True,
+    ignore_mismatched_sizes=True,
+)
 
-########################################
-# LLM Wrapper
-########################################
-def get_reasoning_response(chat):
-    """唯一的 LLM 调用"""
-    return inference_chat_llama_cpp_xml_only(chat, temperature=0.0)
+model = AutoModelForVision2Seq.from_pretrained(
+    "ByteDance-Seed/UI-TARS-2B-SFT",
+    torch_dtype=torch.float16,
+    device_map="auto"
+)
+model.eval()
 
+# ================================================================
+# Build messages
+# ================================================================
+messages = [
+    {
+        "role": "user",
+        "content": [
+            {"type": "image", "url": "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/p-blog/candy.JPG"},
+            {"type": "text", "text": "What animal is on the candy?"}
+        ]
+    },
+]
 
-########################################
-# Test Code
-########################################
-if __name__ == "__main__":
-    # ======== 1. 加载 XML 文件 ========
-    xml_file = "./screenshot/a11y.xml"   # ❗换成你的 XML
-    if not os.path.exists(xml_file):
-        raise FileNotFoundError(f"{xml_file} not found.")
+# ================================================================
+# Convert to inputs
+# ================================================================
+inputs = processor.apply_chat_template(
+    messages,
+    add_generation_prompt=True,
+    tokenize=True,
+    return_dict=True,
+    return_tensors="pt",
+)
 
-    with open(xml_file, "r", encoding="utf-8") as f:
-        xml_str = f.read()
+inputs = inputs.to(model.device)
+prefill_tokens = inputs["input_ids"].numel()
 
-    print("Loaded XML length:", len(xml_str))
+# ================================================================
+# 1. Prefill latency (generate 只做 prefill + first token)
+# ================================================================
+torch.cuda.synchronize()
+t0 = time.time()
 
-    # ======== 2. 解析 XML tree（给 Agent 用） ========
-    tree = parse_a11y_tree(xml_file)
-
-    # ======== 3. 创建 Agent ========
-    agent = OneStepAgent_XML(adb_path="adb")  # adb 不会被用到
-
-    # Fake 屏幕参数（你可以调整）
-    w, h = 1080, 2400
-    history = []
-    instruction = "Based on this UI XML tree, determine the next action."
-
-    # ======== 4. 调用 run_step（Text-only 模式） ========
-    print("\n==== Calling OneStepAgent_XML.run_step ====\n")
-
-    action = agent.run_step(
-        instruction=instruction,
-        screenshot_img=None,    # ❗XML-only，不再需要 screenshot
-        width=w,
-        height=h,
-        history=history,
-        llm_api_func=get_reasoning_response,
-        xml_str=xml_str         # ❗关键：把 XML 传进去
+with torch.no_grad():
+    out = model.generate(
+        **inputs,
+        max_new_tokens=1,
+        use_cache=True,
+        return_dict_in_generate=True,
+        output_logits=True
     )
 
-    # ======== 5. 打印 LLM Action ========
-    print("\n==== LLM OUTPUT ACTION ====")
-    print(action)
+torch.cuda.synchronize()
+prefill_latency = time.time() - t0
+
+prefill_speed = prefill_tokens / prefill_latency
+
+print("\n=== PREFILL ===")
+print(f"Prefill tokens:  {prefill_tokens}")
+print(f"Prefill latency: {prefill_latency:.4f}s")
+print(f"Prefill speed:   {prefill_speed:.2f} tokens/s")
+
+
+# ================================================================
+# 2. Decode latency（多生成一些 token）
+# ================================================================
+decode_steps = 20
+
+torch.cuda.synchronize()
+t1 = time.time()
+
+with torch.no_grad():
+    out2 = model.generate(
+        **inputs,
+        max_new_tokens=decode_steps,
+        use_cache=True,
+    )
+
+torch.cuda.synchronize()
+decode_latency = time.time() - t1
+
+decode_speed = decode_steps / decode_latency
+
+print("\n=== DECODE ===")
+print(f"Decode tokens:   {decode_steps}")
+print(f"Decode latency:  {decode_latency:.4f}s")
+print(f"Decode speed:    {decode_speed:.2f} tokens/s")
+
+
+# ================================================================
+# Decode text
+# ================================================================
+decoded = processor.decode(
+    out2[0][inputs["input_ids"].shape[-1]:],
+    skip_special_tokens=True
+)
+
+print("\n=== MODEL OUTPUT ===")
+print(decoded)
