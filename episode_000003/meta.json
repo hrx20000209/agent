@@ -1,0 +1,25 @@
+{
+  "actions": [
+    "{\"action_type\":\"click\",\"x\":686,\"y\":1822}",
+    "{\"action_type\":\"wait\"}",
+    "{\"action_type\":\"scroll\",\"direction\":\"down\"}",
+    "{\"action_type\":\"click\",\"x\":508,\"y\":2019}",
+    "{\"action_type\":\"scroll\",\"direction\":\"down\"}",
+    "{\"action_type\":\"navigate_back\"}",
+    "{\"action_type\":\"scroll\",\"direction\":\"down\"}",
+    "{\"action_type\":\"scroll\",\"direction\":\"down\"}"
+  ],
+  "step_instructions": [
+    "Open The Witcher Audiobook ",
+    "Open The Witcher Audiobook ",
+    "Swipe up for Product details",
+    "Click on the see full description button .",
+    "Swipe up for more description",
+    "Get back to the previous page ",
+    "Swipe up for shipping and more details",
+    "Swipe up for shipping and more details"
+  ],
+  "goal": "view the details of The Witcher Audiobook including price , description shipping and more .",
+  "num_screenshots": 9,
+  "num_accessibility_trees": 9
+}

@@ -1,111 +1,202 @@
 import time
-import torch
-from transformers import AutoProcessor, AutoModelForVision2Seq
+from PIL import Image
+import io
+import base64
+import os
+import requests
 
-# ================================================================
-# Load model (按照你给的方式)
-# ================================================================
-processor = AutoProcessor.from_pretrained(
-    "ByteDance-Seed/UI-TARS-2B-SFT",
-    trust_remote_code=True,
-    use_fast=False,
-    local_files_only=True,
-    ignore_mismatched_sizes=True,
-)
 
-model = AutoModelForVision2Seq.from_pretrained(
-    "ByteDance-Seed/UI-TARS-2B-SFT",
-    torch_dtype=torch.float16,
-    device_map="auto"
-)
-model.eval()
+########################################
+#        llama-server API CALL
+########################################
+def inference_chat_llama_cpp(
+        chat,
+        api_url="http://localhost:8080/v1/chat/completions",
+        temperature=0.0,
+        max_tokens=200
+):
+    headers = {"Content-Type": "application/json"}
+    messages = []
 
-# ================================================================
-# Build messages
-# ================================================================
-messages = [
-    {
-        "role": "user",
-        "content": [
-            {"type": "image", "url": "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/p-blog/candy.JPG"},
-            {"type": "text", "text": "What animal is on the candy?"}
-        ]
-    },
-]
+    for role, content_items in chat:
+        content_list = []
 
-# ================================================================
-# Convert to inputs
-# ================================================================
-inputs = processor.apply_chat_template(
-    messages,
-    add_generation_prompt=True,
-    tokenize=True,
-    return_dict=True,
-    return_tensors="pt",
-)
+        for item in content_items:
+            if item["type"] == "text":
+                content_list.append({
+                    "type": "text",
+                    "text": item["text"]
+                })
 
-inputs = inputs.to(model.device)
-prefill_tokens = inputs["input_ids"].numel()
+            elif item["type"] == "image_url":
+                content_list.append({
+                    "type": "image_url",
+                    "image_url": {
+                        "url": item["image_url"]["url"]
+                    }
+                })
 
-# ================================================================
-# 1. Prefill latency (generate 只做 prefill + first token)
-# ================================================================
-torch.cuda.synchronize()
-t0 = time.time()
+        messages.append({
+            "role": role,
+            "content": content_list
+        })
 
-with torch.no_grad():
-    out = model.generate(
-        **inputs,
-        max_new_tokens=1,
-        use_cache=True,
-        return_dict_in_generate=True,
-        output_logits=True
+    data = {
+        "messages": messages,
+        "temperature": temperature,
+        "max_tokens": max_tokens,
+        "stream": False
+    }
+
+    res = requests.post(api_url, headers=headers, json=data)
+
+    if res.status_code != 200:
+        print(f"\n[Error] Server Response: {res.text}\n")
+
+    res.raise_for_status()
+    js = res.json()
+
+    return {
+        "content": js["choices"][0]["message"]["content"],
+        "timings": js.get("timings", {}),
+        "usage": js.get("usage", {})
+    }
+
+
+########################################
+#        IMAGE LOADING + RESIZE
+########################################
+def load_image_as_data_uri(path, resize_divisor=1):
+    """
+    resize_divisor = 1  -> original
+    resize_divisor = 2  -> width/height / 2
+    resize_divisor = 4  -> width/height / 4
+    """
+    img = Image.open(os.path.expanduser(path)).convert("RGB")
+
+    if resize_divisor > 1:
+        w, h = img.size
+        img = img.resize(
+            (max(1, w // resize_divisor), max(1, h // resize_divisor)),
+            Image.LANCZOS
+        )
+
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
+
+    return f"data:image/png;base64,{b64}"
+
+
+########################################
+#                MAIN
+########################################
+def main():
+
+    # ---------------- CONFIG ----------------
+    IMAGE_PATHS = [
+        "./data/episode_000003/screenshot_000.png",
+        "./data/episode_000003/screenshot_001.png",
+        "./data/episode_000003/screenshot_002.png",
+    ]
+
+    RESIZE_DIVISOR = 2   # change this
+    N = 5                # number of runs
+
+    # ---------------- PRELOAD IMAGES ----------------
+    image_uris = [
+        load_image_as_data_uri(p, resize_divisor=RESIZE_DIVISOR)
+        for p in IMAGE_PATHS
+    ]
+
+    # ---------------- BUILD CHAT ----------------
+    chat = [
+        (
+            "user",
+            [
+                {
+                    "type": "image_url",
+                    "image_url": {"url": image_uris[0]}
+                },
+                {
+                    "type": "text",
+                    "text": "Describe what is shown on the phone screen."
+                }
+            ]
+        )
+    ]
+
+    # ---------------- WARM-UP ----------------
+    inference_chat_llama_cpp(chat)
+
+    # ---------------- STATS ----------------
+    prefill_times = []
+    decode_times = []
+    e2e_times = []
+
+    prefill_tps_list = []
+    decode_tps_list = []
+
+    # ---------------- BENCHMARK ----------------
+    for i in range(N):
+        img_uri = image_uris[i % len(image_uris)]
+        chat[0][1][0]["image_url"]["url"] = img_uri
+
+        t0 = time.time()
+        result = inference_chat_llama_cpp(chat)
+        t1 = time.time()
+
+        timings = result["timings"]
+        usage = result["usage"]
+
+        # latency (seconds)
+        prefill_s = timings.get("prompt_ms", 0.0) / 1000.0
+        decode_s = timings.get("predicted_ms", 0.0) / 1000.0
+        e2e_s = t1 - t0
+
+        # tokens
+        prompt_tokens = usage.get("prompt_tokens", 0)
+        completion_tokens = usage.get("completion_tokens", 0)
+
+        # token/s
+        prefill_tps = (
+            prompt_tokens / prefill_s if prefill_s > 0 else 0.0
+        )
+        decode_tps = (
+            completion_tokens / decode_s if decode_s > 0 else 0.0
+        )
+
+        # record
+        prefill_times.append(prefill_s)
+        decode_times.append(decode_s)
+        e2e_times.append(e2e_s)
+
+        prefill_tps_list.append(prefill_tps)
+        decode_tps_list.append(decode_tps)
+
+        print(
+            f"[Run {i+1}] Image={i % len(image_uris)} | "
+            f"Prefill={prefill_s:.3f}s ({prefill_tps:.1f} tok/s) | "
+            f"Decode={decode_s:.3f}s ({decode_tps:.1f} tok/s) | "
+            f"E2E={e2e_s:.3f}s"
+        )
+
+    # ---------------- SUMMARY ----------------
+    print("\n=== Averages ===")
+    print(f"Resize divisor: {RESIZE_DIVISOR}")
+
+    print(
+        f"Prefill avg: {sum(prefill_times)/N:.3f}s | "
+        f"{sum(prefill_tps_list)/N:.1f} tok/s"
+    )
+    print(
+        f"Decode  avg: {sum(decode_times)/N:.3f}s | "
+        f"{sum(decode_tps_list)/N:.1f} tok/s"
+    )
+    print(
+        f"E2E     avg: {sum(e2e_times)/N:.3f}s"
     )
 
-torch.cuda.synchronize()
-prefill_latency = time.time() - t0
 
-prefill_speed = prefill_tokens / prefill_latency
-
-print("\n=== PREFILL ===")
-print(f"Prefill tokens:  {prefill_tokens}")
-print(f"Prefill latency: {prefill_latency:.4f}s")
-print(f"Prefill speed:   {prefill_speed:.2f} tokens/s")
-
-
-# ================================================================
-# 2. Decode latency（多生成一些 token）
-# ================================================================
-decode_steps = 20
-
-torch.cuda.synchronize()
-t1 = time.time()
-
-with torch.no_grad():
-    out2 = model.generate(
-        **inputs,
-        max_new_tokens=decode_steps,
-        use_cache=True,
-    )
-
-torch.cuda.synchronize()
-decode_latency = time.time() - t1
-
-decode_speed = decode_steps / decode_latency
-
-print("\n=== DECODE ===")
-print(f"Decode tokens:   {decode_steps}")
-print(f"Decode latency:  {decode_latency:.4f}s")
-print(f"Decode speed:    {decode_speed:.2f} tokens/s")
-
-
-# ================================================================
-# Decode text
-# ================================================================
-decoded = processor.decode(
-    out2[0][inputs["input_ids"].shape[-1]:],
-    skip_special_tokens=True
-)
-
-print("\n=== MODEL OUTPUT ===")
-print(decoded)
+if __name__ == "__main__":
+    main()
