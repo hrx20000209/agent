@@ -132,7 +132,8 @@ def run_single_step_agent(args):
             w, h,
             history=history,
             llm_api_func=get_reasoning_response,
-            clues=clues
+            clues=clues,
+            scale=4.0
         )
 
         # time.sleep(20)

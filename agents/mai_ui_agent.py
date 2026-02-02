@@ -125,7 +125,16 @@ class MAIOneStepAgent:
         action["tool_call"] = tool_call
         return action
 
-    def run_step(self, instruction, screenshot_img, width, height, history, llm_api_func, clues):
+    def run_step(self, instruction, screenshot_img, width, height, history, llm_api_func, clues, scale=1.0):
+        orig_width, orig_height = width, height
+
+        if scale != 1.0:
+            new_w = int(width / scale)
+            new_h = int(height / scale)
+
+            screenshot_img = screenshot_img.resize((new_w, new_h))
+            width, height = new_w, new_h
+
         info = InfoPool(instruction=instruction, width=width, height=height)
 
         chat = self.init_chat()
