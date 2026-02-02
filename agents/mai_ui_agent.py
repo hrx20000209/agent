@@ -133,8 +133,6 @@ class MAIOneStepAgent:
         if scale != 1.0:
             new_w = int(width / scale)
             new_h = int(height / scale)
-
-            screenshot_img = screenshot_img.resize((new_w, new_h))
             width, height = new_w, new_h
 
         chat = self.init_chat()
