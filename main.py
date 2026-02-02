@@ -95,8 +95,10 @@ def run_single_step_agent(args):
         start_time = time.time()
         print(f"\n================ Iteration {itr} ================\n")
 
+        scale = 4.0
+
         # --- Perception ---
-        get_screenshot(args, screenshot_path)
+        get_screenshot(args, screenshot_path, scale=scale)
         screenshot_time = time.time()
         screenshot_latency = (screenshot_time - start_time) * 1000
         screenshot_latency_list.append(screenshot_latency)
@@ -133,7 +135,7 @@ def run_single_step_agent(args):
             history=history,
             llm_api_func=get_reasoning_response,
             clues=clues,
-            scale=4.0
+            scale=scale
         )
 
         # time.sleep(20)

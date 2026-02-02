@@ -1,21 +1,29 @@
 import os
 import time
 import subprocess
+from PIL import Image
 from time import sleep
 
 
-def get_screenshot(args, screenshot_path):
+def get_screenshot(args, screenshot_path, scale=1.0):
+    # 1️⃣ 设备截图（原分辨率）
     command = args.adb_path + " shell screencap -p /sdcard/screenshot.png"
     subprocess.run(command, capture_output=True, text=True, shell=True)
 
+    # 2️⃣ 拉到本地
     if not args.on_device:
         command = args.adb_path + f" pull /sdcard/screenshot.png {screenshot_path}"
         subprocess.run(command, capture_output=True, text=True, shell=True)
-    # image_path = "./screenshot/screenshot.png"
-    # save_path = "./screenshot/screenshot.jpg"
-    # image = Image.open(image_path)
-    # image.convert("RGB").save(save_path, "JPEG")
-    # os.remove(image_path)
+
+    # 3️⃣ 本地 resize + 压缩
+    img = Image.open(screenshot_path).convert("RGB")
+
+    if scale != 1.0:
+        w, h = img.size
+        img = img.resize((int(w/scale), int(h/scale)), Image.BILINEAR)
+
+    # 直接覆盖保存为 JPEG（减少 token）
+    img.save(screenshot_path, format="JPEG", quality=85)
 
 
 def get_a11y_tree(args, xml_path):

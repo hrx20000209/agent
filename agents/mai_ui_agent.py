@@ -126,6 +126,8 @@ class MAIOneStepAgent:
         return action
 
     def run_step(self, instruction, screenshot_img, width, height, history, llm_api_func, clues, scale=1.0):
+        info = InfoPool(instruction=instruction, width=width, height=height)
+
         orig_width, orig_height = width, height
 
         if scale != 1.0:
@@ -134,8 +136,6 @@ class MAIOneStepAgent:
 
             screenshot_img = screenshot_img.resize((new_w, new_h))
             width, height = new_w, new_h
-
-        info = InfoPool(instruction=instruction, width=width, height=height)
 
         chat = self.init_chat()
         user_prompt = self.build_prompt(info, history) + ("\n\n" + clues if clues else "")
