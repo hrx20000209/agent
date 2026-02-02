@@ -1,7 +1,6 @@
 import os
 import time
 import subprocess
-from PIL import Image
 from time import sleep
 
 

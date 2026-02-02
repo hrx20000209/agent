@@ -1,6 +1,6 @@
 
-from inference_agent_E import run_single_task
-from inference_agent_E import Perceptor, DEFAULT_PERCEPTION_ARGS, ADB_PATH, INIT_TIPS, INIT_SHORTCUTS, REASONING_MODEL
+from main import run_single_task
+from main import Perceptor, DEFAULT_PERCEPTION_ARGS, ADB_PATH, INIT_TIPS, INIT_SHORTCUTS, REASONING_MODEL
 import torch
 import os
 import json

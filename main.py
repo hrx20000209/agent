@@ -13,6 +13,9 @@ from MobileAgentE.api import (
 )
 from MobileAgentE.tree import parse_a11y_tree, print_tree
 from MobileAgentE.agents import OneStepAgent, InfoPool  # ✅ 换成新的 Agent 和 InfoPool
+from agents.mai_ui_agent import MAIOneStepAgent
+# from Explorer.online_explorer import A11yTreeOnlineExplorer
+from Explorer.GoalExplorer import A11yTreeOnlineExplorer
 
 ########################################
 #              CONFIG
@@ -59,7 +62,24 @@ def run_single_step_agent(args):
     print("### Running Single-Step Agent ###")
 
     # Initialize unified agent
-    agent = OneStepAgent(args.adb_path)
+    agent = MAIOneStepAgent(args.adb_path)
+    # explorer = A11yTreeOnlineExplorer(
+    #     adb_path=args.adb_path,
+    #     args=args,
+    #     xml_path=xml_path,
+    # )
+
+    explorer = A11yTreeOnlineExplorer(
+        adb_path=args.adb_path,
+        args=args,
+        xml_path="./screenshot/a11y.xml",
+        task_text=args.task,
+        explore_vis_dir="explore_results",
+        screenshot_path="explore_screenshot.png",
+    )
+
+    explore_logs = []
+    clues = None
 
     steps = []
     history = []
@@ -88,7 +108,7 @@ def run_single_step_agent(args):
         w, h = Image.open(screenshot_path).size
 
         tree = parse_a11y_tree(xml_path=xml_path)
-        # print_tree(tree)
+        print_tree(tree)
 
         info_pool = InfoPool(
             instruction=args.task,
@@ -102,14 +122,24 @@ def run_single_step_agent(args):
         perception_latency_list.append(perception_latency)
         print("[Perception] Captured screenshot:", screenshot_path, f"size=({w},{h})")
 
+
         # --- Single-step reasoning ---
+        explorer.start(max_steps=5, sleep_sec=0.1)     # parallel exploration
+
         action_obj = agent.run_step(
             args.task,
             screenshot_path,
             w, h,
             history=history,
-            llm_api_func=get_reasoning_response
+            llm_api_func=get_reasoning_response,
+            clues=clues
         )
+
+        # time.sleep(20)
+
+        explorer.stop()
+        clues = explorer.build_prompt_clues()  # ⭐ 拿到压缩结果
+        explorer.fast_rollback()
 
         planning_end_time = time.time()
         planning_latency = (planning_end_time - perception_end_time) * 1000
@@ -168,7 +198,7 @@ def run_single_step_agent(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--task", type=str, default="Open Chrome and search for newest paper about GUI agent.",
+    parser.add_argument("--task", type=str, default="Record an audio clip using Audio Recorder app and save it.",
                         help="User instruction for the single-step agent")
     parser.add_argument("--max_itr", type=int, default=10,
                         help="Maximum iterations for the agent")

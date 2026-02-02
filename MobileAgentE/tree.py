@@ -18,7 +18,6 @@ class Node:
         checkable=False,
         checked=False,
         clickable=False,
-        enabled=True,
         focusable=False,
         focused=False,
         scrollable=False,
@@ -28,6 +27,7 @@ class Node:
         bounds=None,
         drawing_order=None,
         hint=None,
+        uid=None,
         children=None,
     ):
         self.index = index
@@ -39,7 +39,6 @@ class Node:
         self.checkable = checkable
         self.checked = checked
         self.clickable = clickable
-        self.enabled = enabled
         self.focusable = focusable
         self.focused = focused
         self.scrollable = scrollable
@@ -49,11 +48,13 @@ class Node:
         self.bounds = bounds
         self.drawing_order = drawing_order
         self.hint = hint
+        self.uid = uid
         self.children = children or []
 
     def to_dict(self):
         """Convert to JSON-style dict recursively"""
         return {
+            "uid": self.uid,
             "index": self.index,
             "text": self.text,
             "resource_id": self.resource_id,
@@ -63,7 +64,6 @@ class Node:
             "checkable": self.checkable,
             "checked": self.checked,
             "clickable": self.clickable,
-            "enabled": self.enabled,
             "focusable": self.focusable,
             "focused": self.focused,
             "scrollable": self.scrollable,
@@ -77,7 +77,12 @@ class Node:
         }
 
     def __repr__(self):
-        desc = f"{self.class_name or 'Unknown'} text='{self.text or ''}' desc='{self.content_desc or ''}' clickable={self.clickable}"
+        desc = (
+            f"{self.class_name or 'Unknown'} "
+            f"text='{self.text or ''}' "
+            f"desc='{self.content_desc or ''}' "
+            f"clickable={self.clickable}"
+        )
         return f"<Node {desc}>"
 
 
@@ -85,9 +90,47 @@ def parse_bool(s):
     return s == "true"
 
 
-def parse_node(element):
-    """Recursively parse XML <node>"""
+def _keep_leaf(node: Node) -> bool:
+    """
+    Keep only useful leaf nodes.
+    Useful means:
+    - actionable (clickable/focusable/scrollable/long_clickable/checkable)
+    OR
+    - has strong semantic (text/content_desc)
+    """
+    if (
+        node.clickable
+        or node.long_clickable
+        or node.focusable
+        or node.scrollable
+        or node.checkable
+    ):
+        return True
+
+    if node.text and node.text.strip():
+        return True
+
+    if node.content_desc and node.content_desc.strip():
+        return True
+
+    return False
+
+
+def parse_node_collect_leaves(element):
+    """
+    Parse XML node and collect only useful leaf nodes.
+    Return: list[Node]
+    """
     attrib = element.attrib
+
+    children_elems = element.findall("node")
+    if children_elems:
+        leaves = []
+        for ch in children_elems:
+            leaves.extend(parse_node_collect_leaves(ch))
+        return leaves
+
+    # leaf element -> build Node
     node = Node(
         index=attrib.get("index"),
         text=attrib.get("text"),
@@ -98,7 +141,6 @@ def parse_node(element):
         checkable=parse_bool(attrib.get("checkable", "false")),
         checked=parse_bool(attrib.get("checked", "false")),
         clickable=parse_bool(attrib.get("clickable", "false")),
-        enabled=parse_bool(attrib.get("enabled", "true")),
         focusable=parse_bool(attrib.get("focusable", "false")),
         focused=parse_bool(attrib.get("focused", "false")),
         scrollable=parse_bool(attrib.get("scrollable", "false")),
@@ -108,17 +150,29 @@ def parse_node(element):
         bounds=attrib.get("bounds"),
         drawing_order=attrib.get("drawing-order"),
         hint=attrib.get("hint"),
-        children=[parse_node(child) for child in element.findall("node")],
+        children=[],
     )
-    return node
+
+    return [node] if _keep_leaf(node) else []
 
 
 def parse_a11y_tree(xml_path):
-    """Parse uiautomator dump file into Node tree"""
+    """
+    Parse uiautomator dump file into a pruned Node tree:
+    - keep only useful leaf nodes
+    - assign each leaf a uid (E0001, E0002, ...)
+    """
     tree = ET.parse(xml_path)
     hierarchy = tree.getroot()
     first = hierarchy.find("node")
-    return parse_node(first)
+
+    leaves = parse_node_collect_leaves(first)
+
+    for i, n in enumerate(leaves):
+        n.uid = f"E{i+1:04d}"
+
+    # virtual root
+    return Node(class_name="LEAF_ROOT", uid="ROOT", children=leaves)
 
 
 def print_tree(node, level=0, max_depth=None, max_children=None):
@@ -129,11 +183,10 @@ def print_tree(node, level=0, max_depth=None, max_children=None):
 
     # 关键属性
     brief = (
-        f"{node.class_name} "
+        f"uid={node.uid} "
         f"text='{node.text or ''}' "
         f"desc='{node.content_desc or ''}' "
         f"clickable={node.clickable} "
-        f"enabled={node.enabled} "
         f"focusable={node.focusable} "
         f"scrollable={node.scrollable} "
         f"selected={node.selected} "
@@ -201,6 +254,7 @@ def embed_text(text: str):
     _embedding_cache[text] = emb
     return emb
 
+
 def cosine_sim(a, b):
     denom = (np.linalg.norm(a) * np.linalg.norm(b))
     if denom == 0:
@@ -253,5 +307,5 @@ def find_app_icon_embedding(tree, app_name: str, threshold=0.25):
 
 
 if __name__ == "__main__":
-    tree = parse_a11y_tree("../screenshot/a11y.xml")
+    tree = parse_a11y_tree("../screenshot/ui.xml")
     print_tree(tree)

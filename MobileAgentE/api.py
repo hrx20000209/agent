@@ -207,7 +207,7 @@ def inference_chat_ollama(
 
 def inference_chat_llama_cpp(
         chat,
-        api_url="http://localhost:8080/v1/chat/completions",
+        api_url="http://localhost:8081/v1/chat/completions",
         temperature=0.0,
         max_tokens=200
 ):
@@ -278,7 +278,7 @@ def inference_chat_llama_cpp(
 
 def inference_chat_llama_cpp_xml_only(
         chat,
-        api_url="http://localhost:8080/v1/chat/completions",
+        api_url="http://localhost:8081/v1/chat/completions",
         temperature=0.0,
         max_tokens=200
 ):
