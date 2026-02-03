@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 from sentence_transformers import SentenceTransformer
 import numpy as np
+import time
 
 embed_model = SentenceTransformer("sentence-transformers/paraphrase-MiniLM-L6-v2")
 
@@ -162,14 +163,29 @@ def parse_a11y_tree(xml_path):
     - keep only useful leaf nodes
     - assign each leaf a uid (E0001, E0002, ...)
     """
+    et_start_time = time.time()
     tree = ET.parse(xml_path)
+    et_end_time = time.time()
+    et_latency = (et_end_time - et_start_time) * 1000
     hierarchy = tree.getroot()
+    hierarchy_end_time = time.time()
+    hierarchy_latency = (hierarchy_end_time - et_end_time) * 1000
     first = hierarchy.find("node")
+    first_end_time = time.time()
+    first_latency = (first_end_time - hierarchy_end_time) * 1000
 
     leaves = parse_node_collect_leaves(first)
 
+    leaves_end_time = time.time()
+    leaves_latency = (leaves_end_time - first_end_time) * 1000
+
     for i, n in enumerate(leaves):
         n.uid = f"E{i+1:04d}"
+
+    print(f"ET Latency:         {et_latency:.3f} ms\n"
+          f"Hierarchy Latency:  {hierarchy_latency:.3f} ms\n"
+          f"First Latency:      {first_latency:.3f} ms\n"
+          f"Leaves Latency:     {leaves_latency:.3f} ms\n")
 
     # virtual root
     return Node(class_name="LEAF_ROOT", uid="ROOT", children=leaves)
@@ -306,6 +322,61 @@ def find_app_icon_embedding(tree, app_name: str, threshold=0.25):
     return best_node
 
 
+def node_to_text(node):
+    parts = []
+
+    t = getattr(node, "text", "") or ""
+    d = getattr(node, "content_desc", "") or ""
+    rid = getattr(node, "resource_id", "") or ""
+    cls = getattr(node, "class_name", "") or ""
+
+    if t.strip():
+        parts.append(t.strip())
+    if d.strip():
+        parts.append(d.strip())
+    if rid.strip():
+        parts.append(rid.strip().split("/")[-1])
+    if cls.strip():
+        parts.append(cls.strip().split(".")[-1])
+
+    return " | ".join(parts).strip()
+
+
+def collect_clickable_nodes(root):
+    candidates = []
+
+    def dfs(n):
+        if n is None:
+            return
+
+        bounds = getattr(n, "bounds", None)
+        text = getattr(n, "text", "") or ""
+        clickable = getattr(n, "clickable", None)
+        enabled = getattr(n, "enabled", None)
+
+        if bounds and "[" in bounds and "]" in bounds:
+            ok = False
+            if clickable is True:
+                ok = True
+            elif text.strip():
+                ok = True
+            if enabled is False:
+                ok = False
+
+            if ok:
+                candidates.append(n)
+
+        for c in getattr(n, "children", []) or []:
+            dfs(c)
+
+    dfs(root)
+    return candidates
+
+
 if __name__ == "__main__":
+    start_time = time.time()
     tree = parse_a11y_tree("../screenshot/ui.xml")
+    end_time = time.time()
+    end_to_end_latency = (end_time - start_time) * 1000
+    print(f"Latency: {end_to_end_latency:.3f} ms")
     print_tree(tree)

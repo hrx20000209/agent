@@ -95,7 +95,7 @@ def run_single_step_agent(args):
         start_time = time.time()
         print(f"\n================ Iteration {itr} ================\n")
 
-        scale = 4.0
+        scale = 1.0
 
         # --- Perception ---
         get_screenshot(args, screenshot_path, scale=scale)
@@ -126,7 +126,7 @@ def run_single_step_agent(args):
 
 
         # --- Single-step reasoning ---
-        explorer.start(max_steps=5, sleep_sec=0.1)     # parallel exploration
+        explorer.start(max_steps=5)     # parallel exploration
 
         action_obj = agent.run_step(
             args.task,
@@ -138,7 +138,7 @@ def run_single_step_agent(args):
             scale=scale
         )
 
-        # time.sleep(20)
+        time.sleep(20)
 
         explorer.stop()
         clues = explorer.build_prompt_clues()  # ⭐ 拿到压缩结果

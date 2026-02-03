@@ -1,8 +1,17 @@
 from PIL import Image, ImageDraw, ImageFont
 import os
 import re
+import json
+import time
+import random
 
-def _mark_and_save_explore_click(
+import numpy as np
+from sentence_transformers import SentenceTransformer
+from MobileAgentE.utils import parse_bounds
+from MobileAgentE.controller import tap, back, home
+
+
+def mark_and_save_explore_click(
     screenshot_path: str,
     save_dir: str,
     step_idx: int,
@@ -179,3 +188,245 @@ def extract_task_queries(task_text: str):
             out.append(q.strip())
 
     return out
+
+def cosine_sim(a, b):
+    if a is None or b is None:
+        return 0.0
+    denom = np.linalg.norm(a) * np.linalg.norm(b)
+    if denom == 0:
+        return 0.0
+    return float(np.dot(a, b) / denom)
+
+
+def build_exploration_clues(history, max_items=4):
+    clicks = [r for r in history if r.get("type") == "click"]
+    clicks = [r for r in clicks if r.get("best_sim", 0.0) > 0.35]
+
+    uniq = {}
+    for r in clicks:
+        key = (r.get("node_text", ""), r.get("node_desc", ""), r.get("node_resource_id", ""))
+        if key not in uniq or r["best_sim"] > uniq[key]["best_sim"]:
+            uniq[key] = r
+
+    items = sorted(uniq.values(), key=lambda x: x["best_sim"], reverse=True)
+
+    lines = ["[Environment Clues from Parallel Exploration]"]
+    for r in items[:max_items]:
+        name = r.get("node_text") or r.get("node_desc") or ""
+        if name.strip():
+            lines.append(f"• {name}")
+
+    return "\n".join(lines)
+
+
+def ensure_dir(path):
+    os.makedirs(path, exist_ok=True)
+
+
+def append_jsonl(path, record):
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+
+def embed_text(text, embed_model, emb_cache):
+    text = (text or "").strip()
+    if not text:
+        return None
+    if text in emb_cache:
+        return emb_cache[text]
+    emb = embed_model.encode([text])[0].astype(np.float32)
+    emb_cache[text] = emb
+    return emb
+
+
+def cosine_sim(goal_emb_list, cand_emb):
+    if cand_emb is None or goal_emb_list is None:
+        return 0.0
+
+    b = np.asarray(cand_emb, dtype=np.float32)
+
+    # goal_emb_list is a list of vectors
+    best = 0.0
+    for g in goal_emb_list:
+        if g is None:
+            continue
+        g = np.asarray(g, dtype=np.float32)
+        denom = np.linalg.norm(g) * np.linalg.norm(b)
+        if denom == 0:
+            continue
+        s = float(np.dot(g, b) / denom)
+        if s > best:
+            best = s
+    return best
+
+
+def node_to_text(node):
+    parts = []
+
+    t = getattr(node, "text", "") or ""
+    d = getattr(node, "content_desc", "") or ""
+    rid = getattr(node, "resource_id", "") or ""
+    cls = getattr(node, "class_name", "") or ""
+
+    if t.strip():
+        parts.append(t.strip())
+    if d.strip():
+        parts.append(d.strip())
+    if rid.strip():
+        parts.append(rid.strip().split("/")[-1])
+    if cls.strip():
+        parts.append(cls.strip().split(".")[-1])
+
+    return " | ".join(parts).strip()
+
+
+def collect_clickable_nodes(root):
+    candidates = []
+
+    def dfs(n):
+        if n is None:
+            return
+
+        bounds = getattr(n, "bounds", None)
+        text = getattr(n, "text", "") or ""
+        clickable = getattr(n, "clickable", None)
+        enabled = getattr(n, "enabled", None)
+
+        if bounds and isinstance(bounds, str) and "[" in bounds and "]" in bounds:
+            ok = False
+            if clickable is True:
+                ok = True
+            elif text.strip():
+                ok = True
+
+            if enabled is False:
+                ok = False
+
+            if ok:
+                candidates.append(n)
+
+        for c in getattr(n, "children", None) or []:
+            dfs(c)
+
+    dfs(root)
+    return candidates
+
+
+def select_node_by_semantic(
+    candidates,
+    goal_emb_list,
+    embed_model,
+    emb_cache,
+    clicked_bounds,
+):
+    best_node = None
+    best_score = -1.0
+    best_txt = ""
+
+    for n in candidates:
+        bounds = getattr(n, "bounds", "") or ""
+        if bounds in clicked_bounds:
+            continue
+
+        cand_txt = node_to_text(n)
+        if not cand_txt:
+            continue
+
+        cand_emb = embed_text(cand_txt, embed_model, emb_cache)
+        score = cosine_sim(goal_emb_list, cand_emb)
+
+        if getattr(n, "clickable", False):
+            score += 0.05
+
+        if score > best_score:
+            best_score = score
+            best_node = n
+            best_txt = cand_txt
+
+    return best_node, best_score, best_txt
+
+
+def click_node_center(adb_path, node):
+    b = parse_bounds(node.bounds)
+    if b is None:
+        return None, None
+
+    x1, y1, x2, y2 = b
+    x = int((x1 + x2) / 2)
+    y = int((y1 + y2) / 2)
+
+    tap(adb_path, x, y)
+    return (x, y), b
+
+
+def fallback_action(adb_path):
+    # keep your original behavior: random back/home
+    if random.random() < 0.5:
+        back(adb_path)
+        return "back"
+    home(adb_path)
+    return "home"
+
+
+def build_prompt_clues(history, max_items=4):
+    if not history:
+        return ""
+
+    clicks = [r for r in history if r.get("type") == "click"]
+    clicks = [r for r in clicks if r.get("best_sim", 0.0) > 0.35]
+    if not clicks:
+        return ""
+
+    uniq = {}
+    for r in clicks:
+        key = (
+            r.get("node_text", ""),
+            r.get("node_desc", ""),
+            r.get("node_resource_id", ""),
+        )
+        if key not in uniq or r["best_sim"] > uniq[key]["best_sim"]:
+            uniq[key] = r
+
+    items = sorted(uniq.values(), key=lambda x: x["best_sim"], reverse=True)
+
+    role_map = {
+        "settings": "likely related to configuration options",
+        "search": "used to locate content or features",
+        "profile": "user account and personal information",
+        "menu": "contains additional app functions",
+        "more": "contains additional app functions",
+    }
+
+    lines = []
+    lines.append("[Environment Clues from Parallel Exploration]")
+    lines.append("The system briefly explored the interface and found possible functional areas:")
+
+    for r in items[:max_items]:
+        name = (r.get("node_text") or r.get("node_desc") or "").strip()
+        if not name:
+            continue
+        low = name.lower()
+        role = "potentially useful"
+        for k in role_map:
+            if k in low:
+                role = role_map[k]
+                break
+        lines.append(f"• {name} — {role}")
+
+    lines.append("Use these clues if they help with the task.\n")
+    return "\n".join(lines)
+
+
+def print_latency_summary(total_latency, get_tree_latency, parse_tree_latency, selection_latency, action_latency, exploration_latency):
+    if not total_latency:
+        return
+
+    print("\n" + "=" * 90)
+    print("📊 Exploration latency summary")
+    print(f"Avg Step         : {sum(total_latency) / len(total_latency) * 1000:.3f} ms")
+    print(f"Avg Tree ADB     : {sum(get_tree_latency) / len(get_tree_latency) * 1000:.3f} ms")
+    print(f"Avg Tree parse   : {sum(parse_tree_latency) / len(parse_tree_latency) * 1000:.3f} ms")
+    print(f"Avg Selection    : {sum(selection_latency) / len(selection_latency) * 1000:.3f} ms")
+    print(f"Avg Action       : {sum(action_latency) / len(action_latency) * 1000:.3f} ms")
+    print(f"Total Exploration: {exploration_latency * 1000:.3f} ms")
+    print("=" * 90 + "\n")
