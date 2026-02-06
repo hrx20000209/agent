@@ -75,7 +75,7 @@ def run_single_step_agent(args):
         xml_path="./screenshot/a11y.xml",
         task_text=args.task,
         explore_vis_dir="explore_results",
-        screenshot_path="explore_screenshot.png",
+        screenshot_path=args.screenshot_path,
     )
 
     explore_logs = []
@@ -126,7 +126,7 @@ def run_single_step_agent(args):
 
 
         # --- Single-step reasoning ---
-        explorer.start(max_steps=5)     # parallel exploration
+        explorer.start(max_steps=10)     # parallel exploration
 
         action_obj = agent.run_step(
             args.task,
@@ -158,6 +158,8 @@ def run_single_step_agent(args):
 
         # --- Execution ---
         executed_action = agent.execute_action(action_obj, info_pool)
+
+        time.sleep(0.5)
 
         history.append(str(executed_action))
 
@@ -206,6 +208,7 @@ if __name__ == "__main__":
     parser.add_argument("--max_itr", type=int, default=10,
                         help="Maximum iterations for the agent")
     parser.add_argument("--adb_path", type=str, default="adb", help="ADB path.")
+    parser.add_argument("--screenshot_path", type=str, default="./screenshot/screenshot.png", help="Screenshot path.")
     parser.add_argument("--on_device", action="store_true", help="Run on-device or on server.")
     args = parser.parse_args()
 

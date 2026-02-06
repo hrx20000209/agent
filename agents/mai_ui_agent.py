@@ -4,6 +4,9 @@ from dataclasses import dataclass
 import copy
 import time
 import base64
+import ast
+import json
+import re
 from typing import List, Optional
 
 from PIL import Image
@@ -13,7 +16,7 @@ from agents.mai_prompt import MAI_MOBILE_SYS_PROMPT, build_user_prompt
 from typing import Any, Dict, Optional, Tuple, List, Union
 
 from MobileAgentE.controller import (
-    tap, swipe, type as adb_type, back, home, switch_app, enter
+    tap, swipe, type as adb_type, back, home, switch_app, enter, launch_app
 )
 
 BoxType = Union[str, List[float], Tuple[float, ...]]
@@ -112,19 +115,6 @@ class MAIOneStepAgent:
     def build_prompt(self, info_pool: InfoPool, history: str):
         return build_user_prompt(info_pool.instruction, history)
 
-    def parse_action(self, llm_output: str, width: int, height: int):
-        llm_output = llm_output.strip()
-        parsed = parse_tagged_text(llm_output)
-        tool_call = parsed.get("tool_call", None)
-
-        if tool_call is None:
-            return None
-
-        action = mai_toolcall_to_action(tool_call)
-        action["thinking"] = parsed.get("thinking", "")
-        action["tool_call"] = tool_call
-        return action
-
     def run_step(self, instruction, screenshot_img, width, height, history, llm_api_func, clues, scale=1.0):
         info = InfoPool(instruction=instruction, width=width, height=height)
 
@@ -148,39 +138,43 @@ class MAIOneStepAgent:
 
     def execute_action(self, action_obj: Dict[str, Any], info_pool) -> Optional[str]:
         """
-        Execute normalized action output.
+        Execute canonical action schema.
 
         action_obj format:
-          {
-            "action_type": "click"/"drag"/"type"/...,
-            "action_inputs": {...},
-            "raw": {...}   # optional
-          }
-
-        info_pool needs:
-          info_pool.width
-          info_pool.height
+        {
+            "action_type": "...",
+            "action_inputs": {...}
+        }
         """
+
         if not action_obj:
-            print("⚠️ No valid action parsed.")
+            print("⚠️ No valid action.")
             return None
 
-        action_type = (action_obj.get("action_type") or "").lower()
+        action_type = action_obj.get("action_type", "").lower()
         args = action_obj.get("action_inputs", {}) or {}
 
-        print(f"[EXEC] {action_type}: {args}")
+        print(f"[EXEC] {action_type} → {args}")
 
-        # --------- finished ----------
-        if action_type in ["finished", "finish", "done", "terminate"]:
+        W, H = info_pool.width, info_pool.height
+
+        # ==============================
+        # 🟢 TERMINATE
+        # ==============================
+        if action_type in ["finished", "done", "terminate"]:
             return "finished"
 
-        # --------- wait ----------
+        # ==============================
+        # 🟡 WAIT
+        # ==============================
         if action_type == "wait":
-            sec = float(args.get("seconds", 2))
+            sec = float(args.get("seconds", 1))
             time.sleep(sec)
             return f"wait({sec})"
 
-        # --------- system button ----------
+        # ==============================
+        # 🔵 SYSTEM BUTTONS
+        # ==============================
         if action_type == "press_back":
             back(self.adb)
             return "press_back"
@@ -189,75 +183,251 @@ class MAIOneStepAgent:
             home(self.adb)
             return "press_home"
 
-        if action_type == "switch_app":
-            switch_app(self.adb)
-            return "switch_app"
-
-        if action_type == "enter":
+        if action_type == "press_enter":
             enter(self.adb)
-            return "enter"
+            return "press_enter"
 
-        # --------- type ----------
+        # ==============================
+        # 🟣 TYPE
+        # ==============================
         if action_type == "type":
             text = args.get("content", "")
             adb_type(self.adb, text)
             return f"type({text})"
 
-        # --------- click ----------
+        # ==============================
+        # 🔴 CLICK
+        # ==============================
         if action_type == "click":
-            if "start_box" not in args:
-                print("⚠️ click missing start_box")
+            coord = args.get("coordinate")
+            if coord is None:
+                print("⚠️ click missing coordinate")
                 return None
 
-            box = _parse_box(args["start_box"])
-            x_norm, y_norm = _center_of_box(box)
-            x, y = _norm_to_pixel(x_norm, y_norm, info_pool.width, info_pool.height)
-
+            x_norm, y_norm = coord
+            x, y = _norm_to_pixel(x_norm, y_norm, W, H)
             tap(self.adb, x, y)
             return f"click({x},{y})"
 
-        # --------- long press ----------
+        # ==============================
+        # 🟠 LONG PRESS
+        # ==============================
         if action_type == "long_press":
-            if "start_box" not in args:
-                print("⚠️ long_press missing start_box")
+            coord = args.get("coordinate")
+            if coord is None:
                 return None
 
-            box = _parse_box(args["start_box"])
-            x_norm, y_norm = _center_of_box(box)
-            x, y = _norm_to_pixel(x_norm, y_norm, info_pool.width, info_pool.height)
-
-            # ADB long press: swipe from (x,y)->(x,y) with duration
+            x_norm, y_norm = coord
+            x, y = _norm_to_pixel(x_norm, y_norm, W, H)
             duration_ms = int(args.get("duration_ms", 600))
-            # If your controller has long_press(), replace this line.
-            swipe(self.adb, x, y, x, y)  # fallback: might not hold duration in your wrapper
-            # Better: implement swipe_with_duration in controller
-            return f"long_press({x},{y},{duration_ms}ms)"
+            swipe(self.adb, x, y, x, y)
+            return f"long_press({x},{y})"
 
-        # --------- drag / swipe ----------
-        if action_type in ["drag", "swipe", "select"]:
-            if "start_box" not in args or "end_box" not in args:
-                print("⚠️ drag/swipe missing start_box or end_box")
+        # ==============================
+        # 🟡 SWIPE
+        # ==============================
+        if action_type in ["swipe", "drag"]:
+            s = args.get("start_coordinate") or args.get("coordinate")
+            e = args.get("end_coordinate")
+
+            if not s:
+                print("⚠️ swipe missing start coordinate")
                 return None
 
-            sbox = _parse_box(args["start_box"])
-            ebox = _parse_box(args["end_box"])
+            if not e:
+                # directional swipe fallback
+                direction = args.get("direction", "down")
+                sx_norm, sy_norm = s
+                sx, sy = _norm_to_pixel(sx_norm, sy_norm, W, H)
 
-            sx_norm, sy_norm = _center_of_box(sbox)
-            ex_norm, ey_norm = _center_of_box(ebox)
-
-            sx, sy = _norm_to_pixel(sx_norm, sy_norm, info_pool.width, info_pool.height)
-            ex, ey = _norm_to_pixel(ex_norm, ey_norm, info_pool.width, info_pool.height)
+                if direction == "down":
+                    ex, ey = sx, min(H - 1, sy + 400)
+                elif direction == "up":
+                    ex, ey = sx, max(0, sy - 400)
+                elif direction == "left":
+                    ex, ey = max(0, sx - 400), sy
+                else:
+                    ex, ey = min(W - 1, sx + 400), sy
+            else:
+                sx_norm, sy_norm = s
+                ex_norm, ey_norm = e
+                sx, sy = _norm_to_pixel(sx_norm, sy_norm, W, H)
+                ex, ey = _norm_to_pixel(ex_norm, ey_norm, W, H)
 
             swipe(self.adb, sx, sy, ex, ey)
-            return f"{action_type}({sx},{sy})->({ex},{ey})"
+            return f"swipe({sx},{sy}→{ex},{ey})"
 
-        # --------- open_app (no XML matching) ----------
+        # ==============================
+        # 🟢 OPEN APP
+        # ==============================
         if action_type == "open_app":
-            # 你现在已经不匹配 XML tree，因此 open_app 没法直接点 app icon
-            # 最合理的降级策略：回到 Home，让模型下一步 click app icon
-            print("⚠️ open_app is not supported without XML matching. Fallback to HOME.")
-            home(self.adb)
-            return "press_home"
+            app_name = args.get("content")
+            app = launch_app(self.adb, app_name)
+            return app
 
         print(f"⚠️ Unsupported action_type={action_type}")
         return None
+
+
+    def parse_action(self, llm_output: str, width: int, height: int):
+        """
+        Robust action parser that supports:
+        - internal reasoning dict
+        - MAI <tool_call>
+        - raw JSON
+        - partially broken JSON
+        """
+
+        llm_output = llm_output.strip()
+
+        # ===============================
+        # 1️⃣ Try: model already gave dict
+        # ===============================
+        try:
+            if llm_output.startswith("{") and "action_type" in llm_output:
+                obj = ast.literal_eval(llm_output)
+                return _canonicalize_action(obj)
+        except Exception:
+            pass
+
+        # ===============================
+        # 2️⃣ Extract JSON inside <tool_call>
+        # ===============================
+        if "<tool_call>" in llm_output:
+            try:
+                tool_block = llm_output.split("<tool_call>")[1].split("</tool_call>")[0]
+            except Exception:
+                tool_block = None
+
+            if tool_block:
+                tool_block = tool_block.strip()
+
+                # remove code fences
+                if tool_block.startswith("```"):
+                    tool_block = tool_block.strip("`").strip()
+                    if tool_block.startswith("json"):
+                        tool_block = tool_block[len("json"):].lstrip()
+
+                try:
+                    obj = json.loads(tool_block)
+                except Exception:
+                    obj = None
+
+                if obj:
+                    return _canonicalize_action(obj)
+
+        # ===============================
+        # 3️⃣ Try: raw JSON in text
+        # ===============================
+        try:
+            first = llm_output.find("{")
+            last = llm_output.rfind("}")
+            if first != -1 and last != -1:
+                obj = json.loads(llm_output[first:last+1])
+                return _canonicalize_action(obj)
+        except Exception:
+            pass
+
+        # ===============================
+        # 4️⃣ Heuristic fallback (safe_json style)
+        # ===============================
+        try:
+            act_match = re.search(r'"action"\s*:\s*"([^"]+)"', llm_output)
+            text_match = re.search(r'"text"\s*:\s*"([^"]*)"', llm_output)
+            coord_match = re.search(r'\[\s*(-?\d+)\s*,\s*(-?\d+)', llm_output)
+
+            act = act_match.group(1).lower() if act_match else "wait"
+
+            obj = {
+                "action_type": act,
+                "action_inputs": {},
+                "raw": {"recovered": True},
+            }
+
+            if text_match:
+                obj["action_inputs"]["content"] = text_match.group(1)
+
+            if coord_match:
+                obj["action_inputs"]["coordinate"] = [
+                    int(coord_match.group(1)),
+                    int(coord_match.group(2))
+                ]
+
+            return obj
+        except Exception:
+            pass
+
+        print("⚠️ parse_action failed, fallback to wait")
+        return {
+            "action_type": "wait",
+            "action_inputs": {"seconds": 1},
+            "raw": {"failed_parse": True},
+        }
+
+
+def _canonicalize_action(obj: dict):
+    """
+    Convert any action schema into canonical MobileAgentE schema.
+    """
+
+    # ---------- Case 1: already internal agent format ----------
+    if "action_type" in obj:
+        act = obj.get("action_type", "").lower()
+        inp = obj.get("action_inputs", {}) or {}
+        thinking = obj.get("thinking")
+
+    # ---------- Case 2: MAI tool_call ----------
+    elif "tool_call" in obj:
+        args = obj["tool_call"].get("arguments", {})
+        act = args.get("action", "").lower()
+        inp = args
+        thinking = obj.get("thinking")
+
+    # ---------- Case 3: raw MAI JSON ----------
+    elif "arguments" in obj:
+        args = obj.get("arguments", {})
+        act = args.get("action", "").lower()
+        inp = args
+        thinking = None
+
+    else:
+        return None
+
+    # ----- normalize system_button -----
+    if act == "system_button":
+        act = f"press_{inp.get('button', '').lower()}"
+
+    # ----- normalize open -----
+    if act == "open":
+        act = "open_app"
+
+    canon = {
+        "action_type": act,
+        "action_inputs": {},
+        "thinking": thinking,
+        "raw": obj,
+    }
+
+    # ---------- coordinate ----------
+    if "coordinate" in inp:
+        canon["action_inputs"]["coordinate"] = inp["coordinate"]
+
+    if "start_coordinate" in inp:
+        canon["action_inputs"]["start_coordinate"] = inp["start_coordinate"]
+
+    if "end_coordinate" in inp:
+        canon["action_inputs"]["end_coordinate"] = inp["end_coordinate"]
+
+    # ---------- text ----------
+    if "text" in inp:
+        canon["action_inputs"]["content"] = inp["text"]
+
+    # ---------- swipe direction ----------
+    if "direction" in inp:
+        canon["action_inputs"]["direction"] = inp["direction"]
+
+    # ---------- status ----------
+    if "status" in inp:
+        canon["action_inputs"]["status"] = inp["status"]
+
+    return canon

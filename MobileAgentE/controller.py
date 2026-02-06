@@ -1,22 +1,197 @@
 import os
+import re
 import time
 import subprocess
 from PIL import Image
 from time import sleep
 
 
-def get_screenshot(args, screenshot_path, scale=1.0):
+_PATTERN_TO_ACTIVITY = {
+    r'google chrome|chrome':
+        'com.android.chrome/com.google.android.apps.chrome.Main',
+
+    r'google chat':
+        'com.google.android.apps.dynamite/com.google.android.apps.dynamite.startup.StartUpActivity',
+
+    r'settings|system settings':
+        'com.android.settings/.Settings',
+
+    r'youtube|yt':
+        'com.google.android.youtube/com.google.android.apps.youtube.app.WatchWhileActivity',
+
+    r'google play|play store|gps':
+        'com.android.vending/com.google.android.finsky.activities.MainActivity',
+
+    r'gmail|gemail|google mail|google email|google mail client':
+        'com.google.android.gm/.ConversationListActivityGmail',
+
+    r'google maps|gmaps|maps|google map':
+        'com.google.android.apps.maps/com.google.android.maps.MapsActivity',
+
+    r'google photos|gphotos|photos|google photo|google pics|google images':
+        'com.google.android.apps.photos/com.google.android.apps.photos.home.HomeActivity',
+
+    r'google calendar|gcal':
+        'com.google.android.calendar/com.android.calendar.AllInOneActivity',
+
+    r'camera':
+        'com.android.camera2/com.android.camera.CameraLauncher',
+
+    r'audio recorder':
+        'com.dimowner.audiorecorder/com.dimowner.audiorecorder.app.welcome.WelcomeActivity',
+
+    r'google drive|gdrive|drive':
+        'com.google.android.apps.docs/.drive.startup.StartupActivity',
+
+    r'google keep|gkeep|keep':
+        'com.google.android.keep/.activities.BrowseActivity',
+
+    r'grubhub':
+        'com.grubhub.android/com.grubhub.dinerapp.android.splash.SplashActivity',
+
+    r'tripadvisor':
+        'com.tripadvisor.tripadvisor/com.tripadvisor.android.ui.launcher.LauncherActivity',
+
+    r'starbucks':
+        'com.starbucks.mobilecard/.main.activity.LandingPageActivity',
+
+    r'google docs|gdocs|docs':
+        'com.google.android.apps.docs.editors.docs/com.google.android.apps.docs.editors.homescreen.HomescreenActivity',
+
+    r'google sheets|gsheets|sheets':
+        'com.google.android.apps.docs.editors.sheets/com.google.android.apps.docs.editors.homescreen.HomescreenActivity',
+
+    r'google slides|gslides|slides':
+        'com.google.android.apps.docs.editors.slides/com.google.android.apps.docs.editors.homescreen.HomescreenActivity',
+
+    r'google voice|voice':
+        'com.google.android.apps.googlevoice/com.google.android.apps.googlevoice.SplashActivity',
+
+    r'clock':
+        'com.google.android.deskclock/com.android.deskclock.DeskClock',
+
+    r'google search|google':
+        'com.google.android.googlequicksearchbox/com.google.android.googlequicksearchbox.SearchActivity',
+
+    r'contacts':
+        'com.google.android.contacts/com.android.contacts.activities.PeopleActivity',
+
+    r'facebook|fb':
+        'com.facebook.katana/com.facebook.katana.LoginActivity',
+
+    r'whatsapp|wa':
+        'com.whatsapp/com.whatsapp.Main',
+
+    r'instagram|ig':
+        'com.instagram.android/com.instagram.mainactivity.MainActivity',
+
+    r'twitter|tweet':
+        'com.twitter.android/com.twitter.app.main.MainActivity',
+
+    r'snapchat|sc':
+        'com.snapchat.android/com.snap.mushroom.MainActivity',
+
+    r'telegram|tg':
+        'org.telegram.messenger/org.telegram.ui.LaunchActivity',
+
+    r'linkedin':
+        'com.linkedin.android/com.linkedin.android.authenticator.LaunchActivity',
+
+    r'spotify|spot':
+        'com.spotify.music/com.spotify.music.MainActivity',
+
+    r'netflix':
+        'com.netflix.mediaclient/com.netflix.mediaclient.ui.launch.UIWebViewActivity',
+
+    r'amazon shopping|amazon|amzn':
+        'com.amazon.mShop.android.shopping/com.amazon.mShop.home.HomeActivity',
+
+    r'tiktok|tt':
+        'com.zhiliaoapp.musically/com.ss.android.ugc.aweme.splash.SplashActivity',
+
+    r'discord':
+        'com.discord/com.discord.app.AppActivity$Main',
+
+    r'reddit':
+        'com.reddit.frontpage/com.reddit.frontpage.MainActivity',
+
+    r'pinterest':
+        'com.pinterest/com.pinterest.activity.PinterestActivity',
+
+    r'android world':
+        'com.example.androidworld/.MainActivity',
+
+    r'files':
+        'com.google.android.documentsui/com.android.documentsui.files.FilesActivity',
+
+    r'markor':
+        'net.gsantner.markor/.activity.MainActivity',
+
+    r'clipper':
+        'ca.zgrs.clipper/ca.zgrs.clipper.Main',
+
+    r'messages':
+        'com.google.android.apps.messaging/com.google.android.apps.messaging.ui.ConversationListActivity',
+
+    r'simple sms messenger|simple sms':
+        'com.simplemobiletools.smsmessenger/com.simplemobiletools.smsmessenger.activities.MainActivity',
+
+    r'dialer|phone':
+        'com.google.android.dialer/com.google.android.dialer.extensions.GoogleDialtactsActivity',
+
+    r'simple calendar pro|simple calendar':
+        'com.simplemobiletools.calendar.pro/com.simplemobiletools.calendar.pro.activities.MainActivity',
+
+    r'simple gallery pro|simple gallery':
+        'com.simplemobiletools.gallery.pro/com.simplemobiletools.gallery.pro.activities.MainActivity',
+
+    r'miniwob':
+        'com.google.androidenv.miniwob/com.google.androidenv.miniwob.app.MainActivity',
+
+    r'simple draw pro':
+        'com.simplemobiletools.draw.pro/com.simplemobiletools.draw.pro.activities.MainActivity',
+
+    r'pro expense|pro expense app':
+        'com.arduia.expense/com.arduia.expense.ui.MainActivity',
+
+    r'broccoli|broccoli app|recipe app':
+        'com.flauschcode.broccoli/com.flauschcode.broccoli.MainActivity',
+
+    r'osmand':
+        'net.osmand/net.osmand.plus.activities.MapActivity',
+
+    r'tasks|tasks app':
+        'org.tasks/com.todoroo.astrid.activity.MainActivity',
+
+    r'opentracks|activity tracker':
+        'de.dennisguse.opentracks/de.dennisguse.opentracks.TrackListActivity',
+
+    r'joplin':
+        'net.cozic.joplin/.MainActivity',
+
+    r'vlc':
+        'org.videolan.vlc/.gui.MainActivity',
+
+    r'retro music|retro':
+        'code.name.monkey.retromusic/.activities.MainActivity',
+}
+
+
+def get_screenshot(args, screenshot_path, scale=1.0, image_id=1):
     # 1️⃣ 设备截图（原分辨率）
-    command = args.adb_path + " shell screencap -p /sdcard/screenshot.png"
+    image_root = "/sdcard/screenshot" + str(image_id)
+    command = args.adb_path + f" shell screencap -p {image_root}.png"
     subprocess.run(command, capture_output=True, text=True, shell=True)
 
     # 2️⃣ 拉到本地
     if not args.on_device:
-        command = args.adb_path + f" pull /sdcard/screenshot.png {screenshot_path}"
+        command = args.adb_path + f" pull {image_root}.png {screenshot_path}"
         subprocess.run(command, capture_output=True, text=True, shell=True)
 
     # 3️⃣ 本地 resize + 压缩
+    time.sleep(0.3)
     img = Image.open(screenshot_path).convert("RGB")
+    time.sleep(0.3)
 
     if scale != 1.0:
         w, h = img.size
@@ -169,3 +344,60 @@ def home(adb_path):
 def switch_app(adb_path):
     command = adb_path + f" shell input keyevent KEYCODE_APP_SWITCH"
     subprocess.run(command, capture_output=True, text=True, shell=True)
+
+
+def launch_app(adb: str, app_name: str):
+    package = normalize_app_name(app_name)
+    print(f"[ADB] launcher start → {package}")
+    os.system(f"{adb} shell monkey -p {package} -c android.intent.category.LAUNCHER 1")
+    time.sleep(0.1)
+    return package
+
+
+def normalize_app_name(app_name: str) -> str:
+    """Map human-readable app names to Android package names."""
+    APP_NAME_TO_PACKAGE = {
+        # ===== File / Media =====
+        "File Manager": "com.google.android.documentsui",
+        "Files": "com.simplemobiletools.filemanager.pro",
+        "Gallery": "com.simplemobiletools.gallery.pro",
+        "Photos": "com.google.android.apps.photos",
+
+        # ===== Audio / Video =====
+        "Audio Recorder": "com.dimowner.audiorecorder",  # 注意：不是 dimowner
+        "Music": "com.spotify.music",
+        "YouTube Music": "com.google.android.apps.youtube.music",
+        "YouTube": "com.google.android.youtube",
+
+        # ===== Notes / Docs =====
+        "Notes": "com.simplemobiletools.notes.pro",
+        "Docs": "com.google.android.apps.docs",
+
+        # ===== Communication =====
+        "Phone": "com.google.android.dialer",
+        "Messages": "com.google.android.apps.messaging",
+        "Contacts": "com.google.android.contacts",
+        "Gmail": "com.google.android.gm",
+
+        # ===== Browser / Search =====
+        "Chrome": "com.android.chrome",
+        "Browser": "com.android.chrome",
+        "Google": "com.google.android.googlequicksearchbox",
+
+        # ===== Utilities =====
+        "Calculator": "com.simplemobiletools.calculator",
+        "Clock": "com.simplemobiletools.clock",
+        "Calendar": "com.simplemobiletools.calendar",
+        "Flashlight": "com.simplemobiletools.flashlight",
+
+        # ===== Maps =====
+        "Maps": "com.google.android.apps.maps",
+
+        # ===== Expense / Tasks (Android World 常用) =====
+        "Tasks": "org.tasks",
+        "Pro Expense": "com.arduia.expense",
+
+        # ===== Launcher（一般不需要 monkey）=====
+        "Launcher": "com.google.android.apps.nexuslauncher",
+    }
+    return APP_NAME_TO_PACKAGE.get(app_name, app_name)

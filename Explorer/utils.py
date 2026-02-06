@@ -1,11 +1,12 @@
-from PIL import Image, ImageDraw, ImageFont
 import os
 import re
 import json
 import time
 import random
+import imagehash
 
 import numpy as np
+from PIL import Image, ImageDraw, ImageFont
 from sentence_transformers import SentenceTransformer
 from MobileAgentE.utils import parse_bounds
 from MobileAgentE.controller import tap, back, home
@@ -417,7 +418,7 @@ def build_prompt_clues(history, max_items=4):
     return "\n".join(lines)
 
 
-def print_latency_summary(total_latency, get_tree_latency, parse_tree_latency, selection_latency, action_latency, exploration_latency):
+def print_latency_summary(total_latency, get_tree_latency, parse_tree_latency, selection_latency, action_latency, screenshot_latency, exploration_latency):
     if not total_latency:
         return
 
@@ -427,6 +428,23 @@ def print_latency_summary(total_latency, get_tree_latency, parse_tree_latency, s
     print(f"Avg Tree ADB     : {sum(get_tree_latency) / len(get_tree_latency) * 1000:.3f} ms")
     print(f"Avg Tree parse   : {sum(parse_tree_latency) / len(parse_tree_latency) * 1000:.3f} ms")
     print(f"Avg Selection    : {sum(selection_latency) / len(selection_latency) * 1000:.3f} ms")
+    print(f"Avg Screenshot   : {sum(screenshot_latency) / len(screenshot_latency) * 1000:.3f} ms")
     print(f"Avg Action       : {sum(action_latency) / len(action_latency) * 1000:.3f} ms")
     print(f"Total Exploration: {exploration_latency * 1000:.3f} ms")
     print("=" * 90 + "\n")
+
+
+def phash(img_path):
+    img = Image.open(img_path).convert("L")
+    return imagehash.phash(img)  # 64-bit hash
+
+
+def check_same_image(img1, img2, threshold=8):
+    """
+    threshold 越小越严格，常用范围 5~12
+    """
+    h1 = phash(img1)
+    h2 = phash(img2)
+    diff = h1 - h2  # Hamming distance
+    print(f"pHash diff = {diff}")
+    return diff <= threshold

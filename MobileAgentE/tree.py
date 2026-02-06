@@ -374,9 +374,16 @@ def collect_clickable_nodes(root):
 
 
 if __name__ == "__main__":
-    start_time = time.time()
-    tree = parse_a11y_tree("../screenshot/ui.xml")
-    end_time = time.time()
-    end_to_end_latency = (end_time - start_time) * 1000
-    print(f"Latency: {end_to_end_latency:.3f} ms")
-    print_tree(tree)
+    # start_time = time.time()
+    # tree = parse_a11y_tree("../screenshot/ui.xml")
+    # end_time = time.time()
+    # end_to_end_latency = (end_time - start_time) * 1000
+    # print(f"Latency: {end_to_end_latency:.3f} ms")
+    # print_tree(tree)
+
+    image_1 = "../explore_results/explore_001.png"
+    image_2 = "../explore_results/explore_006.png"
+    # start_time = time.time()
+    # print(check_same_image(image_1, image_2))
+    # end_time = time.time()
+    # print((end_time - start_time) * 1000)
