@@ -12,13 +12,31 @@ from MobileAgentE.utils import parse_bounds
 from MobileAgentE.controller import tap, back, home
 
 
+def _load_debug_font(font_size: int):
+    candidates = [
+        "DejaVuSans.ttf",
+        "/System/Library/Fonts/Supplemental/Arial.ttf",
+        "/System/Library/Fonts/Supplemental/Helvetica.ttf",
+        "/System/Library/Fonts/SFNS.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    ]
+    for path in candidates:
+        try:
+            return ImageFont.truetype(path, font_size)
+        except Exception:
+            continue
+    return ImageFont.load_default()
+
+
 def mark_and_save_explore_click(
     screenshot_path: str,
     save_dir: str,
     step_idx: int,
-    xy: tuple,
+    xy: tuple = None,
     bounds: tuple = None,
     text: str = "",
+    extra_lines=None,
+    bottom_lines=None,
 ):
     """
     Draw a large visible marker at (x,y) and optional bounds rectangle.
@@ -32,7 +50,8 @@ def mark_and_save_explore_click(
     overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     draw = ImageDraw.Draw(overlay)
 
-    x, y = xy
+    extra_lines = extra_lines or []
+    bottom_lines = bottom_lines or []
 
     # === scale based on image size ===
     # For 1080x2400, marker should be big enough to see.
@@ -43,16 +62,18 @@ def mark_and_save_explore_click(
     marker_w = int(8 * scale)
     rect_w = int(8 * scale)
 
-    # === marker circle ===
-    draw.ellipse(
-        (x - r, y - r, x + r, y + r),
-        outline=(255, 0, 0, 255),
-        width=marker_w,
-    )
+    if xy is not None:
+        x, y = xy
+        # === marker circle ===
+        draw.ellipse(
+            (x - r, y - r, x + r, y + r),
+            outline=(255, 0, 0, 255),
+            width=marker_w,
+        )
 
-    # === crosshair ===
-    draw.line((x - cross, y, x + cross, y), fill=(255, 0, 0, 255), width=marker_w)
-    draw.line((x, y - cross, x, y + cross), fill=(255, 0, 0, 255), width=marker_w)
+        # === crosshair ===
+        draw.line((x - cross, y, x + cross, y), fill=(255, 0, 0, 255), width=marker_w)
+        draw.line((x, y - cross, x, y + cross), fill=(255, 0, 0, 255), width=marker_w)
 
     # === bounds rectangle ===
     if bounds is not None:
@@ -66,30 +87,32 @@ def mark_and_save_explore_click(
     # === big label bar ===
     label_lines = [
         f"Explore #{step_idx:03d}",
-        f"xy=({x},{y})",
     ]
+    if xy is not None:
+        x, y = xy
+        label_lines.append(f"xy=({x},{y})")
+    else:
+        label_lines.append("xy=(none)")
     if bounds is not None:
         x1, y1, x2, y2 = bounds
         label_lines.append(f"bounds=[{x1},{y1}][{x2},{y2}]")
     if text:
-        label_lines.append(f'text="{text[:60]}"')
+        label_lines.append(f'text="{text[:180]}"')
+    label_lines.extend(extra_lines)
 
-    label = " | ".join(label_lines)
+    label = "\n".join(label_lines)
 
     # choose font size
-    font_size = int(44 * scale)  # big
-    try:
-        # common font path on many Linux systems
-        font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", font_size)
-    except Exception:
-        font = ImageFont.load_default()
+    # On 1080x2400, 72px is much easier to read for debug overlays.
+    font_size = max(72, int(72 * scale))
+    font = _load_debug_font(font_size)
 
     # label background (semi-transparent)
     pad = int(18 * scale)
     x0, y0 = pad, pad
 
     # compute text box size
-    bbox = draw.textbbox((x0, y0), label, font=font)
+    bbox = draw.multiline_textbbox((x0, y0), label, font=font, spacing=int(8 * scale))
     tw = bbox[2] - bbox[0]
     th = bbox[3] - bbox[1]
 
@@ -103,7 +126,44 @@ def mark_and_save_explore_click(
         outline=(255, 255, 255, 220),
         width=max(2, int(3 * scale)),
     )
-    draw.text((x0, y0), label, fill=(255, 255, 255, 255), font=font)
+    draw.multiline_text(
+        (x0, y0),
+        label,
+        fill=(255, 255, 255, 255),
+        font=font,
+        spacing=int(8 * scale),
+    )
+
+    # === bottom clue panel ===
+    if bottom_lines:
+        clue_text = "\n".join(bottom_lines)
+        bx_pad = int(18 * scale)
+        by_pad = int(14 * scale)
+        bx0 = bx_pad
+        # slightly smaller font for dense clue content
+        bfont_size = max(46, int(52 * scale))
+        bfont = _load_debug_font(bfont_size)
+        bb = draw.multiline_textbbox((bx0, 0), clue_text, font=bfont, spacing=int(6 * scale))
+        btw = bb[2] - bb[0]
+        bth = bb[3] - bb[1]
+        panel_w = min(W - 2 * bx_pad, btw + 2 * bx_pad)
+        panel_h = bth + 2 * by_pad
+        by1 = H - by_pad
+        by0 = max(int(H * 0.55), by1 - panel_h)
+        draw.rounded_rectangle(
+            (bx0 - bx_pad, by0 - by_pad, bx0 - bx_pad + panel_w, by1),
+            radius=int(16 * scale),
+            fill=(0, 0, 0, 170),
+            outline=(180, 255, 180, 220),
+            width=max(2, int(3 * scale)),
+        )
+        draw.multiline_text(
+            (bx0, by0),
+            clue_text,
+            fill=(220, 255, 220, 255),
+            font=bfont,
+            spacing=int(6 * scale),
+        )
 
     # merge overlay
     out_img = Image.alpha_composite(img, overlay).convert("RGB")
@@ -266,6 +326,7 @@ def node_to_text(node):
 
     t = getattr(node, "text", "") or ""
     d = getattr(node, "content_desc", "") or ""
+    hint = getattr(node, "hint", "") or ""
     rid = getattr(node, "resource_id", "") or ""
     cls = getattr(node, "class_name", "") or ""
 
@@ -273,6 +334,8 @@ def node_to_text(node):
         parts.append(t.strip())
     if d.strip():
         parts.append(d.strip())
+    if hint.strip():
+        parts.append(hint.strip())
     if rid.strip():
         parts.append(rid.strip().split("/")[-1])
     if cls.strip():
