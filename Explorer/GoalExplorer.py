@@ -41,8 +41,8 @@ class A11yTreeOnlineExplorer:
 
     def __init__(
         self,
-        args,
-        xml_path,
+        args=None,
+        xml_path=None,
         explore_vis_dir="explore_results",
         embed_model_name="sentence-transformers/paraphrase-MiniLM-L6-v2",
         ui_lock=None,
@@ -51,11 +51,26 @@ class A11yTreeOnlineExplorer:
         width=None,
         height=None,
         explorer_mode="collect_demo",
+        adb_path=None,
+        task_text=None,
     ):
-        self.adb = args.adb_path
+        if args is None:
+            class _Args:
+                pass
+
+            args = _Args()
+            setattr(args, "adb_path", adb_path or "adb")
+            setattr(args, "task", task_text or "")
+            setattr(args, "scale", 1.0)
+            setattr(args, "on_device", False)
+
+        if xml_path is None:
+            raise ValueError("A11yTreeOnlineExplorer requires xml_path.")
+
         self.args = args
+        self.adb = str(adb_path or getattr(args, "adb_path", "adb"))
         self.xml_path = xml_path
-        self.task_text = args.task
+        self.task_text = str(task_text if task_text is not None else getattr(args, "task", ""))
 
         self.stop_event = stop_event or threading.Event()
         self.ui_lock = ui_lock or threading.Lock()
