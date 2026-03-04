@@ -148,6 +148,7 @@ def run_single_step_agent(args):
     os.makedirs(input_dir, exist_ok=True)
 
     print("### Running Single-Step Agent ###")
+    print(f"[Config] task={args.task}")
 
     # Initialize unified agent
     agent = MAIOneStepAgent(args.adb_path, coord_space=args.coord_space)
@@ -410,7 +411,7 @@ def run_single_step_agent(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    task = "Create a new folder in Markor named folder_20250917_002630"
+    task = "Search papers on Mobile GUI Agent on Google Scholar."
     # task = "Record an audio clip using Audio Recorder app and save it."
     # task = "Run the stopwatch"
     parser.add_argument("--task", type=str, default=task,

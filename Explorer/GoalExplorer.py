@@ -86,6 +86,7 @@ class A11yTreeOnlineExplorer:
         self.rollback_root_path = "rollback/root.png"
         self.leaf_before_screenshot_path = "rollback/leaf_before.png"
         self.leaf_after_screenshot_path = "rollback/leaf_after.png"
+        self.rollback_debug_dir = "explore_debug"
         self.vis_step = 0
         self.debug_step = 0
         self.cur_steps = 0
@@ -102,6 +103,12 @@ class A11yTreeOnlineExplorer:
         ensure_dir(self.explore_vis_dir)
         ensure_dir(self.explore_debug_vis_dir)
         ensure_dir(self.explore_raw_dir)
+        ensure_dir(self.rollback_debug_dir)
+        ensure_dir(os.path.dirname(self.explore_screenshot_path))
+        ensure_dir(os.path.dirname(self.rollback_screenshot_path))
+        ensure_dir(os.path.dirname(self.rollback_root_path))
+        ensure_dir(os.path.dirname(self.leaf_before_screenshot_path))
+        ensure_dir(os.path.dirname(self.leaf_after_screenshot_path))
         self.log_path = os.path.join(self.explore_vis_dir, "explore_log.jsonl")
 
         # --- embedding model ---
@@ -1299,7 +1306,11 @@ class A11yTreeOnlineExplorer:
                     # 1. 先截图判断是否已经回到起始页
                     get_screenshot(self.args, self.rollback_screenshot_path)
 
-                    file_path = f"explore_debug/step_{step}_explore_{self.cur_steps}_back_{i}.png"
+                    file_path = os.path.join(
+                        self.rollback_debug_dir,
+                        f"step_{step}_explore_{self.cur_steps}_back_{i}.png",
+                    )
+                    ensure_dir(os.path.dirname(file_path))
                     shutil.copyfile(self.rollback_screenshot_path, file_path)
 
                     is_same, same_reason = self._same_root_page(
