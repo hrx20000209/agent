@@ -1,10 +1,10 @@
 import os
 import re
 import time
+import uuid
 import subprocess
 from PIL import Image
-from time import sleep
-
+from threading import Lock
 
 _PATTERN_TO_ACTIVITY = {
     r'google chrome|chrome':
@@ -177,29 +177,57 @@ _PATTERN_TO_ACTIVITY = {
 }
 
 
-def get_screenshot(args, screenshot_path, scale=1.0, image_id=1):
-    # 1️⃣ 设备截图（原分辨率）
-    image_root = "/sdcard/screenshot" + str(image_id)
-    command = args.adb_path + f" shell screencap -p {image_root}.png"
-    subprocess.run(command, capture_output=True, text=True, shell=True)
+screenshot_lock = Lock()
 
-    # 2️⃣ 拉到本地
-    if not args.on_device:
-        command = args.adb_path + f" pull {image_root}.png {screenshot_path}"
-        subprocess.run(command, capture_output=True, text=True, shell=True)
+def wait_stable(path, timeout=2.0):
+    start = time.time()
+    last = -1
+    while time.time() - start < timeout:
+        if not os.path.exists(path):
+            continue
+        size = os.path.getsize(path)
+        if size == last and size > 0:
+            return
+        last = size
+        time.sleep(0.02)
+    raise RuntimeError("file not stable")
 
-    # 3️⃣ 本地 resize + 压缩
-    time.sleep(0.3)
-    img = Image.open(screenshot_path).convert("RGB")
-    time.sleep(0.3)
+def get_screenshot(args, screenshot_path, scale=1.0):
+    with screenshot_lock:
 
-    if scale != 1.0:
-        w, h = img.size
-        img = img.resize((int(w/scale), int(h/scale)), Image.BILINEAR)
+        uid = uuid.uuid4().hex[:6]
+        remote_path = f"/sdcard/shot_{uid}.png"
+        local_tmp = screenshot_path + ".tmp"
 
-    # 直接覆盖保存为 JPEG（减少 token）
-    img.save(screenshot_path, format="JPEG", quality=85)
+        # 1. 设备截图
+        subprocess.run(
+            f"{args.adb_path} shell screencap -p {remote_path}",
+            shell=True, check=True
+        )
 
+        # 2. pull 到 tmp
+        subprocess.run(
+            f"{args.adb_path} pull {remote_path} {local_tmp}",
+            shell=True, check=True
+        )
+
+        # 3. 等文件稳定
+        wait_stable(local_tmp)
+
+        # 4. 读图
+        img = Image.open(local_tmp).convert("RGB")
+
+        if scale != 1.0:
+            w, h = img.size
+            img = img.resize((int(w/scale), int(h/scale)), Image.BILINEAR)
+
+        # 5. 原子替换
+        img.save(local_tmp, format="JPEG", quality=85)
+        os.replace(local_tmp, screenshot_path)
+
+        # 6. 清理远端
+        subprocess.run(f"{args.adb_path} shell rm {remote_path}", shell=True)
+        # print(f"[INFO] Save screenshot to {screenshot_path}")
 
 def get_a11y_tree(args, xml_path):
     command = args.adb_path + " shell uiautomator dump /sdcard/a11y.xml"
@@ -236,7 +264,7 @@ def end_recording(adb_path, output_recording_path):
     # Send SIGINT to stop the screenrecord process gracefully
     stop_command = adb_path + " shell pkill -SIGINT screenrecord"
     subprocess.run(stop_command, capture_output=True, text=True, shell=True)
-    sleep(1)  # Allow some time to ensure the recording is stopped
+    time.sleep(1)  # Allow some time to ensure the recording is stopped
     
     print("Pulling recorded file from device...")
     pull_command = f"{adb_path} pull /sdcard/screenrecord.mp4 {output_recording_path}"
@@ -348,7 +376,7 @@ def switch_app(adb_path):
 
 def launch_app(adb: str, app_name: str):
     package = normalize_app_name(app_name)
-    print(f"[ADB] launcher start → {package}")
+    # print(f"[ADB] launcher start → {package}")
     os.system(f"{adb} shell monkey -p {package} -c android.intent.category.LAUNCHER 1")
     time.sleep(0.1)
     return package
@@ -386,7 +414,7 @@ def normalize_app_name(app_name: str) -> str:
 
         # ===== Utilities =====
         "Calculator": "com.simplemobiletools.calculator",
-        "Clock": "com.simplemobiletools.clock",
+        "Clock": "com.google.android.deskclock",
         "Calendar": "com.simplemobiletools.calendar",
         "Flashlight": "com.simplemobiletools.flashlight",
 
@@ -399,5 +427,7 @@ def normalize_app_name(app_name: str) -> str:
 
         # ===== Launcher（一般不需要 monkey）=====
         "Launcher": "com.google.android.apps.nexuslauncher",
+
+        "Markor": "net.gsantner.markor"
     }
     return APP_NAME_TO_PACKAGE.get(app_name, app_name)

@@ -182,10 +182,10 @@ def parse_a11y_tree(xml_path):
     for i, n in enumerate(leaves):
         n.uid = f"E{i+1:04d}"
 
-    print(f"ET Latency:         {et_latency:.3f} ms\n"
-          f"Hierarchy Latency:  {hierarchy_latency:.3f} ms\n"
-          f"First Latency:      {first_latency:.3f} ms\n"
-          f"Leaves Latency:     {leaves_latency:.3f} ms\n")
+    # print(f"ET Latency:         {et_latency:.3f} ms\n"
+    #       f"Hierarchy Latency:  {hierarchy_latency:.3f} ms\n"
+    #       f"First Latency:      {first_latency:.3f} ms\n"
+    #       f"Leaves Latency:     {leaves_latency:.3f} ms\n")
 
     # virtual root
     return Node(class_name="LEAF_ROOT", uid="ROOT", children=leaves)
