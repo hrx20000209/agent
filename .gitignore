@@ -1,0 +1,14 @@
+/explore_debug
+/explore_results
+/eval_results
+/rollback
+/rollback_debug
+/reasoning_results
+
+*.pyc
+
+# Other
+*.DS_Store
+
+# PyCharm
+.idea

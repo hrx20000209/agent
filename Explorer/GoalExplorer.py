@@ -848,7 +848,7 @@ class A11yTreeOnlineExplorer:
         ui_desc = getattr(node, "content_desc", "") or ""
 
         # Give UI a short settle window before observing transition.
-        time.sleep(0.22)
+        # time.sleep(0.22)
         shot_t0 = time.time()
         get_screenshot(self.args, self.explore_screenshot_path)
         self.screenshot_latency.append(time.time() - shot_t0)
@@ -1154,7 +1154,7 @@ class A11yTreeOnlineExplorer:
                 if trunk and bool(trunk.get("is_useful")):
                     self.iteration_candidates.append(branch_candidate)
                 branches_done += 1
-                time.sleep(0.05)
+                # time.sleep(0.05)
                 continue
 
             if self.cur_steps < max_steps and not self.stop_event.is_set() and not self._deadline_exceeded(deadline_ts):
@@ -1199,7 +1199,7 @@ class A11yTreeOnlineExplorer:
                     is_last_leaf = (leaf_idx == len(leaf_nodes) - 1)
                     page_changed = False
                     if leaf_ok:
-                        time.sleep(0.25)
+                        # time.sleep(0.25)
                         get_screenshot(self.args, self.leaf_after_screenshot_path)
                         page_changed = not check_same_image(
                             self.leaf_before_screenshot_path,
@@ -1223,7 +1223,7 @@ class A11yTreeOnlineExplorer:
             if trunk and (self.collection_mode or trunk_useful or has_useful_leaf):
                 self.iteration_candidates.append(branch_candidate)
             branches_done += 1
-            time.sleep(0.05)
+            # time.sleep(0.05)
 
     def worker(
         self,
@@ -1340,7 +1340,7 @@ class A11yTreeOnlineExplorer:
 
                     # 2. 执行 back
                     back(self.adb)
-                    time.sleep(1.0)
+                    # time.sleep(1.0)
                     self._save_debug_frame(
                         action_text=f"action=back (rollback) step={step} i={i}",
                         extra_lines=[f"cur_steps={self.cur_steps}"],
@@ -1351,7 +1351,7 @@ class A11yTreeOnlineExplorer:
                     print("⚠️ Fast rollback failed. Start replay previous exploration actions...")
 
                     home(self.adb)
-                    time.sleep(0.8)
+                    # time.sleep(0.8)
                     replay_actions = self.replay_action_history or self.action_history
                     for action in replay_actions:
                         execute_action(
@@ -1362,10 +1362,10 @@ class A11yTreeOnlineExplorer:
                             coord_scale=self.coord_scale,
                         )
                         act_type = (action or {}).get("action_type", "")
-                        if act_type == "open_app":
-                            time.sleep(1.2)
-                        else:
-                            time.sleep(0.35)
+                        # if act_type == "open_app":
+                        #     time.sleep(1.2)
+                        # else:
+                        #     time.sleep(0.35)
 
         if self.rollback_done_event:
             self.rollback_done_event.set()
