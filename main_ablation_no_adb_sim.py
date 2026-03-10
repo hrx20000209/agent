@@ -5,7 +5,21 @@ import threading
 import time
 from typing import Dict, List
 
-from sim_no_adb_utils import COMMON_ELEMENT_TEXTS, avg, parse_action_from_llm_text, simulate_llm_output, text_similarity
+from sim_no_adb_utils import (
+    COMMON_ELEMENT_TEXTS,
+    avg,
+    call_llama_cpp_with_image,
+    ensure_screenshot_path,
+    parse_action_from_llm_text,
+    text_similarity,
+)
+
+SYSTEM_PROMPT = """You are a mobile GUI agent.
+Decide ONE next GUI action from the given task, history and screenshot.
+Use:
+<thinking>...</thinking>
+<tool_call>{"name":"mobile_use","arguments":{"action":"...", "...":"..."}}</tool_call>
+""".strip()
 
 
 def _explore_similarity(task: str, rounds: int, seed: int) -> List[Dict]:
@@ -27,7 +41,7 @@ def _explore_similarity(task: str, rounds: int, seed: int) -> List[Dict]:
     return records
 
 
-def _run_variant(args, variant: str) -> Dict:
+def _run_variant(args, variant: str, screenshot_path: str) -> Dict:
     rng = random.Random(args.seed + (0 if variant == "reasoning_only" else 111))
     planning_latencies: List[float] = []
     step_latencies: List[float] = []
@@ -47,8 +61,28 @@ def _run_variant(args, variant: str) -> Dict:
             th.start()
 
         reasoning_start = time.time()
-        time.sleep(max(0.0, args.reasoning_sleep_sec))
-        llm_text = simulate_llm_output(args.task, history_len=itr - 1, role="single")
+        if args.reasoning_sleep_sec > 0:
+            time.sleep(args.reasoning_sleep_sec)
+
+        clue_line = ""
+        if variant == "reasoning_plus_explorer":
+            clue_line = f"Exploration is running in parallel (rounds={rounds}, each sleep=1s)."
+
+        user_prompt = (
+            f"Task:\n{args.task}\n\n"
+            f"Step Index: {itr}\n"
+            f"Variant: {variant}\n"
+            f"{clue_line}\n\n"
+            "Output one next action now."
+        )
+        llm_text = call_llama_cpp_with_image(
+            system_prompt=SYSTEM_PROMPT,
+            user_prompt=user_prompt,
+            screenshot_path=screenshot_path,
+            api_url=args.llama_api_url,
+            temperature=args.temperature,
+            max_tokens=args.max_tokens,
+        )
         action_obj = parse_action_from_llm_text(llm_text)
         reasoning_end = time.time()
 
@@ -84,12 +118,15 @@ def _run_variant(args, variant: str) -> Dict:
 
 
 def run_ablation_no_adb(args):
-    print("### Running Ablation Simulation (No ADB) ###")
+    print("### Running Ablation (No ADB, llama.cpp) ###")
     print(f"[Config] task={args.task}")
     print(f"[Config] max_itr={args.max_itr}, reasoning_sleep_sec={args.reasoning_sleep_sec}")
+    screenshot_path = ensure_screenshot_path(args.screenshot_path)
+    print(f"[Config] llama_api_url={args.llama_api_url}")
+    print(f"[Config] screenshot_path={screenshot_path}")
 
-    reasoning_only = _run_variant(args, "reasoning_only")
-    reasoning_plus_explorer = _run_variant(args, "reasoning_plus_explorer")
+    reasoning_only = _run_variant(args, "reasoning_only", screenshot_path=screenshot_path)
+    reasoning_plus_explorer = _run_variant(args, "reasoning_plus_explorer", screenshot_path=screenshot_path)
 
     print("\n=== Ablation Summary ===")
     print(
@@ -125,9 +162,23 @@ if __name__ == "__main__":
     parser.add_argument(
         "--reasoning_sleep_sec",
         type=float,
-        default=4.0,
-        help="Reasoning wait used by both ablation variants.",
+        default=0.0,
+        help="Optional extra wait before llama.cpp request.",
     )
+    parser.add_argument(
+        "--screenshot_path",
+        type=str,
+        default="./screenshot.png",
+        help="Input screenshot path (default: repo-root screenshot.png).",
+    )
+    parser.add_argument(
+        "--llama_api_url",
+        type=str,
+        default="http://localhost:8100/v1/chat/completions",
+        help="llama.cpp OpenAI-compatible endpoint.",
+    )
+    parser.add_argument("--temperature", type=float, default=0.0, help="Sampling temperature.")
+    parser.add_argument("--max_tokens", type=int, default=256, help="Max new tokens per request.")
     parser.add_argument(
         "--output_json",
         type=str,
@@ -137,4 +188,3 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     run_ablation_no_adb(args)
-

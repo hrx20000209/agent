@@ -3,7 +3,31 @@ import json
 import time
 from typing import Dict, List, Tuple
 
-from sim_no_adb_utils import avg, parse_action_from_llm_text, safe_json, simulate_llm_output
+from sim_no_adb_utils import (
+    avg,
+    call_llama_cpp_with_image,
+    ensure_screenshot_path,
+    parse_action_from_llm_text,
+    safe_json,
+)
+
+MANAGER_SYSTEM_PROMPT = """You are the Manager in a mobile multi-agent system.
+Track progress and maintain a concise plan for the user task.
+Output strictly with sections:
+### Thought ###
+...
+### Historical Operations ###
+...
+### Plan ###
+...
+""".strip()
+
+EXECUTOR_SYSTEM_PROMPT = """You are the Executor in a mobile multi-agent system.
+Given user task, current plan, and action history, output ONE next GUI action.
+Use:
+<thinking>...</thinking>
+<tool_call>{"name":"mobile_use","arguments":{"action":"...", "...":"..."}}</tool_call>
+""".strip()
 
 
 def _history_to_text(history: List[str], max_items: int = 6) -> str:
@@ -17,25 +41,28 @@ class MultiAgentBaselineSim:
         self.plan = ""
         self.completed = "No completed subgoal."
 
-    def _build_manager_output(self, task: str, history: List[str]) -> str:
+    def _build_manager_prompt(self, task: str, history: List[str]) -> str:
         if not self.plan:
-            plan = (
-                "1. Locate relevant app entry.\n"
-                "2. Perform one atomic action toward task.\n"
-                "3. Verify completion and finish."
+            return (
+                f"### User Request ###\n{task}\n\n"
+                f"### Latest Action History ###\n{_history_to_text(history)}\n\n"
+                "Create an initial concise plan with ordered subgoals."
             )
-        elif len(history) >= 3:
-            plan = "Finished."
-        else:
-            plan = self.plan
-
         return (
-            "### Thought ###\n"
-            f"Keep progress stable for task: {task}\n"
-            "### Historical Operations ###\n"
-            f"{_history_to_text(history)}\n"
-            "### Plan ###\n"
-            f"{plan}\n"
+            f"### User Request ###\n{task}\n\n"
+            f"### Historical Operations ###\n{self.completed}\n\n"
+            f"### Existing Plan ###\n{self.plan}\n\n"
+            f"### Latest Action History ###\n{_history_to_text(history)}\n\n"
+            "Update the plan. If done, set Plan to: Finished."
+        )
+
+    def _build_executor_prompt(self, task: str, history: List[str]) -> str:
+        active_plan = self.plan if self.plan else "No plan yet."
+        return (
+            f"### User Request ###\n{task}\n\n"
+            f"### Overall Plan ###\n{active_plan}\n\n"
+            f"### Latest Action History ###\n{_history_to_text(history)}\n\n"
+            "Pick exactly one next atomic action."
         )
 
     def _update_plan_from_output(self, manager_output: str):
@@ -53,18 +80,38 @@ class MultiAgentBaselineSim:
         self,
         task: str,
         history: List[str],
-        manager_sleep_sec: float,
-        executor_sleep_sec: float,
+        screenshot_path: str,
+        api_url: str,
+        temperature: float,
+        max_tokens: int,
+        manager_sleep_sec: float = 0.0,
+        executor_sleep_sec: float = 0.0,
     ) -> Tuple[Dict, float, float, str, str]:
         manager_start = time.time()
-        time.sleep(max(0.0, manager_sleep_sec))
-        manager_output = self._build_manager_output(task, history)
+        if manager_sleep_sec > 0:
+            time.sleep(manager_sleep_sec)
+        manager_output = call_llama_cpp_with_image(
+            system_prompt=MANAGER_SYSTEM_PROMPT,
+            user_prompt=self._build_manager_prompt(task, history),
+            screenshot_path=screenshot_path,
+            api_url=api_url,
+            temperature=temperature,
+            max_tokens=max_tokens,
+        )
         manager_latency_ms = (time.time() - manager_start) * 1000
         self._update_plan_from_output(manager_output)
 
         executor_start = time.time()
-        time.sleep(max(0.0, executor_sleep_sec))
-        executor_output = simulate_llm_output(task, history_len=len(history), role="executor")
+        if executor_sleep_sec > 0:
+            time.sleep(executor_sleep_sec)
+        executor_output = call_llama_cpp_with_image(
+            system_prompt=EXECUTOR_SYSTEM_PROMPT,
+            user_prompt=self._build_executor_prompt(task, history),
+            screenshot_path=screenshot_path,
+            api_url=api_url,
+            temperature=temperature,
+            max_tokens=max_tokens,
+        )
         action_obj = parse_action_from_llm_text(executor_output)
         executor_latency_ms = (time.time() - executor_start) * 1000
 
@@ -72,9 +119,12 @@ class MultiAgentBaselineSim:
 
 
 def run_multi_agent_baseline_sim(args):
-    print("### Running multi-agent baseline simulation (No ADB) ###")
+    print("### Running multi-agent baseline (No ADB, llama.cpp) ###")
     print(f"[Config] task={args.task}")
     print(f"[Config] max_itr={args.max_itr}")
+    screenshot_path = ensure_screenshot_path(args.screenshot_path)
+    print(f"[Config] llama_api_url={args.llama_api_url}")
+    print(f"[Config] screenshot_path={screenshot_path}")
 
     agent = MultiAgentBaselineSim()
     history: List[str] = []
@@ -98,6 +148,10 @@ def run_multi_agent_baseline_sim(args):
         action_obj, manager_ms, executor_ms, manager_out, executor_out = agent.run_step(
             task=args.task,
             history=history,
+            screenshot_path=screenshot_path,
+            api_url=args.llama_api_url,
+            temperature=args.temperature,
+            max_tokens=args.max_tokens,
             manager_sleep_sec=args.manager_sleep_sec,
             executor_sleep_sec=args.executor_sleep_sec,
         )
@@ -149,9 +203,12 @@ def run_multi_agent_baseline_sim(args):
 
 
 def run_input_pruning_baseline_sim(args):
-    print("### Running input-pruning baseline simulation (No ADB) ###")
+    print("### Running input-pruning baseline (No ADB, llama.cpp) ###")
     print(f"[Config] task={args.task}")
     print(f"[Config] max_itr={args.max_itr}")
+    screenshot_path = ensure_screenshot_path(args.screenshot_path)
+    print(f"[Config] llama_api_url={args.llama_api_url}")
+    print(f"[Config] screenshot_path={screenshot_path}")
 
     history: List[str] = []
     steps: List[Dict] = []
@@ -169,9 +226,22 @@ def run_input_pruning_baseline_sim(args):
         perception_latency = (perception_time - start_time) * 1000
         perception_latency_list.append(perception_latency)
 
+        user_prompt = (
+            f"Task:\n{args.task}\n\n"
+            f"Action History:\n{_history_to_text(history)}\n\n"
+            "Output one next action."
+        )
         planning_start = time.time()
-        time.sleep(max(0.0, args.pruning_sleep_sec))
-        llm_output = simulate_llm_output(args.task, history_len=len(history), role="single")
+        if args.pruning_sleep_sec > 0:
+            time.sleep(args.pruning_sleep_sec)
+        llm_output = call_llama_cpp_with_image(
+            system_prompt=EXECUTOR_SYSTEM_PROMPT,
+            user_prompt=user_prompt,
+            screenshot_path=screenshot_path,
+            api_url=args.llama_api_url,
+            temperature=args.temperature,
+            max_tokens=args.max_tokens,
+        )
         action_obj = parse_action_from_llm_text(llm_output)
         planning_end = time.time()
 
@@ -234,20 +304,20 @@ if __name__ == "__main__":
     parser.add_argument(
         "--manager_sleep_sec",
         type=float,
-        default=1.2,
-        help="Manager-stage simulated latency.",
+        default=0.0,
+        help="Optional extra wait before manager llama.cpp request.",
     )
     parser.add_argument(
         "--executor_sleep_sec",
         type=float,
-        default=1.4,
-        help="Executor-stage simulated latency.",
+        default=0.0,
+        help="Optional extra wait before executor llama.cpp request.",
     )
     parser.add_argument(
         "--pruning_sleep_sec",
         type=float,
-        default=1.8,
-        help="Input-pruning single-stage simulated latency.",
+        default=0.0,
+        help="Optional extra wait before input-pruning llama.cpp request.",
     )
     parser.add_argument(
         "--output_json",
@@ -255,6 +325,20 @@ if __name__ == "__main__":
         default="",
         help="Optional output JSON file for step-level records.",
     )
+    parser.add_argument(
+        "--screenshot_path",
+        type=str,
+        default="./screenshot.png",
+        help="Input screenshot path (default: repo-root screenshot.png).",
+    )
+    parser.add_argument(
+        "--llama_api_url",
+        type=str,
+        default="http://localhost:8100/v1/chat/completions",
+        help="llama.cpp OpenAI-compatible endpoint.",
+    )
+    parser.add_argument("--temperature", type=float, default=0.0, help="Sampling temperature.")
+    parser.add_argument("--max_tokens", type=int, default=256, help="Max new tokens per request.")
     args = parser.parse_args()
 
     if args.baseline == "multi_agent":
@@ -266,4 +350,3 @@ if __name__ == "__main__":
         with open(args.output_json, "w", encoding="utf-8") as f:
             json.dump(run_steps, f, ensure_ascii=False, indent=2)
         print(f"[Saved] step traces -> {args.output_json}")
-

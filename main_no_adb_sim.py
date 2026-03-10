@@ -8,11 +8,24 @@ from typing import Dict, List
 from sim_no_adb_utils import (
     COMMON_ELEMENT_TEXTS,
     avg,
+    call_llama_cpp_with_image,
+    ensure_screenshot_path,
     parse_action_from_llm_text,
     safe_json,
-    simulate_llm_output,
     text_similarity,
 )
+
+SYSTEM_PROMPT = """You are a mobile GUI agent.
+Decide ONE next GUI action from the given task, history, and screenshot.
+
+Output format:
+<thinking>
+one-sentence rationale
+</thinking>
+<tool_call>
+{"name":"mobile_use","arguments":{"action":"...", "...":"..."}}
+</tool_call>
+""".strip()
 
 
 def _explorer_similarity_loop(
@@ -49,9 +62,12 @@ def _explorer_similarity_loop(
 
 
 def run_single_step_agent_no_adb(args):
-    print("### Running Single-Step Agent Simulation (No ADB) ###")
+    print("### Running Single-Step Agent (No ADB, llama.cpp) ###")
     print(f"[Config] task={args.task}")
-    print(f"[Config] max_itr={args.max_itr}, explore_rounds=3~5, reasoning_sleep_sec={args.reasoning_sleep_sec}")
+    screenshot_path = ensure_screenshot_path(args.screenshot_path)
+    print(f"[Config] max_itr={args.max_itr}, explore_rounds=3~5")
+    print(f"[Config] llama_api_url={args.llama_api_url}")
+    print(f"[Config] screenshot_path={screenshot_path}")
 
     rng = random.Random(args.seed)
     history: List[str] = []
@@ -84,10 +100,24 @@ def run_single_step_agent_no_adb(args):
         )
         explorer_thread.start()
 
-        # Main loop waits for reasoning.
+        # Main loop waits for reasoning (real llama.cpp call).
+        user_prompt = (
+            f"Task:\n{args.task}\n\n"
+            f"Action History:\n{history[-6:] if history else 'None'}\n\n"
+            "Output the next action now."
+        )
+
         reasoning_start = time.time()
-        time.sleep(max(0.0, args.reasoning_sleep_sec))
-        llm_output = simulate_llm_output(args.task, history_len=len(history), role="single")
+        if args.reasoning_sleep_sec > 0:
+            time.sleep(args.reasoning_sleep_sec)
+        llm_output = call_llama_cpp_with_image(
+            system_prompt=SYSTEM_PROMPT,
+            user_prompt=user_prompt,
+            screenshot_path=screenshot_path,
+            api_url=args.llama_api_url,
+            temperature=args.temperature,
+            max_tokens=args.max_tokens,
+        )
         action_obj = parse_action_from_llm_text(llm_output)
         reasoning_end = time.time()
         reasoning_latency = (reasoning_end - reasoning_start) * 1000
@@ -181,8 +211,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--reasoning_sleep_sec",
         type=float,
-        default=4.0,
-        help="How long to simulate the reasoning wait in each iteration.",
+        default=0.0,
+        help="Optional extra wait before each llama.cpp request.",
     )
     parser.add_argument(
         "--perception_sleep_ms",
@@ -202,7 +232,20 @@ if __name__ == "__main__":
         default="",
         help="Optional output JSON file for step-level records.",
     )
+    parser.add_argument(
+        "--screenshot_path",
+        type=str,
+        default="./screenshot.png",
+        help="Input screenshot path (default: repo-root screenshot.png).",
+    )
+    parser.add_argument(
+        "--llama_api_url",
+        type=str,
+        default="http://localhost:8100/v1/chat/completions",
+        help="llama.cpp OpenAI-compatible endpoint.",
+    )
+    parser.add_argument("--temperature", type=float, default=0.0, help="Sampling temperature.")
+    parser.add_argument("--max_tokens", type=int, default=256, help="Max new tokens per request.")
     args = parser.parse_args()
 
     run_single_step_agent_no_adb(args)
-

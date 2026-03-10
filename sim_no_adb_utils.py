@@ -1,7 +1,11 @@
 import json
+import os
 import re
 from difflib import SequenceMatcher
 from typing import Any, Dict, Iterable, List, Tuple
+
+from MobileAgentE.api import inference_chat_llama_cpp
+from agents.mai_ui_agent import add_chat
 
 
 COMMON_ELEMENT_TEXTS: List[str] = [
@@ -193,3 +197,33 @@ def parse_action_from_llm_text(llm_text: str) -> Dict[str, Any]:
         return {"action_type": "wait", "action_inputs": {}}
     return {"action_type": "wait", "action_inputs": {}}
 
+
+def ensure_screenshot_path(screenshot_path: str) -> str:
+    abs_path = os.path.abspath(screenshot_path or "./screenshot.png")
+    if not os.path.exists(abs_path):
+        raise FileNotFoundError(
+            f"screenshot not found: {abs_path}. "
+            "Please place screenshot.png at repo root or pass --screenshot_path."
+        )
+    return abs_path
+
+
+def call_llama_cpp_with_image(
+    system_prompt: str,
+    user_prompt: str,
+    screenshot_path: str,
+    api_url: str,
+    temperature: float = 0.0,
+    max_tokens: int = 256,
+) -> str:
+    chat = [["system", [{"type": "text", "text": system_prompt}]]]
+    chat = add_chat("user", user_prompt, chat, image=screenshot_path)
+    try:
+        return inference_chat_llama_cpp(
+            chat,
+            api_url=api_url,
+            temperature=temperature,
+            max_tokens=max_tokens,
+        )
+    except Exception as exc:
+        raise RuntimeError(f"llama.cpp request failed at {api_url}: {exc}") from exc
