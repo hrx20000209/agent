@@ -124,7 +124,11 @@ def execute_action(
 
     action_type = action_obj.get("action_type", "").lower()
     args = extract_action_inputs(action_obj)
-    coord_space = "1000"
+    coord_space = str(
+        action_obj.get("coord_space")
+        or (args.get("coord_space") if isinstance(args, dict) else None)
+        or "1000"
+    ).strip().lower()
 
     print(f"[EXEC] {action_type} → {args} (coord_space={coord_space})")
 

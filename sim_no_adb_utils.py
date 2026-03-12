@@ -1,10 +1,14 @@
 import json
 import os
 import re
+import time
 from difflib import SequenceMatcher
 from typing import Any, Dict, Iterable, List, Tuple
 
+import imagehash
+from PIL import Image
 from MobileAgentE.api import inference_chat_llama_cpp
+from agents.mai_parser import parse_tagged_text
 from agents.mai_ui_agent import add_chat
 
 
@@ -156,46 +160,166 @@ def _extract_first_json_object(text: str) -> str:
     return ""
 
 
+def _extract_action_args(obj: Dict[str, Any]) -> Dict[str, Any]:
+    if not isinstance(obj, dict):
+        return {}
+
+    # Standard MAI format: {"name":"mobile_use","arguments":{...}}
+    if str(obj.get("name", "")).strip().lower() == "mobile_use":
+        args = obj.get("arguments")
+        return args if isinstance(args, dict) else {}
+
+    # Some models output {"name":"click", ...} directly.
+    if "name" in obj and "arguments" not in obj:
+        name = str(obj.get("name", "")).strip().lower()
+        if name:
+            args = dict(obj)
+            args.pop("name", None)
+            args["action"] = name
+            return args
+
+    # Some outputs are already flat action JSON.
+    if "action" in obj:
+        return obj
+
+    # Fallback for malformed nesting.
+    args = obj.get("arguments")
+    if isinstance(args, dict):
+        if "action" in args:
+            return args
+        name = str(obj.get("name", "")).strip().lower()
+        if name:
+            merged = dict(args)
+            merged["action"] = merged.get("action", name)
+            return merged
+
+    return {}
+
+
+def _infer_coord_space(inputs: Dict[str, Any]) -> str:
+    vals: List[float] = []
+    for key in ("coordinate", "start_coordinate", "end_coordinate"):
+        coord = inputs.get(key)
+        if not isinstance(coord, (list, tuple)) or len(coord) < 2:
+            continue
+        try:
+            vals.extend([abs(float(coord[0])), abs(float(coord[1]))])
+        except (TypeError, ValueError):
+            continue
+
+    if not vals:
+        return "1000"
+
+    vmax = max(vals)
+    if vmax <= 1.05:
+        return "norm1"
+    if vmax <= 1000.0:
+        return "1000"
+    return "pixel"
+
+
 def parse_action_from_llm_text(llm_text: str) -> Dict[str, Any]:
     raw = (llm_text or "").strip()
     if not raw:
         return {"action_type": "wait", "action_inputs": {}}
 
+    # MAI official parser path first.
+    try:
+        parsed = parse_tagged_text(raw)
+        tool_call = parsed.get("tool_call")
+        if isinstance(tool_call, dict):
+            args = _extract_action_args(tool_call)
+            if args:
+                action = str(args.get("action") or args.get("action_type") or "wait").strip().lower()
+                action_inputs = {k: v for k, v in args.items() if k not in {"action", "action_type"}}
+                return _canonicalize_action(action, action_inputs)
+    except Exception:
+        pass
+
+    # Generic JSON fallback.
     segment = raw
     m = re.search(r"<tool_call>(.*?)</tool_call>", raw, flags=re.DOTALL | re.IGNORECASE)
     if m:
         segment = m.group(1).strip()
 
-    json_block = _extract_first_json_object(segment)
-    if not json_block:
-        json_block = _extract_first_json_object(raw)
-
+    json_block = _extract_first_json_object(segment) or _extract_first_json_object(raw)
     if json_block:
         try:
             obj = json.loads(json_block)
         except Exception:
             obj = None
-        if isinstance(obj, dict):
-            args = {}
-            if isinstance(obj.get("arguments"), dict):
-                args = obj["arguments"]
-            elif "action" in obj or "action_type" in obj:
-                args = obj
 
-            action = (args.get("action") or args.get("action_type") or "wait").strip().lower()
-            action_inputs = {k: v for k, v in args.items() if k not in {"action", "action_type"}}
-            return {"action_type": action, "action_inputs": action_inputs}
+        if isinstance(obj, dict):
+            args = _extract_action_args(obj)
+            if args:
+                action = str(args.get("action") or args.get("action_type") or "wait").strip().lower()
+                action_inputs = {k: v for k, v in args.items() if k not in {"action", "action_type"}}
+                return _canonicalize_action(action, action_inputs)
 
     lower = raw.lower()
     if "terminate" in lower or '"status":"success"' in lower:
         return {"action_type": "terminate", "action_inputs": {"status": "success"}}
     if '"action":"type"' in lower or " type " in lower:
-        return {"action_type": "type", "action_inputs": {"text": ""}}
+        return {"action_type": "type", "action_inputs": {"content": ""}}
     if '"action":"click"' in lower or "click" in lower:
-        return {"action_type": "click", "action_inputs": {}}
+        return {
+            "action_type": "click",
+            "action_inputs": {"coordinate": [500, 500]},
+            "coord_space": "1000",
+        }
     if "wait" in lower:
         return {"action_type": "wait", "action_inputs": {}}
     return {"action_type": "wait", "action_inputs": {}}
+
+
+def _canonicalize_action(action: str, action_inputs: Dict[str, Any]) -> Dict[str, Any]:
+    act = (action or "wait").strip().lower()
+    inp = dict(action_inputs or {})
+
+    if act == "open":
+        act = "open_app"
+    elif act in {"done", "finish", "finished", "answer", "stop", "exit"}:
+        act = "terminate"
+
+    if act == "system_button":
+        button = str(inp.get("button", "")).strip().lower()
+        if button == "back":
+            act = "press_back"
+        elif button == "home":
+            act = "press_home"
+        elif button in {"enter", "ok"}:
+            act = "press_enter"
+        else:
+            act = "wait"
+            inp = {}
+
+    if act == "type":
+        # execute_action expects "content"
+        if "content" not in inp:
+            text_val = inp.get("text")
+            if text_val is None:
+                text_val = inp.get("value", "")
+            inp["content"] = text_val or ""
+
+    if act == "open_app":
+        # execute_action supports content/value/text/app_name; keep all if present
+        if "app_name" in inp and "content" not in inp:
+            inp["content"] = inp.get("app_name")
+        elif "text" in inp and "content" not in inp:
+            inp["content"] = inp.get("text")
+        elif "value" in inp and "content" not in inp:
+            inp["content"] = inp.get("value")
+
+    if act == "swipe" and "coordinate" not in inp and "start_coordinate" not in inp:
+        # Keep MAI semantics while remaining executable by current controller.
+        inp["coordinate"] = [500, 500]
+
+    out = {"action_type": act, "action_inputs": inp}
+
+    if act in {"click", "long_press", "swipe", "drag"}:
+        out["coord_space"] = _infer_coord_space(inp)
+
+    return out
 
 
 def ensure_screenshot_path(screenshot_path: str) -> str:
@@ -227,3 +351,35 @@ def call_llama_cpp_with_image(
         )
     except Exception as exc:
         raise RuntimeError(f"llama.cpp request failed at {api_url}: {exc}") from exc
+
+
+def compute_phash(image_path: str):
+    img = Image.open(image_path).convert("L")
+    return imagehash.phash(img)
+
+
+def _to_hash_obj(hash_value):
+    if isinstance(hash_value, str):
+        return imagehash.hex_to_hash(hash_value.strip())
+    return hash_value
+
+
+def verify_with_anchor_phash(
+    screenshot_path: str,
+    anchor_hash,
+    threshold: int = 8,
+) -> Dict[str, Any]:
+    verify_start = time.time()
+    curr_hash = compute_phash(screenshot_path)
+    anchor_obj = _to_hash_obj(anchor_hash)
+    diff = int(curr_hash - anchor_obj)
+    ok = diff <= int(threshold)
+    verify_ms = (time.time() - verify_start) * 1000
+    return {
+        "ok": ok,
+        "diff": diff,
+        "threshold": int(threshold),
+        "current_hash": str(curr_hash),
+        "anchor_hash": str(anchor_obj),
+        "verification_latency_ms": verify_ms,
+    }
