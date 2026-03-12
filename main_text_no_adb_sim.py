@@ -3,56 +3,128 @@ import json
 import time
 from typing import Dict, List
 
-from sim_no_adb_utils import avg, parse_action_from_llm_text, simulate_llm_output
+from sim_no_adb_utils import (
+    avg,
+    call_llama_cpp_text_only,
+    ensure_screenshot_path,
+    parse_action_from_llm_text,
+)
+
+SYSTEM_PROMPT = """You are an Android UI agent. Your goal is to complete the given task step by step.
+
+You will be given:
+1. the task instruction
+2. the previous action history
+3. the current page information
+
+Decide the next single action to perform on the current page.
+
+Do not output any explanation, rationale, or thinking.
+Do not use <thinking> tags.
+Output only one <tool_call> block and nothing else.
+
+Output format:
+<tool_call>
+{"name":"mobile_use","arguments":{"action":"...", "...":"..."}}
+</tool_call>
+""".strip()
 
 
-def _load_llm_texts(args) -> List[str]:
-    if args.llm_text_file:
-        texts: List[str] = []
-        with open(args.llm_text_file, "r", encoding="utf-8", errors="ignore") as f:
-            for line in f:
-                s = line.strip()
-                if not s:
-                    continue
-                # Support plain text lines or jsonl with {"llm_text": "..."}
-                if s.startswith("{") and s.endswith("}"):
-                    try:
-                        obj = json.loads(s)
-                        if isinstance(obj, dict) and isinstance(obj.get("llm_text"), str):
-                            texts.append(obj["llm_text"])
-                            continue
-                    except Exception:
-                        pass
-                texts.append(s)
-        return texts
+def build_androidworld_like_prompt(task: str, action_history: List[str], ui_elements: List[Dict]) -> str:
+    history_text = "\n".join(
+        [f"{i + 1}. {h}" for i, h in enumerate(action_history)]
+    ) if action_history else "None yet."
 
-    if args.llm_text:
-        return [args.llm_text]
+    ui_lines = []
+    for i, elem in enumerate(ui_elements, start=1):
+        line = (
+            f"UI Element {i}: "
+            f'text="{elem.get("text", "")}", '
+            f'content_desc="{elem.get("content_desc", "")}", '
+            f'clickable={elem.get("clickable", False)}, '
+            f'editable={elem.get("editable", False)}, '
+            f'bounds={elem.get("bounds", [])}'
+        )
+        ui_lines.append(line)
 
-    # Fallback to built-in simulated outputs.
+    ui_text = "\n".join(ui_lines) if ui_lines else "No UI elements detected."
+
+    prompt = f"""Task:
+{task}
+
+Action History:
+{history_text}
+
+Current Page Information:
+{ui_text}
+
+Please decide the next single action to perform on the current page.
+Return your answer in the required structured format.
+"""
+    return prompt
+
+
+def get_mock_ui_elements_for_androidworld() -> List[Dict]:
     return [
-        simulate_llm_output(args.task, history_len=0, role="single"),
-        simulate_llm_output(args.task, history_len=1, role="single"),
-        simulate_llm_output(args.task, history_len=2, role="single"),
+        {
+            "text": "Google Scholar",
+            "content_desc": "Page title",
+            "clickable": False,
+            "editable": False,
+            "bounds": [24, 40, 420, 88],
+        },
+        {
+            "text": "Search papers",
+            "content_desc": "Search box",
+            "clickable": True,
+            "editable": True,
+            "bounds": [36, 120, 980, 210],
+        },
+        {
+            "text": "Search",
+            "content_desc": "Search button",
+            "clickable": True,
+            "editable": False,
+            "bounds": [860, 120, 1010, 210],
+        },
+        {
+            "text": "Menu",
+            "content_desc": "Navigation menu",
+            "clickable": True,
+            "editable": False,
+            "bounds": [0, 96, 96, 192],
+        },
+        {
+            "text": "Profile",
+            "content_desc": "User profile",
+            "clickable": True,
+            "editable": False,
+            "bounds": [930, 40, 1080, 110],
+        },
     ]
 
 
-def run_text_only_sim(args):
-    print("### Running Text-Only Simulation (No ADB) ###")
-    print(f"[Config] max_itr={args.max_itr}")
-    if args.llm_text:
-        print("[Config] input_source=--llm_text")
-    elif args.llm_text_file:
-        print(f"[Config] input_source=--llm_text_file ({args.llm_text_file})")
-    else:
-        print("[Config] input_source=built-in simulated LLM outputs")
+def get_mock_action_history(itr: int) -> List[str]:
+    base_history = [
+        'open Chrome',
+        'click the search box',
+        'type "Mobile GUI Agent"',
+    ]
+    return base_history[: max(0, min(itr - 1, len(base_history)))]
 
-    llm_texts = _load_llm_texts(args)
-    if not llm_texts:
-        raise RuntimeError("No LLM text found. Provide --llm_text or --llm_text_file.")
+
+def run_text_only_sim(args):
+    print("### Running AndroidWorld-like llama.cpp Benchmark ###")
+    print(f"[Config] task={args.task}")
+
+    screenshot_path = ensure_screenshot_path(args.screenshot_path)
+    print(f"[Config] screenshot_path={screenshot_path}")
+    print(f"[Config] llama_api_url={args.llama_api_url}")
+    print(f"[Config] max_itr={args.max_itr}")
 
     steps: List[Dict] = []
-    input_wait_latency_list: List[float] = []
+    prompt_build_latency_list: List[float] = []
+    reasoning_latency_list: List[float] = []
     parse_latency_list: List[float] = []
     end_to_end_latency_list: List[float] = []
 
@@ -60,14 +132,40 @@ def run_text_only_sim(args):
         start_time = time.time()
         print(f"\n================ Iteration {itr} ================\n")
 
-        # Simulate waiting for LLM output to arrive.
-        time.sleep(max(0.0, args.input_wait_ms / 1000.0))
-        input_ready_time = time.time()
-        input_wait_ms = (input_ready_time - start_time) * 1000
-        input_wait_latency_list.append(input_wait_ms)
+        # Build AndroidWorld-like prompt
+        prompt_start = time.time()
+        mock_history = get_mock_action_history(itr)
+        mock_ui_elements = get_mock_ui_elements_for_androidworld()
+        prompt_text = build_androidworld_like_prompt(
+            task=args.task,
+            action_history=mock_history,
+            ui_elements=mock_ui_elements,
+        )
+        prompt_end = time.time()
+        prompt_build_latency_ms = (prompt_end - prompt_start) * 1000
+        prompt_build_latency_list.append(prompt_build_latency_ms)
 
-        llm_text = llm_texts[(itr - 1) % len(llm_texts)]
+        print("[Prompt]")
+        print(prompt_text)
 
+        # Optional extra sleep before llama call
+        if args.reasoning_sleep_sec > 0:
+            time.sleep(args.reasoning_sleep_sec)
+
+        # Real llama.cpp call
+        reasoning_start = time.time()
+        llm_text = call_llama_cpp_text_only(
+            system_prompt=SYSTEM_PROMPT,
+            user_prompt=prompt_text,
+            api_url=args.llama_api_url,
+            temperature=args.temperature,
+            max_tokens=args.max_tokens,
+        )
+        reasoning_end = time.time()
+        reasoning_latency_ms = (reasoning_end - reasoning_start) * 1000
+        reasoning_latency_list.append(reasoning_latency_ms)
+
+        # Parse model output
         parse_start = time.time()
         action_obj = parse_action_from_llm_text(llm_text)
         parse_end = time.time()
@@ -80,26 +178,30 @@ def run_text_only_sim(args):
         steps.append(
             {
                 "step": itr,
+                "prompt_text": prompt_text,
                 "llm_text": llm_text,
                 "action": action_obj,
-                "input_wait_latency_ms": input_wait_ms,
+                "prompt_build_latency_ms": prompt_build_latency_ms,
+                "reasoning_latency_ms": reasoning_latency_ms,
                 "parse_latency_ms": parse_latency_ms,
                 "step_latency_ms": step_latency_ms,
             }
         )
 
-        preview = llm_text.replace("\n", " ")[:120]
-        print(f"[Input] LLM text preview: {preview}")
+        preview = llm_text.replace("\n", " ")[:200]
+        print(f"[LLM Output] {preview}")
         print(f"[Parse] Parsed action: {action_obj}")
         print(
-            f"Input wait latency: {input_wait_ms:.3f} ms, "
+            f"Prompt build latency: {prompt_build_latency_ms:.3f} ms, "
+            f"Reasoning latency: {reasoning_latency_ms:.3f} ms, "
             f"Parse latency: {parse_latency_ms:.3f} ms"
         )
         print(f"Step latency: {step_latency_ms:.3f} ms")
 
-    print("\n=== Finished all iterations (text-only simulation) ===")
+    print("\n=== Finished all iterations ===")
     print(
-        f"Input wait latency: {avg(input_wait_latency_list):.3f} ms, "
+        f"Prompt build latency: {avg(prompt_build_latency_list):.3f} ms, "
+        f"Reasoning latency: {avg(reasoning_latency_list):.3f} ms, "
         f"Parse latency: {avg(parse_latency_list):.3f} ms, "
         f"End-to-end latency: {avg(end_to_end_latency_list):.3f} ms"
     )
@@ -118,26 +220,14 @@ if __name__ == "__main__":
         "--task",
         type=str,
         default="Search papers on Mobile GUI Agent on Google Scholar.",
-        help="Only used when built-in simulated LLM outputs are selected.",
+        help="Task instruction for AndroidWorld-like prompt simulation.",
     )
     parser.add_argument("--max_itr", type=int, default=10, help="Maximum benchmark iterations.")
     parser.add_argument(
-        "--llm_text",
-        type=str,
-        default="",
-        help="Direct LLM output text as input for parsing.",
-    )
-    parser.add_argument(
-        "--llm_text_file",
-        type=str,
-        default="",
-        help="Optional file path containing one LLM output per line (or JSONL with llm_text field).",
-    )
-    parser.add_argument(
-        "--input_wait_ms",
+        "--reasoning_sleep_sec",
         type=float,
         default=0.0,
-        help="Simulated waiting time before receiving each LLM text input.",
+        help="Optional extra wait before each llama.cpp request.",
     )
     parser.add_argument(
         "--output_json",
@@ -145,7 +235,20 @@ if __name__ == "__main__":
         default="",
         help="Optional output JSON file for step-level records.",
     )
+    parser.add_argument(
+        "--screenshot_path",
+        type=str,
+        default="./screenshot.png",
+        help="Input screenshot path.",
+    )
+    parser.add_argument(
+        "--llama_api_url",
+        type=str,
+        default="http://localhost:8100/v1/chat/completions",
+        help="llama.cpp OpenAI-compatible endpoint.",
+    )
+    parser.add_argument("--temperature", type=float, default=0.0, help="Sampling temperature.")
+    parser.add_argument("--max_tokens", type=int, default=256, help="Max new tokens per request.")
     args = parser.parse_args()
 
     run_text_only_sim(args)
-
