@@ -167,10 +167,10 @@ if __name__ == "__main__":
     parser.add_argument(
         "--screenshot_path",
         type=str,
-        default="./screenshot.png",
+        default="./resized_screenshot.png",
         help="Input screenshot path (default: repo-root screenshot.png).",
     )
-    parser.add_argument(
+    parser.add_argument( 
         "--llama_api_url",
         type=str,
         default="http://localhost:8100/v1/chat/completions",

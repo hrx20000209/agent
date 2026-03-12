@@ -227,3 +227,25 @@ def call_llama_cpp_with_image(
         )
     except Exception as exc:
         raise RuntimeError(f"llama.cpp request failed at {api_url}: {exc}") from exc
+
+
+def call_llama_cpp_text_only(
+    system_prompt: str,
+    user_prompt: str,
+    api_url: str,
+    temperature: float = 0.0,
+    max_tokens: int = 256,
+) -> str:
+    chat = [
+        ["system", [{"type": "text", "text": system_prompt}]],
+        ["user", [{"type": "text", "text": user_prompt}]],
+    ]
+    try:
+        return inference_chat_llama_cpp(
+            chat,
+            api_url=api_url,
+            temperature=temperature,
+            max_tokens=max_tokens,
+        )
+    except Exception as exc:
+        raise RuntimeError(f"llama.cpp text-only request failed at {api_url}: {exc}") from exc
