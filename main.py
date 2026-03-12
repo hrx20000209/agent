@@ -242,7 +242,7 @@ def run_single_step_agent(args):
 
         # --- Single-step reasoning ---
         explorer.start(
-            max_steps=10,
+            max_steps=6,
             max_depth=2,
             leaf_width=3,
             time_budget_sec=(args.explore_time_budget_sec if args.explore_time_budget_sec > 0 else None),
@@ -411,8 +411,8 @@ def run_single_step_agent(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    task = "Search papers on Mobile GUI Agent on Google Scholar."
-    # task = "Record an audio clip using Audio Recorder app and save it."
+    task = "Search “New York weather” in Chrome."
+    # task = "Search for attractions in Los Angeles in Trip App and open the first attraction."
     # task = "Run the stopwatch"
     parser.add_argument("--task", type=str, default=task,
                         help="User instruction for the single-step agent")

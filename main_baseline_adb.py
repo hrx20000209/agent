@@ -188,7 +188,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--task",
         type=str,
-        default="Search for attractions in Los Angeles in Trip App and open the first attraction.",
+        default="Open the setting and turn off Bluetooth.",
         help="User instruction for the baseline run.",
     )
     parser.add_argument("--max_itr", type=int, default=10, help="Maximum benchmark iterations.")
@@ -211,7 +211,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--reasoning_sleep_sec",
         type=float,
-        default=0.8,
+            default=19,
         help="Extra sleep added to each step reasoning to simulate real inference latency.",
     )
     parser.add_argument(
