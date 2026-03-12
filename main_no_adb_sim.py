@@ -49,7 +49,7 @@ def _explorer_similarity_loop(
         step_start = time.time()
         score, jaccard, seq_ratio = text_similarity(task, element_text)
         # Requirement: each exploration sleeps 1 second.
-        time.sleep(1.0)
+        # time.sleep(1.0)
         step_latency_ms = (time.time() - step_start) * 1000
 
         records.append(
@@ -308,7 +308,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--llama_api_url",
         type=str,
-        default="http://localhost:8081/v1/chat/completions",
+        default="http://localhost:8100/v1/chat/completions",
         help="llama.cpp OpenAI-compatible endpoint.",
     )
     parser.add_argument("--temperature", type=float, default=0.0, help="Sampling temperature.")

@@ -173,7 +173,7 @@ if __name__ == "__main__":
     parser.add_argument( 
         "--llama_api_url",
         type=str,
-        default="http://localhost:8081/v1/chat/completions",
+        default="http://localhost:8100/v1/chat/completions",
         help="llama.cpp OpenAI-compatible endpoint.",
     )
     parser.add_argument("--temperature", type=float, default=0.0, help="Sampling temperature.")
