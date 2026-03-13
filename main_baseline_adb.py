@@ -188,7 +188,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--task",
         type=str,
-        default="Open the setting and turn off Bluetooth.",
+        default="Open the stopwatch.",
         help="User instruction for the baseline run.",
     )
     parser.add_argument("--max_itr", type=int, default=10, help="Maximum benchmark iterations.")
@@ -211,7 +211,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--reasoning_sleep_sec",
         type=float,
-            default=19,
+            default=10,
         help="Extra sleep added to each step reasoning to simulate real inference latency.",
     )
     parser.add_argument(
