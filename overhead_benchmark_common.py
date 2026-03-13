@@ -53,6 +53,13 @@ def _safe_mean(values: List[float]) -> Optional[float]:
     return float(sum(vals) / len(vals)) if vals else None
 
 
+def _safe_float(value: Any) -> Optional[float]:
+    try:
+        return float(value)
+    except Exception:
+        return None
+
+
 def _history_to_prompt_text(history: List[str], max_items: int = 8) -> str:
     if not history:
         return "None"
@@ -185,6 +192,112 @@ def _extract_jtop_stats(stats: Dict[str, Any]) -> Tuple[Optional[float], Optiona
     return power_w, ram_used_mb
 
 
+def _extract_jtop_power_w(power_info: Any) -> Optional[float]:
+    if not isinstance(power_info, dict):
+        return None
+
+    for total_key in ("all", "ALL", "tot", "TOT"):
+        total = power_info.get(total_key)
+        if isinstance(total, dict):
+            for key in ("power", "avg", "instant"):
+                value_mw = _safe_float(total.get(key))
+                if value_mw is not None:
+                    return float(value_mw) / 1000.0
+        elif total is not None:
+            value_w = _extract_power_w_from_text(total, key_hint=total_key)
+            if value_w is not None:
+                return value_w
+
+    rails = power_info.get("rail")
+    if isinstance(rails, dict):
+        rail_all = rails.get("all") or rails.get("ALL")
+        if isinstance(rail_all, dict):
+            for key in ("power", "avg", "instant"):
+                value_mw = _safe_float(rail_all.get(key))
+                if value_mw is not None:
+                    return float(value_mw) / 1000.0
+
+        for rail_name in ("VDD_IN", "POM_5V_IN"):
+            rail = rails.get(rail_name)
+            if not isinstance(rail, dict):
+                continue
+            for key in ("power", "avg", "instant"):
+                value_mw = _safe_float(rail.get(key))
+                if value_mw is not None:
+                    return float(value_mw) / 1000.0
+
+        rail_sum_mw = 0.0
+        rail_count = 0
+        for rail in rails.values():
+            if not isinstance(rail, dict):
+                continue
+            value_mw = _safe_float(rail.get("power"))
+            if value_mw is None:
+                value_mw = _safe_float(rail.get("avg"))
+            if value_mw is None:
+                continue
+            rail_sum_mw += float(value_mw)
+            rail_count += 1
+        if rail_count > 0:
+            return rail_sum_mw / 1000.0
+
+    return None
+
+
+def _extract_jtop_memory_mb(memory_info: Any) -> Optional[float]:
+    if not isinstance(memory_info, dict):
+        return None
+    ram = memory_info.get("RAM")
+    if not isinstance(ram, dict):
+        return None
+
+    used_value = _safe_float(ram.get("used"))
+    if used_value is not None:
+        # jtop.memory["RAM"]["used"] is reported in KB in the official API.
+        return float(used_value) / 1024.0
+
+    for key in ("used", "use", "shared", "cached"):
+        text_value = ram.get(key)
+        if text_value is None:
+            continue
+        raw = str(text_value)
+        match = re.search(r"(\d+(?:\.\d+)?)\s*/\s*(\d+(?:\.\d+)?)\s*MB", raw, flags=re.IGNORECASE)
+        if match:
+            return float(match.group(1))
+        match = re.search(r"(\d+(?:\.\d+)?)\s*MB", raw, flags=re.IGNORECASE)
+        if match:
+            return float(match.group(1))
+    return None
+
+
+def _extract_jtop_reader_metrics(reader: Any) -> Tuple[Optional[float], Optional[float]]:
+    power_w = None
+    system_used_mb = None
+
+    try:
+        power_w = _extract_jtop_power_w(getattr(reader, "power", None))
+    except Exception:
+        power_w = None
+
+    try:
+        system_used_mb = _extract_jtop_memory_mb(getattr(reader, "memory", None))
+    except Exception:
+        system_used_mb = None
+
+    if power_w is None or system_used_mb is None:
+        try:
+            stats = dict(getattr(reader, "stats", {}) or {})
+            stats_power_w, stats_ram_mb = _extract_jtop_stats(stats)
+            if power_w is None:
+                power_w = stats_power_w
+            if system_used_mb is None:
+                system_used_mb = stats_ram_mb
+        except Exception:
+            pass
+
+    return power_w, system_used_mb
+
+
 def _parse_tegrastats_line(line: str) -> Tuple[Optional[float], Optional[float]]:
     power_w = None
     ram_used_mb = None
@@ -301,64 +414,66 @@ class ResourceSampler:
             if ram_used_mb is not None:
                 self._latest_system_used_mb = ram_used_mb
 
-    def _sample_loop(self):
-        jetson_ctx = None
-        jetson_reader = None
+    def _append_sample(self, power_w: Optional[float], system_used_mb: Optional[float]):
+        if power_w is None:
+            power_w = self._latest_power_w
+        else:
+            self._latest_power_w = power_w
 
+        if system_used_mb is None:
+            system_used_mb = self._latest_system_used_mb
+        else:
+            self._latest_system_used_mb = system_used_mb
+
+        if system_used_mb is None:
+            system_used_mb = float(psutil.virtual_memory().used) / (1024.0 * 1024.0)
+
+        process_rss_mb = float(self.process.memory_info().rss) / (1024.0 * 1024.0)
+        sample = {
+            "ts": time.time(),
+            "power_w": power_w,
+            "process_rss_mb": process_rss_mb,
+            "system_used_mb": system_used_mb,
+        }
+        with self._lock:
+            self._samples.append(sample)
+
+    def _sample_loop(self):
         if self.use_jtop:
             try:
                 from jtop import jtop
 
-                jetson_ctx = jtop()
-                jetson_reader = jetson_ctx.__enter__()
                 self.backend = "jtop"
+                jtop_sample_count = 0
+                with jtop() as jetson_reader:
+                    while not self._stop_event.is_set():
+                        if not jetson_reader.ok():
+                            break
+                        try:
+                            power_w, system_used_mb = _extract_jtop_reader_metrics(jetson_reader)
+                        except Exception as exc:
+                            power_w = None
+                            system_used_mb = None
+                            if not self.backend_note:
+                                self.backend_note = f"jtop_read_failed: {exc}"
+                        self._append_sample(power_w=power_w, system_used_mb=system_used_mb)
+                        jtop_sample_count += 1
+                    if self._stop_event.is_set() or jtop_sample_count > 0:
+                        return
+                    if not self.backend_note:
+                        self.backend_note = "jtop_no_samples"
             except Exception as exc:
                 self.backend_note = f"jtop_unavailable: {exc}"
-                jetson_ctx = None
-                jetson_reader = None
 
-        if jetson_reader is None:
-            self._start_tegrastats()
-            if self.backend != "tegrastats":
-                self.backend = "psutil"
-                if not self.backend_note:
-                    self.backend_note = "power_metrics_unavailable"
+        self._start_tegrastats()
+        if self.backend != "tegrastats":
+            self.backend = "psutil"
+            if not self.backend_note:
+                self.backend_note = "power_metrics_unavailable"
 
         while not self._stop_event.is_set():
-            power_w = None
-            system_used_mb = None
-
-            if jetson_reader is not None:
-                try:
-                    stats = dict(getattr(jetson_reader, "stats", {}) or {})
-                    power_w, system_used_mb = _extract_jtop_stats(stats)
-                except Exception as exc:
-                    if not self.backend_note:
-                        self.backend_note = f"jtop_read_failed: {exc}"
-
-            if power_w is None:
-                power_w = self._latest_power_w
-            if system_used_mb is None:
-                system_used_mb = self._latest_system_used_mb
-            if system_used_mb is None:
-                system_used_mb = float(psutil.virtual_memory().used) / (1024.0 * 1024.0)
-
-            process_rss_mb = float(self.process.memory_info().rss) / (1024.0 * 1024.0)
-            sample = {
-                "ts": time.time(),
-                "power_w": power_w,
-                "process_rss_mb": process_rss_mb,
-                "system_used_mb": system_used_mb,
-            }
-            with self._lock:
-                self._samples.append(sample)
+            self._append_sample(power_w=self._latest_power_w, system_used_mb=self._latest_system_used_mb)
             time.sleep(self.sample_interval_sec)
-
-        if jetson_ctx is not None:
-            try:
-                jetson_ctx.__exit__(None, None, None)
-            except Exception:
-                pass
 
 
 def _run_threaded(target, kwargs: Dict[str, Any]) -> Tuple[threading.Thread, Dict[str, Any]]:
@@ -517,7 +632,7 @@ def add_common_args(parser):
         default="Search attractions in Los Angeles in Trip app and open the first attraction.",
     )
     parser.add_argument("--screenshot_path", type=str, default="./resized_screenshot.png")
-    parser.add_argument("--rounds", type=int, default=10)
+    parser.add_argument("--rounds", type=int, default=5)
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--max_tokens", type=int, default=256)
     parser.add_argument("--llama_api_url", type=str, default="http://localhost:8100/v1/chat/completions")
