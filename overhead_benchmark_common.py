@@ -654,14 +654,16 @@ def add_explore_args(parser):
     parser.add_argument("--candidate_pool_size", type=int, default=64)
     parser.add_argument("--embedding_dim", type=int, default=192)
     parser.add_argument("--top_k", type=int, default=5)
-    parser.add_argument("--worker_sleep_sec", type=float, default=0.01)
+    if not any("--worker_sleep_sec" in action.option_strings for action in parser._actions):
+        parser.add_argument("--worker_sleep_sec", type=float, default=0.01)
     return parser
 
 
 def add_phash_args(parser):
     parser.add_argument("--phash_repeats", type=int, default=3)
     parser.add_argument("--phash_threshold", type=int, default=8)
-    parser.add_argument("--worker_sleep_sec", type=float, default=0.01)
+    if not any("--worker_sleep_sec" in action.option_strings for action in parser._actions):
+        parser.add_argument("--worker_sleep_sec", type=float, default=0.01)
     return parser
 
 
@@ -671,7 +673,7 @@ def run_overhead_case(args, case_name: str):
     sampler.start()
 
     synthetic_corpus = None
-    if case_name == "explore":
+    if case_name in ("explore", "all"):
         synthetic_corpus = _generate_synthetic_elements(args.task, count=args.candidate_pool_size)
 
     steps: List[Dict[str, Any]] = []
@@ -681,8 +683,7 @@ def run_overhead_case(args, case_name: str):
             iter_start = time.time()
             resource_mark = sampler.mark()
 
-            worker_thread = None
-            worker_box: Dict[str, Any] = {}
+            worker_jobs: List[Tuple[str, threading.Thread, Dict[str, Any]]] = []
             if case_name == "explore":
                 worker_thread, worker_box = _run_threaded(
                     _run_explore_worker,
@@ -695,6 +696,7 @@ def run_overhead_case(args, case_name: str):
                         "per_round_sleep_sec": args.worker_sleep_sec,
                     },
                 )
+                worker_jobs.append(("explore", worker_thread, worker_box))
             elif case_name == "rollback":
                 worker_thread, worker_box = _run_threaded(
                     _run_threaded_rollback,
@@ -705,11 +707,36 @@ def run_overhead_case(args, case_name: str):
                         "per_round_sleep_sec": args.worker_sleep_sec,
                     },
                 )
+                worker_jobs.append(("rollback", worker_thread, worker_box))
             elif case_name == "selection":
                 worker_thread, worker_box = _run_threaded(
                     _run_noop_worker,
                     {"idle_sleep_sec": 0.0},
                 )
+                worker_jobs.append(("noop", worker_thread, worker_box))
+            elif case_name == "all":
+                worker_thread, worker_box = _run_threaded(
+                    _run_explore_worker,
+                    {
+                        "task": args.task,
+                        "corpus": synthetic_corpus or [],
+                        "worker_rounds": args.worker_rounds,
+                        "embedding_dim": args.embedding_dim,
+                        "top_k": args.top_k,
+                        "per_round_sleep_sec": args.worker_sleep_sec,
+                    },
+                )
+                worker_jobs.append(("explore", worker_thread, worker_box))
+                worker_thread, worker_box = _run_threaded(
+                    _run_threaded_rollback,
+                    {
+                        "screenshot_path": args.screenshot_path,
+                        "repeats": args.phash_repeats,
+                        "threshold": args.phash_threshold,
+                        "per_round_sleep_sec": args.worker_sleep_sec,
+                    },
+                )
+                worker_jobs.append(("rollback", worker_thread, worker_box))
 
             query_start = time.time()
             llm_output = call_llama_cpp_with_image(
@@ -729,13 +756,28 @@ def run_overhead_case(args, case_name: str):
             except Exception as exc:
                 parse_error = str(exc)
 
-            if worker_thread is not None:
+            worker_results: Dict[str, Any] = {}
+            worker_errors: Dict[str, Any] = {}
+            for worker_name, worker_thread, worker_box in worker_jobs:
                 worker_thread.join()
-            worker_result = worker_box.get("result")
-            worker_error = worker_box.get("error")
+                if "result" in worker_box:
+                    worker_results[worker_name] = worker_box.get("result")
+                if "error" in worker_box:
+                    worker_errors[worker_name] = worker_box.get("error")
+
+            worker_result = None
+            worker_error = None
+            if len(worker_results) == 1:
+                worker_result = list(worker_results.values())[0]
+            elif worker_results:
+                worker_result = worker_results
+            if len(worker_errors) == 1:
+                worker_error = list(worker_errors.values())[0]
+            elif worker_errors:
+                worker_error = worker_errors
 
             selection_result = None
-            if case_name == "selection":
+            if case_name in ("selection", "all"):
                 selection_result = _run_selection_verification(
                     screenshot_path=args.screenshot_path,
                     repeats=args.phash_repeats,
@@ -755,6 +797,8 @@ def run_overhead_case(args, case_name: str):
                 "parse_error": parse_error,
                 "worker_result": worker_result,
                 "worker_error": worker_error,
+                "worker_results": worker_results,
+                "worker_errors": worker_errors,
                 "selection_result": selection_result,
                 "resources": resource_stats,
             }
