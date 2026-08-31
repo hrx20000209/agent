@@ -198,21 +198,58 @@ python main.py --graph_memory_budget_mb 1
 
 ## Physical-device memory/throughput evaluation
 
-The evaluator rejects emulators by default.
+The evaluator rejects emulators by default. Budgets use live Python graph
+objects by default, not serialized JSON. Each budget/repeat runs in a fresh
+Python process, and budget order is randomized to remove warm-up/order bias.
+
+Recommended physical-phone system run (no model workload):
 
 ```bash
 python evaluate_graph_memory_adb.py \
   --adb_serial YOUR_PHYSICAL_SERIAL \
-  --duration_sec 8 \
-  --budgets_mb 0.001,0.005,0 \
+  --duration_sec 60 \
+  --budgets_mb 1,8,32 \
+  --budget_size_metric python \
+  --preload_to_budget \
+  --repeats 5 \
   --adb_retries 3 \
-  --output_dir evaluation_results/physical_phone_8s
+  --output_dir evaluation_results/physical_phone_system_60s
 ```
+
+`--preload_to_budget` fills a realistic synthetic node/edge chain to 90% of
+each positive budget before real ADB exploration starts. This makes the first
+probe see the intended cache pressure instead of waiting for thousands of
+real probes to build a multi-megabyte graph.
+
+Run with one real OpenAI-compatible model request loop in parallel:
+
+```bash
+python evaluate_graph_memory_adb.py \
+  --adb_serial YOUR_PHYSICAL_SERIAL \
+  --duration_sec 60 \
+  --budgets_mb 1,8,32 \
+  --preload_to_budget \
+  --repeats 5 \
+  --inference_warmup_runs 1 \
+  --inference_command "python inference_once_http.py --api_url http://127.0.0.1:8100/v1/chat/completions --model qwen2.5vl --image screenshot.png" \
+  --output_dir evaluation_results/physical_phone_system_with_inference_60s
+```
+
+Use the same fixed image/prompt/model/token limit across every run. The
+evaluator measures the command wall time and reports mean/p50/p95 inference
+latency together with probe throughput. It does not interpret command output.
 
 Outputs:
 
-- `samples.jsonl`: node/edge counts, Python deep size, serialized size, process RSS and pruning at each probe.
-- `summary.json` / `summary.csv`: fixed-window probe throughput per budget, rollback outcomes, device `MemAvailable`, foreground App PSS and memory slopes.
+- `samples.jsonl`: per-probe node/edge counts, live/snapshot/total Python graph
+  bytes, serialized bytes, process RSS, pruning, probe interval and
+  selection/action/screenshot/UI-tree latency breakdown.
+- `summary.json` / `summary.csv`: every individual budget/repeat run.
+- `aggregate.csv`: per-budget mean and standard deviation across repeats.
+- `summary.json.system_effects`: fitted changes in probe throughput, probe
+  latency, inference latency and snapshot-build time per additional graph MB.
+- Device measurements include `MemAvailable`, foreground App PSS, memory PSI,
+  swap-in/out and major page faults.
 
 `--allow_emulator` exists only for explicitly non-final smoke testing.
 

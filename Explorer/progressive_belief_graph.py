@@ -13,6 +13,7 @@ import json
 import math
 import os
 import re
+import sys
 import threading
 from dataclasses import asdict, dataclass, field
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple
@@ -33,6 +34,24 @@ def _mean(total: float, count: int) -> Optional[float]:
 
 def _tokens(text: str) -> List[str]:
     return re.findall(r"[a-z0-9_\-]{2,}|[\u4e00-\u9fff]{2,}", (text or "").lower())
+
+
+def _deep_size(value: Any, seen: Optional[Set[int]] = None) -> int:
+    """Approximate live Python heap bytes without double-counting objects."""
+    if seen is None:
+        seen = set()
+    object_id = id(value)
+    if object_id in seen:
+        return 0
+    seen.add(object_id)
+    size = sys.getsizeof(value)
+    if isinstance(value, dict):
+        size += sum(_deep_size(k, seen) + _deep_size(v, seen) for k, v in value.items())
+    elif isinstance(value, (list, tuple, set, frozenset)):
+        size += sum(_deep_size(item, seen) for item in value)
+    elif hasattr(value, "__dict__"):
+        size += _deep_size(vars(value), seen)
+    return size
 
 
 @dataclass(frozen=True)
@@ -543,20 +562,55 @@ class ProgressiveBeliefGraph:
             }
             return len(json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
 
-    def prune_to_budget(self, max_bytes: int, protected_node_ids: Sequence[str] = ()) -> Dict[str, int]:
+    def approximate_python_bytes(self) -> int:
+        """Approximate the graph's actual in-process Python cache footprint.
+
+        This includes lookup indexes in addition to nodes and edges.  It is
+        intentionally separate from ``approximate_serialized_bytes``: a JSON
+        budget is useful for persistence, while a system-memory experiment
+        must constrain the live objects that contribute to process RSS.
+        """
+        with self._lock:
+            return _deep_size({
+                "generation": self.generation,
+                "nodes": self.nodes,
+                "edges": self.edges,
+                "blocked_recovery_contexts": self.blocked_recovery_contexts,
+                "signature_to_node": self._signature_to_node,
+                "edge_key_to_id": self._edge_key_to_id,
+            })
+
+    def prune_to_budget(
+        self,
+        max_bytes: int,
+        protected_node_ids: Sequence[str] = (),
+        size_metric: str = "serialized",
+    ) -> Dict[str, int]:
         """Enforce an approximate graph cache budget with value-aware LRU pruning.
 
         Verified/reusable and recent edges survive longest.  The method never
         removes protected nodes (normally the current/recent path).
         """
+        if size_metric not in {"serialized", "python"}:
+            raise ValueError(f"Unsupported graph budget metric: {size_metric}")
+        measure = (
+            self.approximate_python_bytes
+            if size_metric == "python"
+            else self.approximate_serialized_bytes
+        )
         budget = max(0, int(max_bytes))
         if budget <= 0:
-            return {"pruned_edges": 0, "pruned_nodes": 0, "bytes": self.approximate_serialized_bytes()}
+            return {
+                "pruned_edges": 0,
+                "pruned_nodes": 0,
+                "bytes": measure(),
+                "size_metric": size_metric,
+            }
         protected = set(protected_node_ids or [])
         removed_edges = 0
         removed_nodes = 0
         with self._lock:
-            while self.approximate_serialized_bytes() > budget and self.edges:
+            while measure() > budget and self.edges:
                 def retention(edge: GraphEdge) -> Tuple[float, int]:
                     status_bonus = {
                         "REUSABLE": 4.0, "VERIFIED": 3.0, "INFERENCE_ALIGNED": 2.0,
@@ -585,7 +639,7 @@ class ProgressiveBeliefGraph:
             ]
             orphan_ids.sort(key=lambda nid: self.nodes[nid].last_updated_generation)
             for node_id in orphan_ids:
-                if self.approximate_serialized_bytes() <= budget:
+                if measure() <= budget:
                     break
                 node = self.nodes.pop(node_id)
                 self._signature_to_node.pop(node.signature, None)
@@ -593,7 +647,8 @@ class ProgressiveBeliefGraph:
         return {
             "pruned_edges": removed_edges,
             "pruned_nodes": removed_nodes,
-            "bytes": self.approximate_serialized_bytes(),
+            "bytes": measure(),
+            "size_metric": size_metric,
         }
 
     @classmethod

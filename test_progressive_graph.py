@@ -101,6 +101,7 @@ class ProgressiveGraphTests(unittest.TestCase):
 
     def test_roundtrip_and_budget(self):
         self.add_edge()
+        self.assertGreater(self.graph.approximate_python_bytes(), 0)
         with tempfile.TemporaryDirectory() as td:
             path = os.path.join(td, "graph.json")
             self.graph.save(path)
@@ -109,6 +110,22 @@ class ProgressiveGraphTests(unittest.TestCase):
             self.assertEqual(len(loaded.edges), len(self.graph.edges))
         result = self.graph.prune_to_budget(1, protected_node_ids=[self.src])
         self.assertIn("bytes", result)
+
+    def test_python_heap_budget_is_enforced(self):
+        self.add_edge()
+        before = self.graph.approximate_python_bytes()
+        result = self.graph.prune_to_budget(
+            max(1, before // 2),
+            protected_node_ids=[self.src],
+            size_metric="python",
+        )
+        self.assertEqual(result["size_metric"], "python")
+        self.assertGreaterEqual(result["pruned_edges"], 1)
+        self.assertLess(self.graph.approximate_python_bytes(), before)
+
+    def test_unknown_budget_metric_is_rejected(self):
+        with self.assertRaises(ValueError):
+            self.graph.prune_to_budget(1024, size_metric="rss")
 
 
 if __name__ == "__main__":
