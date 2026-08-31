@@ -17,3 +17,5 @@ datasets
 modelscope
 matplotlib
 dashscope
+Pillow
+psutil
