@@ -1,0 +1,2 @@
+{"type": "rollback_root_snapshot", "screenshot": "rollback/root.png", "xml": "rollback/root.xml", "source": "adb_live fallback=FileNotFoundError", "trigger": "memory_evaluation"}
+{"type": "budget", "reason": "memory_evaluation", "max_steps": 5, "max_depth": 2, "leaf_width": 2, "max_branches": 4, "boost": 0, "time_budget_sec": 0.0}

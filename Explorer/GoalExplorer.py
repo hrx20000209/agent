@@ -3,10 +3,11 @@ import time
 import os
 import shutil
 import re
+import hashlib
+import json
 
 import numpy as np
 from PIL import Image
-from sentence_transformers import SentenceTransformer
 
 from MobileAgentE.controller import get_a11y_tree, get_screenshot, back, home
 from agents.utils import execute_action
@@ -26,6 +27,75 @@ from Explorer.utils import (
     check_same_image,
     phash,
 )
+from Explorer.progressive_belief_graph import (
+    GraphSnapshot,
+    ProgressiveBeliefGraph,
+    UIStateDescriptor,
+    describe_ui_state,
+)
+from Explorer.state_graph_information import (
+    InformationNeed,
+    MatrixAblations,
+    PredictiveElementScorer,
+    StateGraphInformationMatrix,
+    element_identity,
+    parse_reasoning_prior,
+)
+
+
+def log_event(label, message=""):
+    ts = time.strftime("%H:%M:%S")
+    suffix = f" {message}" if message else ""
+    print(f"[{ts}] {label}{suffix}", flush=True)
+
+
+class HashingTextEmbedder:
+    """Offline lexical embedder used when sentence-transformer weights are unavailable."""
+
+    def __init__(self, dim=384):
+        self.dim = int(dim)
+
+    @staticmethod
+    def _tokens(text):
+        text = (text or "").lower()
+        tokens = re.findall(r"[a-z0-9_\-]{2,}|[\u4e00-\u9fff]", text)
+        compact = re.sub(r"\s+", "", text)
+        tokens.extend(compact[i:i + 2] for i in range(max(0, len(compact) - 1)))
+        return [t for t in tokens if t.strip()]
+
+    def _encode_one(self, text):
+        vec = np.zeros(self.dim, dtype=np.float32)
+        for token in self._tokens(text):
+            digest = hashlib.blake2b(token.encode("utf-8", errors="ignore"), digest_size=8).digest()
+            idx = int.from_bytes(digest[:4], "little") % self.dim
+            sign = 1.0 if (digest[4] & 1) else -1.0
+            vec[idx] += sign
+        norm = float(np.linalg.norm(vec))
+        if norm > 0:
+            vec /= norm
+        return vec
+
+    def encode(self, texts):
+        return np.vstack([self._encode_one(t) for t in texts])
+
+
+def load_embedding_model(model_name):
+    model_name = str(model_name or "").strip()
+    if model_name.lower() in {"hash", "hashing", "offline"}:
+        print("[Explorer:init] embedding_model=hashing-offline")
+        return HashingTextEmbedder()
+    try:
+        from sentence_transformers import SentenceTransformer
+
+        model = SentenceTransformer(model_name, local_files_only=True)
+        print(f"[Explorer:init] embedding_model={model_name} local_files_only=True")
+        return model
+    except Exception as exc:
+        print(
+            "[Explorer:init] sentence-transformer unavailable locally; "
+            f"fallback to hashing-offline. reason={type(exc).__name__}: {exc}"
+        )
+        return HashingTextEmbedder()
 
 
 class A11yTreeOnlineExplorer:
@@ -77,6 +147,8 @@ class A11yTreeOnlineExplorer:
         self.rollback_done_event = rollback_done_event
         self.rollback_lock = threading.Lock()
         self.thread = None
+        self.worker_start_time = None
+        self.worker_done_event = threading.Event()
 
         self.explore_vis_dir = explore_vis_dir
         self.explore_debug_vis_dir = os.path.join(self.explore_vis_dir, "debug")
@@ -84,8 +156,11 @@ class A11yTreeOnlineExplorer:
         self.explore_screenshot_path = "screenshot/explore_screenshot.png"
         self.rollback_screenshot_path = "rollback/explore_screenshot.png"
         self.rollback_root_path = "rollback/root.png"
+        self.rollback_root_xml_path = "rollback/root.xml"
+        self.rollback_current_xml_path = "rollback/current.xml"
         self.leaf_before_screenshot_path = "rollback/leaf_before.png"
         self.leaf_after_screenshot_path = "rollback/leaf_after.png"
+        self.graph_observation_xml_path = "rollback/graph_observation.xml"
         self.rollback_debug_dir = "explore_debug"
         self.vis_step = 0
         self.debug_step = 0
@@ -107,12 +182,15 @@ class A11yTreeOnlineExplorer:
         ensure_dir(os.path.dirname(self.explore_screenshot_path))
         ensure_dir(os.path.dirname(self.rollback_screenshot_path))
         ensure_dir(os.path.dirname(self.rollback_root_path))
+        ensure_dir(os.path.dirname(self.rollback_root_xml_path))
+        ensure_dir(os.path.dirname(self.rollback_current_xml_path))
         ensure_dir(os.path.dirname(self.leaf_before_screenshot_path))
         ensure_dir(os.path.dirname(self.leaf_after_screenshot_path))
+        ensure_dir(os.path.dirname(self.graph_observation_xml_path))
         self.log_path = os.path.join(self.explore_vis_dir, "explore_log.jsonl")
 
         # --- embedding model ---
-        self.embed_model = SentenceTransformer(embed_model_name)
+        self.embed_model = load_embedding_model(embed_model_name)
         self.emb_cache = {}
 
         # precompute goal embedding
@@ -162,6 +240,65 @@ class A11yTreeOnlineExplorer:
         self.iteration_candidates = []
         # Last clue generation diagnostics for debugging k->k+1 matching.
         self.last_clue_debug = {}
+
+        # Progressive graph integration.  These are refreshed at the start of
+        # every reasoning step; the snapshot remains frozen for the whole step.
+        self.belief_graph = None
+        self.graph_snapshot = GraphSnapshot(0, {}, {})
+        self.graph_current_node_id = None       # read id in frozen snapshot
+        self.graph_live_current_node_id = None  # write id in live graph
+        self.graph_root_node_id = None
+        self.graph_root_live_node_id = None
+        self.graph_current_state = None
+        self.graph_root_state = None
+        self.information_need = parse_reasoning_prior("", self.task_text)
+        self.exploration_policy = "information_need"
+        self.matrix_ablations = MatrixAblations()
+        self.matrix_builder = StateGraphInformationMatrix()
+        self.predictive_scorer = PredictiveElementScorer()
+        self.recent_graph_nodes = []
+        self.task_id = "default"
+        self.source_step = 0
+        self.candidate_log_path = os.path.join(self.explore_vis_dir, "candidate_matrix.jsonl")
+        self._last_matrix_rows = []
+        self._last_candidate_ranking = []
+        self._root_candidate_ranking = []
+        self._pending_probe_edge_ids = []
+        self.graph_probe_ingest_count = 0
+
+    def prepare_graph_iteration(
+        self,
+        belief_graph: ProgressiveBeliefGraph,
+        graph_snapshot: GraphSnapshot,
+        current_node_id,
+        live_current_node_id,
+        current_state: UIStateDescriptor,
+        information_need: InformationNeed,
+        step: int,
+        task_id: str,
+        exploration_policy: str = "graph_matrix",
+        matrix_ablations: MatrixAblations = MatrixAblations(),
+        recent_nodes=None,
+    ):
+        """Bind one frozen read generation and one live write generation."""
+        self.belief_graph = belief_graph
+        self.graph_snapshot = graph_snapshot
+        self.graph_current_node_id = current_node_id
+        self.graph_live_current_node_id = live_current_node_id
+        self.graph_root_node_id = current_node_id
+        self.graph_root_live_node_id = live_current_node_id
+        self.graph_current_state = current_state
+        self.graph_root_state = current_state
+        self.information_need = information_need
+        self.exploration_policy = str(exploration_policy or "information_need")
+        self.matrix_ablations = matrix_ablations
+        self.recent_graph_nodes = list(recent_nodes or [])
+        self.source_step = int(step)
+        self.task_id = str(task_id or "default")
+        self._last_matrix_rows = []
+        self._last_candidate_ranking = []
+        self._root_candidate_ranking = []
+        self._pending_probe_edge_ids = []
 
     def _decay_visit_counts(self, decay=0.92):
         if not self.bound_visit_count:
@@ -254,6 +391,7 @@ class A11yTreeOnlineExplorer:
         trigger_reason=None,
     ):
         self.stop_event.clear()
+        self.worker_done_event.clear()
         reason = trigger_reason or self._infer_explore_trigger_reason()
         self._explore_trigger_reason = str(reason)
         self.thread = threading.Thread(
@@ -265,11 +403,15 @@ class A11yTreeOnlineExplorer:
 
     @staticmethod
     def _tokenize(text):
-        return [t for t in re.findall(r"[a-z0-9_\\-]{2,}", (text or "").lower())]
+        text = (text or "").lower()
+        tokens = re.findall(r"[a-z0-9_\\-]{2,}|[\u4e00-\u9fff]{2,}|[\u4e00-\u9fff]", text)
+        compact_cjk = "".join(re.findall(r"[\u4e00-\u9fff]", text))
+        tokens.extend(compact_cjk[i:i + 2] for i in range(max(0, len(compact_cjk) - 1)))
+        return [t for t in tokens if t]
 
     @staticmethod
     def _normalize_text(text):
-        return re.sub(r"[^a-z0-9_\\-]+", " ", (text or "").lower()).strip()
+        return re.sub(r"[^a-z0-9_\-\u4e00-\u9fff]+", " ", (text or "").lower()).strip()
 
     @staticmethod
     def _node_bounds_key(node):
@@ -290,7 +432,9 @@ class A11yTreeOnlineExplorer:
         out = []
         seen = set()
         for tok in A11yTreeOnlineExplorer._tokenize(merged):
-            if len(tok) < 3 or tok in seen:
+            if not re.search(r"[\u4e00-\u9fff]", tok) and len(tok) < 3:
+                continue
+            if tok in seen:
                 continue
             seen.add(tok)
             out.append(tok)
@@ -381,6 +525,24 @@ class A11yTreeOnlineExplorer:
         return any(tok in merged for tok in noise_tokens) or "statusbar" in cls
 
     @staticmethod
+    def _is_launcher_page(root):
+        for node in getattr(root, "children", None) or []:
+            pkg = (getattr(node, "package", "") or "").lower()
+            rid = (getattr(node, "resource_id", "") or "").lower()
+            if "launcher" in pkg or "launcher" in rid:
+                return True
+        return False
+
+    @staticmethod
+    def _is_launcher_recovery_node(node):
+        merged = A11yTreeOnlineExplorer._node_merged_text(node)
+        recovery_tokens = {
+            "search", "finder", "app search", "apps", "app drawer",
+            "搜索", "查找", "应用程序", "所有应用程序",
+        }
+        return any(tok in merged for tok in recovery_tokens)
+
+    @staticmethod
     def _is_keyboard_key_node(node):
         text = (getattr(node, "text", "") or "").strip()
         rid = (getattr(node, "resource_id", "") or "").lower()
@@ -455,6 +617,9 @@ class A11yTreeOnlineExplorer:
             if self._is_risky_node(node):
                 stats["removed_risky"] += 1
                 continue
+            if self._is_back_navigation_node(node) and not allow_back_navigation:
+                stats["removed_risky"] += 1
+                continue
             if self._is_meaningless_node(node, intent_flags=intent_flags):
                 stats["removed_meaningless"] += 1
                 continue
@@ -485,13 +650,28 @@ class A11yTreeOnlineExplorer:
             filtered.append(node)
 
         if not filtered:
-            # Fallback: keep all non-destructive clickable nodes to avoid dead exploration.
-            filtered = [n for n in candidates if not self._is_risky_node(n)]
+            if self.collection_mode:
+                # Collection/demo mode may still probe broad non-destructive nodes for coverage.
+                filtered = [
+                    n for n in candidates
+                    if not self._is_risky_node(n)
+                    and (allow_back_navigation or not self._is_back_navigation_node(n))
+                ]
+            else:
+                # Task mode should not click arbitrary unrelated UI just to keep exploration alive.
+                # On launcher/home, the search/app-drawer affordance is still useful because it
+                # can reveal the requested app when the target icon is not on the current page.
+                if self._is_launcher_page(root):
+                    filtered = [n for n in candidates if self._is_launcher_recovery_node(n)]
+                else:
+                    filtered = []
 
         if self.collection_mode and len(filtered) < 3:
             relaxed = []
             for node in candidates:
                 if self._is_risky_node(node):
+                    continue
+                if self._is_back_navigation_node(node) and not allow_back_navigation:
                     continue
                 if self._is_system_ui_noise_node(node):
                     continue
@@ -678,6 +858,19 @@ class A11yTreeOnlineExplorer:
             "is_clickable",
             "effect_ema",
             "node_txt",
+            "candidate_id",
+            "element_identity",
+            "rank",
+            "has_exact_history",
+            "edge_status",
+            "confidence",
+            "path_probability",
+            "expected_information_gain",
+            "estimated_recoverability",
+            "expected_total_exploration_cost",
+            "predictive_value",
+            "final_exploration_score",
+            "feasible",
         ]
         out = {}
         for k in keep_keys:
@@ -699,6 +892,8 @@ class A11yTreeOnlineExplorer:
         )
         if not picked:
             return None, None, None, n_candidates, None
+        if self.exploration_policy == "graph_matrix":
+            semantic_low = 0.0
         selected, _ = self._select_depth_candidate(
             picked,
             semantic_low=semantic_low,
@@ -708,6 +903,9 @@ class A11yTreeOnlineExplorer:
         if selected is None:
             return None, None, None, n_candidates, None
         node, score, node_txt, score_detail = selected
+        candidate_id = (score_detail or {}).get("candidate_id")
+        if candidate_id:
+            self._log_candidate_selection(candidate_id)
         return node, float(score), node_txt, n_candidates, score_detail
 
     def _pick_topk_nodes(self, root, k, avoid_bounds=None, hard_avoid=False):
@@ -731,6 +929,69 @@ class A11yTreeOnlineExplorer:
         if n_candidates == 0:
             return [], 0
 
+        if self.exploration_policy == "graph_matrix" and self.belief_graph is not None:
+            device_width = max(1, int(round(float(self.width or 1) * float(self.coord_scale))))
+            device_height = max(1, int(round(float(self.height or 1) * float(self.coord_scale))))
+            current_state = self.graph_current_state or describe_ui_state(root, len(candidates))
+            rows = self.matrix_builder.build(
+                current_state=current_state,
+                current_node_id=self.graph_current_node_id,
+                candidate_elements=candidates,
+                graph_snapshot=self.graph_snapshot,
+                information_need=self.information_need,
+                recovery_history=None,
+                recent_nodes=self.recent_graph_nodes,
+                width=device_width,
+                height=device_height,
+                blocked_recovery_contexts=self.belief_graph.blocked_recovery_contexts,
+                ablations=self.matrix_ablations,
+            )
+            ranked_rows = self.predictive_scorer.score(rows)
+            node_by_identity = {
+                element_identity(n, device_width, device_height, "click"): n
+                for n in candidates
+            }
+            scored = []
+            self._last_matrix_rows = ranked_rows
+            self._last_candidate_ranking = []
+            for rank, row in enumerate(ranked_rows, 1):
+                node = node_by_identity.get(row.element_identity)
+                if node is None:
+                    continue
+                detail = row.to_log_dict()
+                detail.update({
+                    "node": node,
+                    "node_txt": node_to_text(node) or row.nearby_context or "[icon_only]",
+                    "score": float(row.final_exploration_score),
+                    "similarity": float(max(row.target_match, row.unresolved_information_match, row.path_probability)),
+                    "rank": rank,
+                })
+                scored.append(detail)
+                self._last_candidate_ranking.append({
+                    "candidate_id": row.candidate_id,
+                    "element_identity": row.element_identity,
+                    "bounds": row.bounds,
+                    "rank": rank,
+                    "score": row.final_exploration_score,
+                })
+                log_row = row.to_log_dict()
+                log_row.update({
+                    "record_type": "candidate",
+                    "task_id": self.task_id,
+                    "step": self.source_step,
+                    "node_id": self.graph_current_node_id,
+                    "rank": rank,
+                    "selected_for_probe": False,
+                })
+                append_jsonl(self.candidate_log_path, log_row)
+            if self.graph_live_current_node_id == self.graph_root_live_node_id:
+                self._root_candidate_ranking = list(self._last_candidate_ranking)
+            scored = [s for s in scored if bool(s.get("feasible"))]
+            picked = []
+            for s in scored[:max(1, int(k))]:
+                picked.append((s["node"], float(s["score"]), s["node_txt"], s))
+            return picked, n_candidates
+
         scored = []
         seen_bounds = set()
         for n in candidates:
@@ -750,6 +1011,52 @@ class A11yTreeOnlineExplorer:
             picked.append((s["node"], float(s["score"]), s["node_txt"], s))
         return picked, n_candidates
 
+    def _log_candidate_selection(self, candidate_id):
+        for row in self._last_matrix_rows:
+            if row.candidate_id == candidate_id:
+                row.selected_for_probe = True
+                payload = row.to_log_dict()
+                payload.update({
+                    "record_type": "candidate_selection",
+                    "task_id": self.task_id,
+                    "step": self.source_step,
+                    "node_id": self.graph_current_node_id,
+                    "selected_for_probe": True,
+                })
+                append_jsonl(self.candidate_log_path, payload)
+                break
+
+    def rank_of_action(self, action_obj):
+        """Return where the later real action ranked in the latest root matrix."""
+        if not isinstance(action_obj, dict) or str(action_obj.get("action_type", "")).lower() != "click":
+            return None
+        inputs = action_obj.get("action_inputs") or {}
+        coord = inputs.get("coordinate")
+        if not isinstance(coord, (list, tuple)) or len(coord) != 2:
+            return None
+        x, y = float(coord[0]), float(coord[1])
+        mode = str(action_obj.get("coord_space") or inputs.get("coord_space") or "norm1000").lower()
+        device_width = max(1, int(round(float(self.width or 1) * float(self.coord_scale))))
+        device_height = max(1, int(round(float(self.height or 1) * float(self.coord_scale))))
+        if mode in {"norm1000", "1000", "0_1000"}:
+            x, y = x / 1000.0 * device_width, y / 1000.0 * device_height
+        elif mode in {"norm1", "normalized", "0_1"}:
+            x, y = x * device_width, y * device_height
+        best = None
+        best_dist = float("inf")
+        ranking = self._root_candidate_ranking or self._last_candidate_ranking
+        for item in ranking:
+            bounds = item.get("bounds")
+            if not bounds:
+                continue
+            x1, y1, x2, y2 = bounds
+            dist = 0.0 if x1 <= x <= x2 and y1 <= y <= y2 else abs(x - (x1 + x2) / 2.0) + abs(y - (y1 + y2) / 2.0)
+            if dist < best_dist:
+                best, best_dist = item, dist
+        if best is None or best_dist > 0.18 * max(device_width, device_height):
+            return None
+        return int(best["rank"])
+
     def _is_risky_node(self, node):
         merged = self._normalize_text(self._node_merged_text(node))
         if not merged:
@@ -763,6 +1070,22 @@ class A11yTreeOnlineExplorer:
             r"\bdiscard\b",
             r"\buninstall\b",
             r"\bfactory reset\b",
+            r"\bsave\b",
+            r"\bsubmit\b",
+            r"\bsend\b",
+            r"\bpurchase\b",
+            r"\bbuy\b",
+            r"\bplace order\b",
+            r"\bconfirm payment\b",
+            r"删除",
+            r"清除",
+            r"全部清除",
+            r"卸载",
+            r"恢复出厂",
+            r"保存",
+            r"提交",
+            r"发送",
+            r"购买",
         ]
         return any(re.search(pattern, merged) for pattern in risky_patterns)
 
@@ -804,6 +1127,12 @@ class A11yTreeOnlineExplorer:
 
     def _click_and_record(self, node, sim, node_txt, n_candidates, depth, branch_id, branch_actions, score_detail=None):
         step_t0 = time.time()
+        source_live_node_id = self.graph_live_current_node_id
+        source_snapshot_node_id = self.graph_current_node_id
+        source_state = self.graph_current_state
+        entropy_before = None
+        if self.belief_graph is not None and source_live_node_id in self.belief_graph.nodes:
+            entropy_before = float(self.belief_graph.nodes[source_live_node_id].decision_entropy)
         before_path = os.path.join(
             self.explore_raw_dir,
             f"before_{self.vis_step + 1:03d}.png",
@@ -832,6 +1161,12 @@ class A11yTreeOnlineExplorer:
             })
             return {"ok": False}
 
+        log_event(
+            "[Explorer]",
+            f"click step={self.cur_steps + 1} branch={branch_id} depth={depth} "
+            f"sim={float(sim) if sim is not None else 0.0:.3f} xy={coordinate} "
+            f"text={(node_txt or '')[:80]!r}",
+        )
         self.cur_steps += 1
         node_bounds = self._node_bounds_key(node)
         self.clicked_bounds.add(node_bounds)
@@ -870,6 +1205,74 @@ class A11yTreeOnlineExplorer:
                 new_ema = 0.65 * float(prev_ema) + 0.35 * float(page_hash_diff)
             self.bound_effect_ema[node_bounds] = float(new_ema)
             self.bound_effect_count[node_bounds] = int(self.bound_effect_count.get(node_bounds, 0)) + 1
+
+        graph_edge_id = None
+        destination_live_node_id = None
+        destination_snapshot_node_id = None
+        destination_state = None
+        realized_ig = None
+        if self.belief_graph is not None and source_live_node_id:
+            try:
+                # The probe's successor is observed from the real device.  It is
+                # written to the live graph but only matched against this step's
+                # frozen snapshot for subsequent ranking reads.
+                with self.ui_lock:
+                    get_a11y_tree(self.args, self.graph_observation_xml_path)
+                observed_root = parse_a11y_tree(xml_path=self.graph_observation_xml_path)
+                observed_candidates = collect_clickable_nodes(observed_root)
+                destination_state = describe_ui_state(observed_root, len(observed_candidates))
+                destination_live_node_id = self.belief_graph.observe_state(destination_state)
+                destination_snapshot_node_id = self.graph_snapshot.match_state(destination_state)
+                device_width = max(1, int(round(float(self.width or 1) * float(self.coord_scale))))
+                device_height = max(1, int(round(float(self.height or 1) * float(self.coord_scale))))
+                identity = (score_detail or {}).get("element_identity") or element_identity(
+                    node, device_width, device_height, "click"
+                )
+                bx = tuple(bounds) if bounds else None
+                label = (ui_text or ui_desc or node_txt or "").strip()[:80]
+                action = {
+                    "action_type": "click",
+                    "coord_space": "norm1000",
+                    "action_inputs": {
+                        "coordinate": [
+                            int(float(coordinate[0]) / device_width * 1000),
+                            int(float(coordinate[1]) / device_height * 1000),
+                        ],
+                        "label": label,
+                    },
+                }
+                graph_edge_id = self.belief_graph.record_probe(
+                    source_node_id=source_live_node_id,
+                    element_identity=identity,
+                    action_type="click",
+                    role=str(getattr(node, "class_name", "") or "").rsplit(".", 1)[-1].lower(),
+                    probe_type="click",
+                    coarse_context=(source_state.coarse_context if source_state else "generic"),
+                    information_need_type=self.information_need.need_type,
+                    action=action,
+                    destination_node_id=destination_live_node_id,
+                    discovered_labels=destination_state.labels,
+                    exploration_cost=max(0.0, time.time() - step_t0),
+                    realized_information_gain=None,
+                    bounds=bx,
+                    risk_level=float((score_detail or {}).get("risk_level", 0.0) or 0.0),
+                )
+                self.graph_probe_ingest_count += 1
+                entropy_after = float(self.belief_graph.nodes[source_live_node_id].decision_entropy)
+                if entropy_before is not None:
+                    realized_ig = float(entropy_before - entropy_after)
+                    self.belief_graph.record_realized_information_gain(graph_edge_id, realized_ig)
+                self._pending_probe_edge_ids.append(graph_edge_id)
+                self.graph_live_current_node_id = destination_live_node_id
+                self.graph_current_node_id = destination_snapshot_node_id
+                self.graph_current_state = destination_state
+            except Exception as graph_exc:
+                self.log_step({
+                    "type": "graph_ingest_error",
+                    "step": self.cur_steps,
+                    "error": f"{type(graph_exc).__name__}: {graph_exc}",
+                    "source_node_id": source_live_node_id,
+                })
 
         raw_out = os.path.join(
             self.explore_raw_dir,
@@ -927,6 +1330,12 @@ class A11yTreeOnlineExplorer:
             "effect_ema": self.bound_effect_ema.get(node_bounds),
             "time_sec": round(total_latency, 3),
             "raw_screenshot": raw_out,
+            "graph_source_node_id": source_live_node_id,
+            "graph_snapshot_source_node_id": source_snapshot_node_id,
+            "graph_edge_id": graph_edge_id,
+            "graph_destination_node_id": destination_live_node_id,
+            "graph_snapshot_destination_node_id": destination_snapshot_node_id,
+            "realized_information_gain": realized_ig,
         })
         return {
             "ok": True,
@@ -949,6 +1358,10 @@ class A11yTreeOnlineExplorer:
             "page_hash_diff": page_hash_diff,
             "effect_ema": self.bound_effect_ema.get(node_bounds),
             "hash": after_hash,
+            "graph_source_node_id": source_live_node_id,
+            "graph_edge_id": graph_edge_id,
+            "graph_destination_node_id": destination_live_node_id,
+            "realized_information_gain": realized_ig,
         }
 
     def _build_action_history_lines(self, max_items=6, max_len=120):
@@ -994,7 +1407,43 @@ class A11yTreeOnlineExplorer:
             extra_lines=lines,
         )
 
-    def _same_root_page(self, root_path, curr_path, phash_thr=18, mae_thr=14.0):
+    def _xml_signature(self, xml_path, limit=80):
+        try:
+            root = parse_a11y_tree(xml_path=xml_path)
+        except Exception:
+            return set()
+
+        sig = set()
+
+        def dfs(node):
+            if node is None or len(sig) >= int(limit):
+                return
+            merged = self._node_merged_text(node)
+            if merged:
+                norm = re.sub(r"\s+", " ", merged.lower()).strip()
+                if norm:
+                    sig.add(norm[:120])
+            for child in getattr(node, "children", None) or []:
+                dfs(child)
+
+        dfs(root)
+        return sig
+
+    def _same_xml_page(self, root_xml_path, curr_xml_path, threshold=0.46):
+        if not root_xml_path or not curr_xml_path:
+            return False, "xml:missing"
+        if not os.path.exists(root_xml_path) or not os.path.exists(curr_xml_path):
+            return False, "xml:missing"
+        root_sig = self._xml_signature(root_xml_path)
+        curr_sig = self._xml_signature(curr_xml_path)
+        if not root_sig or not curr_sig:
+            return False, "xml:empty"
+        inter = len(root_sig.intersection(curr_sig))
+        union = len(root_sig.union(curr_sig))
+        score = float(inter) / max(1.0, float(union))
+        return score >= float(threshold), f"xml:{score:.2f}"
+
+    def _same_root_page(self, root_path, curr_path, phash_thr=18, mae_thr=14.0, curr_xml_path=None):
         # 1) Fast hash check (current behavior)
         try:
             if check_same_image(root_path, curr_path, threshold=phash_thr):
@@ -1010,9 +1459,41 @@ class A11yTreeOnlineExplorer:
             mae = float(np.mean(np.abs(a - b)))
             if mae <= mae_thr:
                 return True, f"mae:{mae:.2f}"
-            return False, f"mae:{mae:.2f}"
+            image_reason = f"mae:{mae:.2f}"
         except Exception:
-            return False, "mae:err"
+            image_reason = "mae:err"
+
+        # 3) Accessibility-tree fallback catches cases where the screenshot has
+        # dynamic content/animations but the page identity is already back at root.
+        if curr_xml_path:
+            same_xml, xml_reason = self._same_xml_page(self.rollback_root_xml_path, curr_xml_path)
+            if same_xml:
+                return True, xml_reason
+            return False, f"{image_reason};{xml_reason}"
+
+        return False, image_reason
+
+    def _verify_rollback_root(self, screenshot_path):
+        is_same, same_reason = self._same_root_page(
+            self.rollback_root_path,
+            screenshot_path,
+            phash_thr=12,
+            mae_thr=10.0,
+        )
+        if is_same:
+            return True, same_reason
+
+        try:
+            get_a11y_tree(self.args, self.rollback_current_xml_path)
+            return self._same_root_page(
+                self.rollback_root_path,
+                screenshot_path,
+                phash_thr=12,
+                mae_thr=10.0,
+                curr_xml_path=self.rollback_current_xml_path,
+            )
+        except Exception as exc:
+            return False, f"{same_reason};xml_err:{type(exc).__name__}"
 
     def run_exploration_policy(
         self,
@@ -1105,6 +1586,12 @@ class A11yTreeOnlineExplorer:
                     semantic_low=0.30 if depth == 0 else 0.35,
                 )
                 self.selection_latency.append(time.time() - s0)
+                log_event(
+                    "[Explorer]",
+                    f"xml_pick branch={branch_id} depth={depth + 1} "
+                    f"candidates={n_candidates} selected={(node_txt or 'None')[:80]!r} "
+                    f"score={(float(sim) if sim is not None else 0.0):.3f}",
+                )
 
                 if node is None:
                     # Avoid side-effect navigation during exploration.
@@ -1169,6 +1656,11 @@ class A11yTreeOnlineExplorer:
                     hard_avoid=False,
                 )
                 self.selection_latency.append(time.time() - s0)
+                log_event(
+                    "[Explorer]",
+                    f"xml_leaf_pick branch={branch_id} candidates={n_candidates} "
+                    f"picked={len(leaf_nodes)}",
+                )
 
                 for leaf_idx, (leaf_node, leaf_sim, leaf_txt, leaf_score_detail) in enumerate(leaf_nodes):
                     if (
@@ -1214,6 +1706,19 @@ class A11yTreeOnlineExplorer:
                             f"page_changed={page_changed}",
                         ],
                     )
+                    # The remaining leaf nodes were extracted from the parent
+                    # screen.  Once the first probe transitions away, their old
+                    # coordinates are stale and must never be tapped on the new
+                    # screen.  End this branch and let verified rollback restore
+                    # the root before selecting a fresh branch.
+                    if page_changed and not is_last_leaf:
+                        self.log_step({
+                            "type": "leaf_batch_stopped",
+                            "reason": "page_changed_old_leaf_coordinates_invalid",
+                            "branch": branch_id,
+                            "leaf_index": leaf_idx,
+                        })
+                        break
 
             rollback_depth = max(1, min(max_depth, max(1, depth)))
             self.fast_rollback(max_depth=rollback_depth, step=branch_id, enable_replay=True)
@@ -1235,44 +1740,101 @@ class A11yTreeOnlineExplorer:
         trigger_reason=None,
     ):
         start_time = time.time()
-        self._decay_visit_counts(decay=0.92)
-        deadline_ts = None
-        if time_budget_sec is not None:
+        self.worker_start_time = start_time
+        log_event("[Explorer]", f"worker_start reason={trigger_reason or self._explore_trigger_reason}")
+        try:
+            self._decay_visit_counts(decay=0.92)
+            deadline_ts = None
+            if time_budget_sec is not None:
+                try:
+                    t_budget = float(time_budget_sec)
+                    if t_budget > 0:
+                        deadline_ts = start_time + t_budget
+                except Exception:
+                    deadline_ts = None
+
+            # Capture root page at worker start. Prefer the perception files from
+            # the main loop because they were taken immediately before this
+            # explorer starts; this avoids two extra ADB round trips before the
+            # first XML pick.
+            if os.path.exists(self.rollback_root_path):
+                os.remove(self.rollback_root_path)
+            if os.path.exists(self.rollback_root_xml_path):
+                os.remove(self.rollback_root_xml_path)
+            root_snapshot_source = "perception_cache"
             try:
-                t_budget = float(time_budget_sec)
-                if t_budget > 0:
-                    deadline_ts = start_time + t_budget
-            except Exception:
-                deadline_ts = None
+                curr_screenshot = getattr(self.args, "_current_screenshot_path", "") or ""
+                curr_xml = getattr(self.args, "_current_xml_path", "") or ""
+                if not curr_screenshot or not os.path.exists(curr_screenshot):
+                    raise FileNotFoundError("current screenshot cache missing")
+                if not curr_xml or not os.path.exists(curr_xml):
+                    raise FileNotFoundError("current xml cache missing")
+                shutil.copyfile(curr_screenshot, self.rollback_root_path)
+                shutil.copyfile(curr_xml, self.rollback_root_xml_path)
+            except Exception as cache_exc:
+                root_snapshot_source = f"adb_live fallback={type(cache_exc).__name__}"
+                with self.ui_lock:
+                    get_screenshot(self.args, self.rollback_root_path)
+                    get_a11y_tree(self.args, self.rollback_root_xml_path)
+            self.log_step({
+                "type": "rollback_root_snapshot",
+                "screenshot": self.rollback_root_path,
+                "xml": self.rollback_root_xml_path,
+                "source": root_snapshot_source,
+                "trigger": trigger_reason or self._explore_trigger_reason,
+            })
+            log_event("[Explorer]", f"rollback_root_snapshot source={root_snapshot_source}")
+            self.replay_action_history = list(self.action_history)
 
-        # Capture root screenshot at worker start to avoid stale file races.
-        if os.path.exists(self.rollback_root_path):
-            os.remove(self.rollback_root_path)
-        with self.ui_lock:
-            get_screenshot(self.args, self.rollback_root_path)
-        self.replay_action_history = list(self.action_history)
+            self.run_exploration_policy(
+                max_steps=max_steps,
+                max_depth=max_depth,
+                leaf_width=leaf_width,
+                max_branches=max_branches,
+                deadline_ts=deadline_ts,
+                trigger_reason=trigger_reason,
+            )
+        finally:
+            exploration_latency = time.time() - start_time
+            log_event("[Explorer]", f"worker_end latency_ms={exploration_latency * 1000:.1f} steps={self.cur_steps}")
+            print_latency_summary(
+                total_latency=self.total_latency,
+                get_tree_latency=self.adb_tree_latency,
+                parse_tree_latency=self.tree_latency,
+                selection_latency=self.selection_latency,
+                action_latency=self.action_latency,
+                screenshot_latency=self.screenshot_latency,
+                exploration_latency=exploration_latency
+            )
+            self.worker_done_event.set()
 
-        self.run_exploration_policy(
-            max_steps=max_steps,
-            max_depth=max_depth,
-            leaf_width=leaf_width,
-            max_branches=max_branches,
-            deadline_ts=deadline_ts,
-            trigger_reason=trigger_reason,
-        )
-
-        exploration_latency = time.time() - start_time
-        print_latency_summary(
-            total_latency=self.total_latency,
-            get_tree_latency=self.adb_tree_latency,
-            parse_tree_latency=self.tree_latency,
-            selection_latency=self.selection_latency,
-            action_latency=self.action_latency,
-            screenshot_latency=self.screenshot_latency,
-            exploration_latency=exploration_latency
-        )
-
-    def stop(self):
+    def stop(self, min_steps=0, min_runtime_sec=0.0, max_wait_sec=None):
+        target_steps = max(0, int(min_steps or 0))
+        target_runtime = max(0.0, float(min_runtime_sec or 0.0))
+        if self.thread and self.thread.is_alive() and (target_steps > 0 or target_runtime > 0.0):
+            wait_start = time.time()
+            deadline = None
+            if max_wait_sec is not None and float(max_wait_sec) > 0:
+                deadline = wait_start + float(max_wait_sec)
+            log_event(
+                "[Explorer]",
+                f"wait_online_exploration min_steps={target_steps} "
+                f"min_runtime_sec={target_runtime:.2f} current_steps={self.cur_steps}",
+            )
+            while self.thread.is_alive():
+                started_at = self.worker_start_time or wait_start
+                runtime_ok = (time.time() - started_at) >= target_runtime
+                steps_ok = self.cur_steps >= target_steps
+                if runtime_ok and steps_ok:
+                    break
+                if deadline is not None and time.time() >= deadline:
+                    break
+                time.sleep(0.05)
+            log_event(
+                "[Explorer]",
+                f"wait_online_done waited_ms={(time.time() - wait_start) * 1000:.1f} "
+                f"steps={self.cur_steps}",
+            )
         self.stop_event.set()
         if self.thread:
             self.thread.join()
@@ -1294,81 +1856,124 @@ class A11yTreeOnlineExplorer:
         if self.cur_steps == 0:
             if self.rollback_done_event:
                 self.rollback_done_event.set()
-            return
+            return {"ok": True, "reason": "no_explore_steps"}
 
         rollback_success = False
+        deep_recovery_used = False
 
-        with self.rollback_lock:
-            with self.ui_lock:
-                for i in range(max_depth):
-                    start_time = time.time()
+        try:
+            with self.rollback_lock:
+                with self.ui_lock:
+                    log_event("[Rollback]", f"start max_depth={max_depth} cur_steps={self.cur_steps}")
+                    for i in range(max_depth):
+                        start_time = time.time()
 
-                    # 1. 先截图判断是否已经回到起始页
-                    get_screenshot(self.args, self.rollback_screenshot_path)
+                        # 1. 先截图判断是否已经回到起始页
+                        get_screenshot(self.args, self.rollback_screenshot_path)
 
-                    file_path = os.path.join(
-                        self.rollback_debug_dir,
-                        f"step_{step}_explore_{self.cur_steps}_back_{i}.png",
-                    )
-                    ensure_dir(os.path.dirname(file_path))
-                    shutil.copyfile(self.rollback_screenshot_path, file_path)
+                        file_path = os.path.join(
+                            self.rollback_debug_dir,
+                            f"step_{step}_explore_{self.cur_steps}_back_{i}.png",
+                        )
+                        ensure_dir(os.path.dirname(file_path))
+                        shutil.copyfile(self.rollback_screenshot_path, file_path)
 
-                    is_same, same_reason = self._same_root_page(
-                        self.rollback_root_path,
-                        self.rollback_screenshot_path,
-                        phash_thr=18,
-                        mae_thr=14.0,
-                    )
+                        is_same, same_reason = self._verify_rollback_root(self.rollback_screenshot_path)
 
-                    end_time = time.time()
-                    check_latency = end_time - start_time
+                        end_time = time.time()
+                        check_latency = end_time - start_time
 
-                    if is_same:
+                        if is_same:
+                            self._save_debug_frame(
+                                action_text=f"rollback_match_root step={step} i={i}",
+                                extra_lines=[
+                                    f"cur_steps={self.cur_steps}",
+                                    f"img_same={is_same}",
+                                    f"same_reason={same_reason}",
+                                ],
+                            )
+                            print("⚡ Fast rollback done (matched root page).")
+                            log_event("[Rollback]", f"level1_ok pre_back i={i} reason={same_reason}")
+                            rollback_success = True
+                            break
+
+                        print(f" Fast rollback step {i + 1} / {max_depth} in {check_latency * 1000:.3f} ms")
+
+                        # 2. 执行 back
+                        back(self.adb)
+                        time.sleep(0.35)
                         self._save_debug_frame(
-                            action_text=f"rollback_match_root step={step} i={i}",
+                            action_text=f"action=back (rollback) step={step} i={i}",
                             extra_lines=[
                                 f"cur_steps={self.cur_steps}",
-                                f"img_same={is_same}",
-                                f"same_reason={same_reason}",
+                                f"pre_back_same={is_same}",
+                                f"pre_back_reason={same_reason}",
                             ],
                         )
-                        print("⚡ Fast rollback done (matched root page).")
-                        rollback_success = True
-                        break
-
-                    print(f" Fast rollback step {i + 1} / {max_depth} in {check_latency * 1000:.3f} ms")
-
-                    # 2. 执行 back
-                    back(self.adb)
-                    # time.sleep(1.0)
-                    self._save_debug_frame(
-                        action_text=f"action=back (rollback) step={step} i={i}",
-                        extra_lines=[f"cur_steps={self.cur_steps}"],
-                    )
-
-                # rollback失败时进行replay
-                if not rollback_success and enable_replay:
-                    print("⚠️ Fast rollback failed. Start replay previous exploration actions...")
-
-                    home(self.adb)
-                    # time.sleep(0.8)
-                    replay_actions = self.replay_action_history or self.action_history
-                    for action in replay_actions:
-                        execute_action(
-                            action,
-                            self.width,
-                            self.height,
-                            self.adb,
-                            coord_scale=self.coord_scale,
+                        get_screenshot(self.args, self.rollback_screenshot_path)
+                        after_file_path = os.path.join(
+                            self.rollback_debug_dir,
+                            f"step_{step}_explore_{self.cur_steps}_after_back_{i}.png",
                         )
-                        act_type = (action or {}).get("action_type", "")
-                        # if act_type == "open_app":
-                        #     time.sleep(1.2)
-                        # else:
-                        #     time.sleep(0.35)
+                        ensure_dir(os.path.dirname(after_file_path))
+                        shutil.copyfile(self.rollback_screenshot_path, after_file_path)
+                        is_same, same_reason = self._verify_rollback_root(self.rollback_screenshot_path)
+                        if is_same:
+                            print("⚡ Fast rollback done after back (matched root page).")
+                            log_event("[Rollback]", f"level1_ok post_back i={i} reason={same_reason}")
+                            rollback_success = True
+                            break
+                        log_event("[Rollback]", f"post_back_mismatch i={i} reason={same_reason}")
 
-        if self.rollback_done_event:
-            self.rollback_done_event.set()
+                    # rollback失败时进行replay
+                    if not rollback_success and enable_replay:
+                        deep_recovery_used = True
+                        print("⚠️ Fast rollback failed. Start replay previous reasoning actions...")
+                        log_event("[Rollback]", "level2_home_replay_start")
+
+                        home(self.adb)
+                        # time.sleep(0.8)
+                        replay_actions = self.replay_action_history or self.action_history
+                        for action in replay_actions:
+                            execute_action(
+                                action,
+                                self.width,
+                                self.height,
+                                self.adb,
+                                coord_scale=self.coord_scale,
+                            )
+                            act_type = (action or {}).get("action_type", "")
+                            # if act_type == "open_app":
+                            #     time.sleep(1.2)
+                            # else:
+                            #     time.sleep(0.35)
+                        try:
+                            get_screenshot(self.args, self.rollback_screenshot_path)
+                            is_same, same_reason = self._verify_rollback_root(self.rollback_screenshot_path)
+                            rollback_success = bool(is_same)
+                            print(f"[Rollback] level2_verify ok={is_same} reason={same_reason}")
+                            log_event("[Rollback]", f"level2_verify ok={is_same} reason={same_reason}")
+                        except Exception as verify_exc:
+                            print(f"[Rollback] level2_verify exception={type(verify_exc).__name__}: {verify_exc}")
+        except Exception as exc:
+            print(f"[Rollback] exception during rollback/replay: {type(exc).__name__}: {exc}")
+        finally:
+            if self.belief_graph is not None and self._pending_probe_edge_ids:
+                for edge_id in list(dict.fromkeys(self._pending_probe_edge_ids)):
+                    self.belief_graph.record_rollback_result(
+                        edge_id,
+                        success=bool(rollback_success),
+                        deep_recovery=bool(deep_recovery_used),
+                    )
+                self._pending_probe_edge_ids = []
+            if rollback_success:
+                self.graph_current_node_id = self.graph_root_node_id
+                self.graph_live_current_node_id = self.graph_root_live_node_id
+                self.graph_current_state = self.graph_root_state
+            if self.rollback_done_event:
+                self.rollback_done_event.set()
+
+        return {"ok": bool(rollback_success), "reason": "matched_root" if rollback_success else "replay_or_failed"}
 
     # -----------------------------
     # Clues for VLM prompt

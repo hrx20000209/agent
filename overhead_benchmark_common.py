@@ -1,5 +1,6 @@
 import json
 import os
+import plistlib
 import re
 import shutil
 import subprocess
@@ -317,6 +318,44 @@ def _parse_tegrastats_line(line: str) -> Tuple[Optional[float], Optional[float]]
     return power_w, ram_used_mb
 
 
+def _read_macos_power_w() -> Optional[float]:
+    if os.uname().sysname.lower() != "darwin":
+        return None
+    if not shutil.which("ioreg"):
+        return None
+
+    try:
+        proc = subprocess.run(
+            ["ioreg", "-rn", "AppleSmartBattery", "-a"],
+            capture_output=True,
+            timeout=2.0,
+        )
+        if proc.returncode != 0 or not proc.stdout:
+            return None
+        payload = plistlib.loads(proc.stdout)
+        if not isinstance(payload, list) or not payload:
+            return None
+        battery = payload[0] or {}
+        telemetry = battery.get("PowerTelemetryData") or {}
+
+        system_power_in = _safe_float(telemetry.get("SystemPowerIn"))
+        if system_power_in is not None:
+            return float(system_power_in) / 1000.0
+
+        adapter_power = _safe_float(((battery.get("BatteryData") or {}).get("AdapterPower")))
+        if adapter_power is not None:
+            return float(adapter_power)
+
+        amperage_ma = _safe_float(battery.get("Amperage"))
+        voltage_mv = _safe_float(battery.get("Voltage"))
+        if amperage_ma is not None and voltage_mv is not None:
+            return abs(float(amperage_ma) * float(voltage_mv)) / 1e6
+    except Exception:
+        return None
+
+    return None
+
+
 class ResourceSampler:
     def __init__(self, use_jtop: bool = True, sample_interval_sec: float = 0.1):
         self.use_jtop = bool(use_jtop)
@@ -332,6 +371,7 @@ class ResourceSampler:
         self._tegrastats_thread: Optional[threading.Thread] = None
         self._latest_power_w: Optional[float] = None
         self._latest_system_used_mb: Optional[float] = None
+        self._last_local_power_ts = 0.0
 
     def start(self):
         self._thread = threading.Thread(target=self._sample_loop, daemon=True)
@@ -467,11 +507,21 @@ class ResourceSampler:
 
         self._start_tegrastats()
         if self.backend != "tegrastats":
-            self.backend = "psutil"
-            if not self.backend_note:
-                self.backend_note = "power_metrics_unavailable"
+            if os.uname().sysname.lower() == "darwin":
+                self.backend = "macos_ioreg"
+                if not self.backend_note:
+                    self.backend_note = "using_ioreg_powertelemetry"
+            else:
+                self.backend = "psutil"
+                if not self.backend_note:
+                    self.backend_note = "power_metrics_unavailable"
 
         while not self._stop_event.is_set():
+            if self.backend == "macos_ioreg":
+                now = time.time()
+                if now - self._last_local_power_ts >= max(0.5, self.sample_interval_sec):
+                    self._latest_power_w = _read_macos_power_w()
+                    self._last_local_power_ts = now
             self._append_sample(power_w=self._latest_power_w, system_used_mb=self._latest_system_used_mb)
             time.sleep(self.sample_interval_sec)
 

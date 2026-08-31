@@ -135,6 +135,7 @@ Short plan + what UI element you are targeting and why in one sentence.
 - Do NOT output natural language outside <thinking> and <tool_call> tags.
 - Do NOT output multiple actions in one step.
 - Prefer using the "open" action to launch apps when possible, as it is faster and more reliable.
+- For clock or time-picker wheels, if the desired hour or minute is already visible, tap the visible number directly; after the requested alarm time is displayed, tap Save/保存.
 - Avoid destructive or irreversible actions unless the task explicitly requires them (e.g., delete, record, purchase).
 - If the task is completed, use "terminate" with status "success" and optionally provide an "answer".
 - If the task cannot continue, use "terminate" with status "fail" and explain briefly in thinking.

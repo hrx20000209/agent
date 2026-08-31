@@ -7,7 +7,6 @@ import imagehash
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
-from sentence_transformers import SentenceTransformer
 from MobileAgentE.utils import parse_bounds
 from MobileAgentE.controller import tap, back, home
 
@@ -186,12 +185,35 @@ _STOPWORDS = {
     "your","my","me","you","it","this","that",
     # common UI boilerplate
     "button","icon","menu","page","screen","app","application",
+    # common Chinese instruction words
+    "设置","一个","的","请","帮","我","打开","点击","选择","进入","应用","程序",
 }
+
+_CJK_STOP_FRAGMENTS = (
+    "请", "帮我", "帮", "我", "设置", "一个", "的", "打开", "点击", "选择", "进入",
+    "应用", "程序",
+)
+
+def _clean_task_token(token: str) -> str:
+    token = (token or "").strip().strip("._-")
+    if not token:
+        return ""
+    if re.search(r"[\u4e00-\u9fff]", token):
+        for frag in _CJK_STOP_FRAGMENTS:
+            token = token.replace(frag, "")
+        token = token.strip().strip("._-")
+    return token
+
+def _split_task_token(token: str):
+    token = (token or "").strip()
+    if not token:
+        return []
+    return re.findall(r"[a-z0-9][a-z0-9\._-]*|[\u4e00-\u9fff]{2,}", token)
 
 def _normalize_text(s: str) -> str:
     s = (s or "").lower().strip()
-    # keep letters/numbers/space/quotes/hyphen
-    s = re.sub(r"[^a-z0-9\s\-\_\"\'\.]", " ", s)
+    # keep letters/numbers/CJK/space/quotes/hyphen
+    s = re.sub(r"[^a-z0-9\u4e00-\u9fff\s\-\_\"\'\.]", " ", s)
     s = re.sub(r"\s+", " ", s).strip()
     return s
 
@@ -214,7 +236,24 @@ def extract_task_queries(task_text: str):
             quoted_phrases.append(q)
 
     # 2) token filtering
-    tokens = [t for t in norm.split(" ") if t and t not in _STOPWORDS]
+    tokens = []
+    for raw_token in norm.split(" "):
+        cleaned = _clean_task_token(raw_token)
+        for t in _split_task_token(cleaned):
+            t = _clean_task_token(t)
+            if not t or t in _STOPWORDS:
+                continue
+            if re.search(r"[\u4e00-\u9fff]", t) and len(t) < 2:
+                continue
+            tokens.append(t)
+    cjk_phrases = []
+    for q in re.findall(r"[\u4e00-\u9fff]{2,}", raw):
+        cleaned = q
+        for frag in _CJK_STOP_FRAGMENTS:
+            cleaned = cleaned.replace(frag, "")
+        cleaned = cleaned.strip()
+        if len(cleaned) >= 2:
+            cjk_phrases.append(cleaned)
 
     # 3) keep numbers / version-like tokens
     numbers = [t for t in tokens if re.search(r"\d", t)]
@@ -229,7 +268,10 @@ def extract_task_queries(task_text: str):
     for q in quoted_phrases:
         queries.append(q)
 
-    if content_tokens:
+    for q in cjk_phrases[:4]:
+        queries.append(q)
+
+    if content_tokens and not re.search(r"[\u4e00-\u9fff]", raw):
         queries.append(" ".join(content_tokens))
 
     # add individual tokens too (helps short UI labels)
@@ -238,6 +280,14 @@ def extract_task_queries(task_text: str):
 
     for n in numbers[:3]:
         queries.append(n)
+
+    raw_lower = raw.lower()
+    if "alarm" in raw_lower or "闹钟" in raw:
+        queries.extend(["Clock", "时钟", "闹钟", "添加闹钟", "Alarm"])
+    if "timer" in raw_lower or "定时器" in raw:
+        queries.extend(["Clock", "时钟", "定时器", "Timer"])
+    if "stopwatch" in raw_lower or "秒表" in raw:
+        queries.extend(["Clock", "时钟", "秒表", "Stopwatch"])
 
     # dedup while keeping order
     seen = set()

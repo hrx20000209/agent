@@ -1,9 +1,57 @@
 import xml.etree.ElementTree as ET
-from sentence_transformers import SentenceTransformer
+import hashlib
+import re
 import numpy as np
 import time
 
-embed_model = SentenceTransformer("sentence-transformers/paraphrase-MiniLM-L6-v2")
+
+class HashingTextEmbedder:
+    def __init__(self, dim=384):
+        self.dim = int(dim)
+
+    @staticmethod
+    def _tokens(text):
+        text = (text or "").lower()
+        tokens = re.findall(r"[a-z0-9_\-]{2,}|[\u4e00-\u9fff]", text)
+        compact = re.sub(r"\s+", "", text)
+        tokens.extend(compact[i:i + 2] for i in range(max(0, len(compact) - 1)))
+        return [t for t in tokens if t.strip()]
+
+    def _encode_one(self, text):
+        vec = np.zeros(self.dim, dtype=np.float32)
+        for token in self._tokens(text):
+            digest = hashlib.blake2b(token.encode("utf-8", errors="ignore"), digest_size=8).digest()
+            idx = int.from_bytes(digest[:4], "little") % self.dim
+            sign = 1.0 if (digest[4] & 1) else -1.0
+            vec[idx] += sign
+        norm = float(np.linalg.norm(vec))
+        if norm > 0:
+            vec /= norm
+        return vec
+
+    def encode(self, texts):
+        return np.vstack([self._encode_one(t) for t in texts])
+
+
+_embed_model = None
+
+
+def get_embed_model():
+    global _embed_model
+    if _embed_model is not None:
+        return _embed_model
+    try:
+        from sentence_transformers import SentenceTransformer
+
+        _embed_model = SentenceTransformer(
+            "sentence-transformers/paraphrase-MiniLM-L6-v2",
+            local_files_only=True,
+        )
+        print("[Tree] embedding_model=sentence-transformers/paraphrase-MiniLM-L6-v2 local_files_only=True")
+    except Exception as exc:
+        print(f"[Tree] embedding fallback=hashing-offline reason={type(exc).__name__}: {exc}")
+        _embed_model = HashingTextEmbedder()
+    return _embed_model
 
 
 class Node:
@@ -264,7 +312,7 @@ def embed_text(text: str):
     if text in _embedding_cache:
         return _embedding_cache[text]
 
-    emb = embed_model.encode([text])[0]  # shape (384,)
+    emb = get_embed_model().encode([text])[0]  # shape (384,)
     emb = emb.astype(np.float32)
 
     _embedding_cache[text] = emb

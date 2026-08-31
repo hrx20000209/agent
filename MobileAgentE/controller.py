@@ -184,6 +184,7 @@ def wait_stable(path, timeout=2.0):
     last = -1
     while time.time() - start < timeout:
         if not os.path.exists(path):
+            time.sleep(0.02)
             continue
         size = os.path.getsize(path)
         if size == last and size > 0:
@@ -192,24 +193,116 @@ def wait_stable(path, timeout=2.0):
         time.sleep(0.02)
     raise RuntimeError("file not stable")
 
+
+def _adb_timeout(args, default=8.0):
+    try:
+        return float(getattr(args, "adb_cmd_timeout", default) or default)
+    except Exception:
+        return float(default)
+
+
+def _adb_retries(args, default=1):
+    try:
+        return max(1, int(getattr(args, "adb_retries", default) or default))
+    except Exception:
+        return int(default)
+
+
+def _run_adb_command(command, retries=2, retry_sleep=0.35, timeout=8, check=True):
+    last = None
+    for attempt in range(1, int(retries) + 1):
+        start = time.time()
+        try:
+            last = subprocess.run(
+                command,
+                capture_output=True,
+                text=True,
+                shell=True,
+                timeout=timeout,
+            )
+        except subprocess.TimeoutExpired as exc:
+            stdout = exc.stdout or ""
+            stderr = exc.stderr or f"timeout after {timeout}s"
+            if isinstance(stdout, bytes):
+                stdout = stdout.decode(errors="replace")
+            if isinstance(stderr, bytes):
+                stderr = stderr.decode(errors="replace")
+            last = subprocess.CompletedProcess(command, 124, stdout=stdout, stderr=stderr)
+        elapsed = time.time() - start
+        if elapsed >= 2.0:
+            short_cmd = re.sub(r"\s+", " ", str(command)).strip()
+            print(
+                f"[ADB:slow] {elapsed:.2f}s rc={last.returncode} "
+                f"attempt={attempt}/{int(retries)} cmd={short_cmd[:180]}",
+                flush=True,
+            )
+        if last.returncode == 0:
+            return last
+        if attempt < int(retries):
+            time.sleep(float(retry_sleep))
+
+    if check:
+        raise RuntimeError(
+            f"ADB command failed after {retries} attempts: {command}\n"
+            f"stdout={last.stdout.strip()}\nstderr={last.stderr.strip()}"
+        )
+    return last
+
+
+def _run_adb_binary_to_file(command, output_path, timeout=8):
+    start = time.time()
+    with open(output_path, "wb") as f:
+        proc = subprocess.run(
+            command,
+            stdout=f,
+            stderr=subprocess.PIPE,
+            shell=True,
+            timeout=timeout,
+        )
+    elapsed = time.time() - start
+    if elapsed >= 2.0:
+        short_cmd = re.sub(r"\s+", " ", str(command)).strip()
+        print(f"[ADB:slow] {elapsed:.2f}s rc={proc.returncode} cmd={short_cmd[:180]}", flush=True)
+    return proc
+
+
 def get_screenshot(args, screenshot_path, scale=1.0):
     with screenshot_lock:
 
         uid = uuid.uuid4().hex[:6]
         remote_path = f"/sdcard/shot_{uid}.png"
         local_tmp = screenshot_path + ".tmp"
+        timeout = _adb_timeout(args, 8.0)
+        retries = _adb_retries(args, 1)
 
-        # 1. 设备截图
-        subprocess.run(
-            f"{args.adb_path} shell screencap -p {remote_path}",
-            shell=True, check=True
-        )
+        os.makedirs(os.path.dirname(screenshot_path) or ".", exist_ok=True)
 
-        # 2. pull 到 tmp
-        subprocess.run(
-            f"{args.adb_path} pull {remote_path} {local_tmp}",
-            shell=True, check=True
-        )
+        fast_ok = False
+        try:
+            proc = _run_adb_binary_to_file(
+                f"{args.adb_path} exec-out screencap -p",
+                local_tmp,
+                timeout=timeout,
+            )
+            fast_ok = bool(proc.returncode == 0 and os.path.exists(local_tmp) and os.path.getsize(local_tmp) > 0)
+        except Exception:
+            fast_ok = False
+
+        if not fast_ok:
+            if os.path.exists(local_tmp):
+                os.remove(local_tmp)
+
+            # Fallback for devices where exec-out is flaky.
+            _run_adb_command(
+                f"{args.adb_path} shell screencap -p {remote_path}",
+                retries=retries,
+                timeout=timeout,
+            )
+            _run_adb_command(
+                f"{args.adb_path} pull {remote_path} {local_tmp}",
+                retries=retries,
+                timeout=timeout,
+            )
 
         # 3. 等文件稳定
         wait_stable(local_tmp)
@@ -226,16 +319,28 @@ def get_screenshot(args, screenshot_path, scale=1.0):
         os.replace(local_tmp, screenshot_path)
 
         # 6. 清理远端
-        subprocess.run(f"{args.adb_path} shell rm {remote_path}", shell=True)
+        if not fast_ok:
+            _run_adb_command(f"{args.adb_path} shell rm {remote_path}", timeout=3, check=False)
         # print(f"[INFO] Save screenshot to {screenshot_path}")
 
 def get_a11y_tree(args, xml_path):
-    command = args.adb_path + " shell uiautomator dump /sdcard/a11y.xml"
-    subprocess.run(command, capture_output=True, text=True, shell=True)
+    timeout = _adb_timeout(args, 8.0)
+    retries = _adb_retries(args, 1)
+    command = args.adb_path + " shell uiautomator dump --compressed /sdcard/a11y.xml"
+    proc = _run_adb_command(
+        command,
+        retries=retries,
+        retry_sleep=0.25,
+        timeout=timeout,
+        check=False,
+    )
+    if proc.returncode != 0:
+        command = args.adb_path + " shell uiautomator dump /sdcard/a11y.xml"
+        _run_adb_command(command, retries=retries, retry_sleep=0.25, timeout=timeout)
 
     if not args.on_device:
         command = args.adb_path + f" pull /sdcard/a11y.xml {xml_path}"
-        subprocess.run(command, capture_output=True, text=True, shell=True)
+        _run_adb_command(command, retries=retries, retry_sleep=0.25, timeout=timeout)
     #
     # # 设置路径
     # xml_path = "./screenshot/a11y.xml"
@@ -414,7 +519,7 @@ def normalize_app_name(app_name: str) -> str:
 
         # ===== Utilities =====
         "Calculator": "com.simplemobiletools.calculator",
-        "Clock": "com.google.android.deskclock",
+        "Clock": "com.sec.android.app.clockpackage",
         "Calendar": "com.simplemobiletools.calendar",
         "Flashlight": "com.simplemobiletools.flashlight",
 

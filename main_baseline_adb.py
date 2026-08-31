@@ -188,7 +188,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--task",
         type=str,
-        default="Open the stopwatch.",
+        default="Input 123 in meeting note in Notes app.",
         help="User instruction for the baseline run.",
     )
     parser.add_argument("--max_itr", type=int, default=10, help="Maximum benchmark iterations.")

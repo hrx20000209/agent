@@ -1,0 +1,553 @@
+                  MobileExplorer: Accelerating On-Device Inference
+                       for Mobile GUI Agents via Online Exploration
+                  ABSTRACT                                                      However, building an on-device mobile GUI agent
+                  Mobile graphical user interface (GUI) agents enable AI      is still challenging. First, many on-device agents rely
+                  modelstoautonomouslyoperatesmartphonesonbehalf              mainlyonLLMswithtextualinputssuchasaccessibility
+                  ofusers.However,mostexistingsystemsfocusprimarily           trees, which introduce an inherent information bottle-
+                  on task accuracy and rely on remote servers for infer-      neck by abstracting away rich visual layouts, spatial
+                  ence, introducing privacy risks and network-dependent       structures, icons, and other non-textual interface cues.
+                  latency. As a result, fully on-device mobile GUI agents     Such text-centric representations are also often incom-
+                  remain underexplored. We propose MobileExplorer, a          plete, device-dependent, and unable to faithfully reflect
+                  fully on-device framework that improves mobile GUI          visually styled or dynamically rendered elements, limit-
+                  task automation via latency-aware online exploration.       ing robustness in real-world mobile environments. This
+                  The key idea is to exploit the long per-step reasoning      motivates our focus on screenshot-based perception and
+                  time of vision-language models (VLMs) by performing         VLMs. Prior work on mobile UI understanding shows
+                  lightweight, time-budgeted exploration in parallel with     that raw screenshots contain rich visual context, in-
+                  modelinference. During exploration, the agent probes        cluding layout organization, spatial relations, icons, and
+                  semantically relevant UI elements within the reasoning      non-textual cues that are essential for interpreting com-
+                  windowandrecordsstatetransitions as structured ex-          plex interfaces [3, 10, 28]. In contrast, accessibility trees
+                  ploration memory. To preserve execution consistency in      mainly expose textual attributes and structural meta-
+                  live mobileenvironments,wedesignatwo-levelrollback          data, whereas screenshots provide a holistic and faithful
+                  mechanism that reliably restores the starting UI state      representation of the actual interface. Moreover, screen-
+                  whenanexploredbranchdoesnotalignwiththefinal                shot inputs can be adaptively scaled (e.g., resolution
+                  VLMdecision. We evaluate MobileExplorer on multiple         or region selection) to balance accuracy and ef√èciency
+                  real-world devices using the AndroidWorld benchmark.        under on-device resource constraints. Empirical stud-
+                  Underfully on-device execution, our system preserves        ies in vision-language UI understanding further demon-
+                  task success while reducing the average number of in-       strate that screenshot-based models achieve stronger
+                  teraction steps by approximately 23%.                       visual grounding and often outperform hierarchy-based
+                                                                              approaches on complex GUI tasks [8, 10]. These find-
+                                                                              ings suggest that screenshot-based VLMs enable more
+                  1 INTRODUCTION                                              human-like visual interpretation and improve task suc-
+                  MobileGUIagentshaverecentlyemergedwiththerapid              cess in visually structured scenarios.
+                  progress of large language models (LLMs) [1, 6] and           Second, although VLMs provide stronger visual un-
+                  vision-language models (VLMs) [2, 17], enabling an end-     derstanding, they introduce significantly higher com-
+                  to-end paradigm for mobile task automation where task       putational and memory costs than text-only models,
+                  understanding,planning,andexecutionareunifiedwithin         makingcontinuous on-device execution still expensive
+                  a single model [21]. Existing agents typically adopt two    even for recent compact models [26, 32]. To alleviate
+                  input modalities: LLM-based methods rely on accessi-        this cost, recent GUI agents have explored several ac-
+                  bility trees [4, 5, 9, 21, 22], while VLM-based methods     celeration strategies, such as reducing the number of
+                  directly operate on screenshots [19, 20, 26, 27, 32]. How-  modelcalls through multi-step planning or script-style
+                  ever, most current mobile GUI agents execute LLMs or        execution [21, 22], transforming action generation into
+                  VLMsonremoteservers,requiring on-device data to be          lightweight verification over candidate actions [4], and
+                  uploaded through the network, which introduces pri-         pruning redundant visual or contextual tokens to lower
+                  vacy and security risks. Therefore, a natural direction is  inference complexity in vision-language pipelines [13].
+                  to deploy mobile GUI agents fully on-device, so that per-   However, these approaches still have inherent limita-
+                  ception, reasoning, and action can be performed locally     tions. Multi-step planning or script-style execution can
+                  without external data transmission.
+                                                                               1
+                  be brittle under dynamic and unseen UI states, verifier-            and converts exploration results into structured
+                  based pipelines remain dependent on candidate action                hints for subsequent reasoning.
+                  quality and still incur non-trivial per-step reasoning            ‚Ä¢ Weimplementafull end-to-end system that over-
+                  overhead, and aggressive token or context pruning may               laps perception, reasoning, and exploration on
+                  discard fine-grained visual cues that are critical for pre-         resource-constrainedmobiledevices,reducingidle
+                  cise GUI grounding. Third, existing on-device agents                timeintheconventionalsequentialexecutionpipeline.
+                  usually block and wait during model reasoning, leaving            ‚Ä¢ Weconductextensive evaluation across multiple
+                  sensing and interaction resources idle and underutilized.           commercialdevicesandtheAndroidWorldbench-
+                  Finally, mostexistingsystemsfollowastrictlysequential               mark, demonstrating improved task success, re-
+                  perception‚Äìreasoning‚Äìaction loop, which further limits              duced interaction latency, and fewer execution
+                  system-level ef√èciency under tight latency and resource             steps under realistic mobile constraints.
+                  constraints on mobile devices.
+                     In this paper, we propose MobileExplorer, a novel on-      2 RELATEDWORK
+                  devicemobileGUIagentframeworkthatutilizesthelong              Mobile GUI Agents. Recent advances in foundation
+                  reasoning latency of the model to perform online explo-       models have made mobile GUI agents an emerging re-
+                  rationinparallel. Instead of remaining idle during model      search topic [4, 5, 8, 9, 19, 21, 22, 26, 27, 32]. Early works
+                  inference, the system proactively explores the current        mainly rely on LLMs with structured inputs such as
+                  screen to collect task-relevant information. To achieve       accessibility trees and action histories. For example, Au-
+                  effective exploration under strict latency budgets, Mo-       toDroid [21] leverages memory and action history to
+                  bileExplorer adopts a time-bounded and diversity-aware        support long-horizon GUI interaction, while AutoDroid-
+                  exploration strategy that prioritizes semantically rele-      V2[22]reduceslatency by replacing iterative multi-step
+                  vant and interactive UI elements based on lightweight         reasoningwithmoredirectplanning.V-Droid[4]further
+                  text embeddings [16]. During exploration, the system          adopts a verification-based paradigm, where the model
+                  maintains stable navigation through controlled rollback       selects actions from candidate UI elements instead of
+                  and state recovery to avoid drifting from the original        directly generating operations. More recent studies ex-
+                  task context, addressing the system challenges caused         plore VLM-based agents that operate directly on screen-
+                  by speculative interactions. The discovered UI elements       shots, enabling visual grounding over layout, icons, and
+                  and interaction traces are then stored in a structured        spatial structures without relying on UI trees. CogA-
+                  formandsummarizedintocompacttextualhints,which                gent [8] aligns user instructions with screen regions
+                  can be seamlessly appended to the prompt to enhance           through vision-language attention, and Mobile-Agent-
+                  subsequent reasoning. By explicitly externalizing explo-      V3[27]employsacollaborative architecture to handle
+                  ration knowledge and reusing it as contextual signals,        perception and reasoning in complex tasks. In addition,
+                  MobileExplorer improves decision accuracy without in-         MAI-UI[32],TARS-UI[19],andSTEP-UI[26]trainVLM-
+                  troducing additional model inference overhead.                based agents with interaction trajectories and reinforce-
+                     Wedeployoursystemonacommercialoff-the-shelf                mentsignals, improving robustness in real-world GUI
+                  smartphone for real-world evaluation. We further evalu-       environments.
+                  ate on the widely used emulator-based benchmark An-           On-devicedeploymentofmobileGUIagent.Most
+                  droid World [14], where our method achieves accuracy          existingmobileGUIagentsystemsfollowaserver‚Äìdevice
+                  under a latency of latency.                                   architecture, where the agent logic runs on a remote
+                     Themaincontributions of this work are:                     server and interacts with the mobile phone through An-
+                      ‚Ä¢ Wepresent MobileExplorer, an on-device mobile           droid Debug Bridge (ADB) [7]. While this design simpli-
+                        GUIagentframeworkthatutilizes model reason-             fies computation,itrequiresuploadingdevicedatatothe
+                        ing latency to perform parallel online exploration,     server,raisingprivacyconcernsandlimitingdeployment
+                        improving system ef√èciency without increasing           insensitiveordisconnectedscenarios.Afewrecentstud-
+                        modelinvocation frequency.                              ies have examined the reasoning latency of language
+                      ‚Ä¢ Wedesignanonlineexploration mechanism that              models directly on mobile devices [21, 22]. However,
+                        prioritizes semantically relevant and diverse UI        these works focus only on LLM inference and do not
+                        elements within limited inference time, maintains       consider vision-language models (VLMs), which are es-
+                        stable task context through controlled rollback,        sential for perception in GUI tasks. Moreover, they do
+                                                                                notprovideacompleteend-to-endon-deviceframework
+                                                                             2
+                                                                                agent. Given the current screen of a mobile phone, the
+                                                                                agent first captures a screenshot that reflects the visual
+                                                                                layout, icons, text, and spatial relationships among UI
+                                                                                elements. An image encoder transforms the screenshot
+                                                                                into visual embeddings, which encode appearance and
+                                                                                structural information of the interface.
+                                                                                  These visual embeddings are combined with textual
+                                                                                tokens, such as user instructions, task descriptions, or
+                                                                                dialogue context. Positional encodings are further incor-
+                                                                                poratedtopreservespatialrelationshipsamonginterface
+                  Figure 1: End-to-end workflow of a mobile GUI                 elements. The resulting multimodal token sequence is
+                  agent. Theagenttakesascreenshotasvisualinput,                 processed by transformer-based encoders and decoders
+                  performsmultimodalreasoning,andoutputstext                    to perform joint visual‚Äìtextual reasoning over the GUI
+                  that are mapped to executable GUI actions.                    state.
+                                                                                  Based on this reasoning process, the model gener-
+                  that integrates perception, reasoning, and action execu-      ates output tokens that correspond to interaction de-
+                  tion within the mobile device itself.                         cisions. These tokens typically include both semantic
+                  Offline exploration for mobile GUI agents. Explo-             components(e.g., the intended action type) and spatial
+                  ration has been studied as a way to augment GUI agents        components (e.g., the location of the target element).
+                  withadditionalinteractionknowledgebeyondpretrained            They are then translated into executable GUI opera-
+                  modelpriors.GUI-explorer[23]firstperformsautonomous           tions, such as tapping an icon, entering text, adjusting
+                  andsystematicexplorationovertheapplicationtocollect           a control, or navigating between pages. This percep-
+                  function-aware trajectories, and then mines transition-       tion‚Äìreasoning‚Äìaction loop forms the core workflow of
+                  awareknowledgefromthecollectedinteraction traces              modernmobileGUIagents.
+                  throughunsupervisedanalysis of state‚Äìaction‚Äìoutcome             3.1.2  BenchmarkformobileGUIagents. Recentbench-
+                  triples. The extracted knowledge is organized into a          marks such as Android-in-the-Wild [15] and Android-
+                  knowledge store and later retrieved to guide task ex-         Control [12] have enabled systematic evaluation of mo-
+                  ecution, rather than being generated during real-time         bile GUI agents across diverse real-world applications.
+                  interaction. Similarly, LLM-Explorer [31] conducts large-     However, these benchmarks rely on of√íine interaction
+                  scale app exploration to build an abstract knowledge          tracesandthereforedonotreflectthedynamicexecution
+                  base, including UI states, actions, and interaction graphs,   conditionsofrealmobiledevices,suchasruntimedelays,
+                  which is maintained and updated from historical ex-           system states, and environment-dependent behaviors.
+                  ploration traces and used to guide future action selec-         To better capture these dynamics, interactive plat-
+                  tion. Other knowledge-augmented agents [30] also rely         formsincludingAndroidWorld[14]andAndroidLab[25]
+                  onpre-collected trajectories or retrieved experience as       provideenvironmentswhereagentsdirectlyoperatereal
+                  static external knowledge for decision making. Techni-        Android applications through system-level control in-
+                  cally, these methods decouple exploration from online         terfaces. Such platforms allow evaluation under realistic
+                  task execution: exploration is conducted beforehand to        execution conditions, including live UI transitions and
+                  constructreusableknowledgerepositories,andtheagent            system responses.
+                  mainlyperformsretrievalorplanningatruntime.Incon-               In this work, we adopt Android World as the primary
+                  trast, we design an online exploration mechanism that         evaluationplatformtoassessoursystemunderdynamic,
+                  runs concurrently with model inference, enabling the          real-device interaction settings.
+                  agent to actively probe the current UI state and acquire
+                  task-relevant information during execution instead of         3.2    WhyVisionisEssentialforMobile
+                  relying on pre-built of√íine knowledge.
+                  3 AMOTIVATIONSTUDY                                                   GUIAgents
+                                                                                MobileGUIinteractionisfundamentallyavisuallygrounded
+                  3.1    Background                                             problem. As shown in Fig. 2, the top-performing agents
+                     3.1.1  Workflow of Mobile GUI Agent. Figure 1 illus-       on the AndroidWorld benchmark are predominantly
+                  trates the typical end-to-end workflow of a mobile GUI        screenshot-based systems. In contrast, approaches that
+                                                                             3
+                                                                                   (a) Latency of task ‚ÄúRecord (b) Steps statistics in An-
+                                                                                   anaudioandsaveit‚Äù.           droidWorld[14].
+                                                                                   Figure 3: The repeated long reasoning phases cre-
+                                                                                   ate idle intervals that can be exploited for parallel
+                                                                                   exploration.
+                                                                                   3.3    OpportunityforOnlineExploration
+                   Figure 2: Top models on AndroidWorld [4, 11, 18,               WhilevisualreasoningenablesaccurateGUIunderstand-
+                   19, 24, 27, 32]. Leading agents are predominantly               ing, it introduces a critical systems bottleneck on mobile
+                   VLM-based,highlightingtheimportanceofvisual                     devices: large and repeated on-device reasoning latency.
+                   understanding over tree-only representations in                AsshowninFig.3a,evenforasimplemobiletasksuchas
+                   mobileGUItasks.                                                ‚ÄúRecord an audio and save it‚Äù, each decision step incurs
+                                                                                   substantial planning time, which dominates the end-to-
+                                                                                   end latency (around tens of seconds per step), while
+                                                                                   perception and operation only take a small fraction of
+                                                                                   the total time. This indicates that the agent spends most
+                   rely mainly on accessibility trees or textual UI represen-      ofitstimewaitingfortheVLMtofinishreasoningbefore
+                   tations rarely appear among the leading entries. This           issuing the next action.
+                   trend suggests that high task success in realistic mobile         More importantly, mobile GUI tasks are inherently
+                   environments is largely determined by the agent‚Äôs abil-         multi-step and sequential. Fig. 3b shows that completing
+                   ity to understand rendered visual content rather than           a task often requires many interaction steps, and some
+                   structured UI trees alone.                                      tasks exceed 15‚Äì20 steps. As a result, the large per-step
+                     This dominance of vision stems from the nature of             reasoning latency is repeatedly accumulated across the
+                   GUItasks. Many interactions require recognizing visual         whole trajectory, leading to extremely high task com-
+                   elements whose semantics are only partially reflected in        pletion time on resource-constrained devices. Therefore,
+                   accessibility metadata, such as icons, styled text, or tran-    theinef√èciencyofon-deviceGUIagentsstemsnotfroma
+                   sient visual prompts. Furthermore, mobile tasks often           single slow inference, but from the combination of long-
+                   depend on spatial and layout cues (e.g., relative posi-         horizon decision making and heavy per-step reasoning
+                   tions, corner locations, grouping of elements), which           cost.
+                   are naturally encoded in pixel space but only weakly              Wefurther conduct a preliminary measurement on
+                   captured in tree structures. In addition, successful inter-     a commercial smartphone (Samsung Galaxy S24, 12GB
+                   action frequently requires interpreting visual feedback         RAM)runninga2BVLM(MAI-UI)withon-deviceinfer-
+                   after each action, such as state changes or confirmation        ence.AsobservedinFig.3a,asinglereasoningsteptakes
+                   indicators on the updated screen. These characteristics         around 40 seconds on average, whereas a lightweight
+                   makemobileGUIautomationinherently vision-centric,               UI interaction, such as a tap and the resulting screen
+                   explaining why VLM-based agents consistently outper-            transition, only takes about 1‚Äì2 seconds. This large gap
+                   form LLM-only agents in complex task settings.                  implies that, within one reasoning step, the system has
+                     Takentogether,theseobservationsindicatethatvision             suf√ècient time budget to perform roughly 20 lightweight
+                   is not optional but a fundamental capability for reliable       interactions. In other words, a considerable amount of
+                   mobile GUI agents.                                              executable time is available but remains unused while
+                                                                                   the model performs visual reasoning.
+                                                                               4
+                                                        Thisobservationrevealsafundamentalinef√èciencyin                                                                                                                    waiting idly for the model output, an online exploration
+                                                 conventional step-wise GUI agents. During each reason-                                                                                                                     controller is triggered in parallel. The controller parses
+                                                 ing phase, the UI environment remains unchanged and                                                                                                                        the current UI elements and computes semantic similar-
+                                                 the interaction pipeline is largely idle, yet the system                                                                                                                   ity between candidate interactive elements and the task
+                                                 passively waits for the model output. The device is ef-                                                                                                                    description using a lightweight text embedding model.
+                                                 fectively blocked by sequential reasoning, even though                                                                                                                     Based on this relevance score, the system selects a small
+                                                 the UI can already be probed and interacted with during                                                                                                                    set of task-related UI elements and performs lightweight
+                                                 this interval.                                                                                                                                                             exploratory interactions (e.g., tap and observe screen
+                                                        Wearguethatthisrepeatedidleinterval should be ex-                                                                                                                   transitions) to probe hidden UI branches and interface
+                                                 ploited rather than wasted. Instead of treating reasoning                                                                                                                  structure.
+                                                 latency as unavoidable overhead, we leverage it as an                                                                                                                             Toensureconsistency with the main decision trajec-
+                                                 opportunity to perform lightweight online exploration                                                                                                                      tory, the system explicitly records the exploration traces
+                                                 in parallel with model inference. Concretely, while the                                                                                                                    andscreen states, and reliably returns the device to the
+                                                 VLMisgeneratingthenextaction, the exploration con-                                                                                                                         UIstatewhereexplorationstartedbeforethenextaction
+                                                 troller proactively interacts with selected UI elements                                                                                                                    is executed. This design prevents exploration-induced
+                                                 and observes the resulting screen transitions, gradually                                                                                                                   screen changes from interfering with the original rea-
+                                                 uncovering hidden UI branches and structural context.                                                                                                                      soningcontext,whichiscriticalformulti-stepGUItasks.
+                                                 The collected information reduces uncertainty in sub-                                                                                                                             Theoutcomesofexploration,includingvisitedscreens,
+                                                 sequent decisions, which can shorten the interaction                                                                                                                       discovered UI semantics, and interaction feedback, are
+                                                 trajectory and reduce unnecessary trial-and-error steps.                                                                                                                   compactly summarized into structured hints (e.g., high-
+                                                        However, enabling online exploration during reason-                                                                                                                 lighted elements and textual cues). These hints are ap-
+                                                 ingalsointroducesseveralnon-trivialsystemchallenges.                                                                                                                       pended to the prompt of the next reasoning step, en-
+                                                 First, how to perform effective exploration under a strict                                                                                                                 abling the VLM to leverage newly acquired environmen-
+                                                 time budget, so that the limited idle interval is used to                                                                                                                  tal evidence rather than relying solely on a single static
+                                                 gather diverse and task-relevant information. Second,                                                                                                                      screenshot.Inthisway,reasoningbecomesprogressively
+                                                 how to convert the discovered UI states and interac-                                                                                                                       informed by runtime observations of the UI.
+                                                 tion traces into compact knowledge that can be directly                                                                                                                           Fromasystemperspective, MobileExplorer forms a
+                                                 leveraged to enhance subsequent reasoning. Third, how                                                                                                                      partially parallel pipeline: VLM reasoning operates on
+                                                 to reliably return the agent to the UI state where ex-                                                                                                                     stepÌ†µÌ±ñ while exploration continuously collects contextual
+                                                 ploration started, since parallel exploration may trigger                                                                                                                  knowledge for future steps. This pipeline-aware design
+                                                 screen transitions and change the original interface con-                                                                                                                  converts otherwise idle reasoning time into productive
+                                                 text. Without accurately restoring the starting UI state,                                                                                                                  interaction time, improves decision accuracy through
+                                                 the subsequent reasoning step may operate on a differ-                                                                                                                     knowledgeaugmentation,andreducesunnecessarytrial-
+                                                 ent screen than the one used for inference, leading to                                                                                                                     and-error steps in long-horizon mobile GUI tasks, while
+                                                 inconsistent decisions.                                                                                                                                                    remainingfullydeployableoncommoditysmartphones.
+                                                 4 SYSTEMOVERVIEW                                                                                                                                                           5 DESIGNOFMOBILEEXPLORER
+                                                 WeproposeMobileExplorer,afullyon-deviceVLM-based                                                                                                                           5.1               ProblemFormulation
+                                                 mobile GUI agent that overlaps model reasoning with                                                                                                                       Weconsideranon-devicemobileGUIagentthatinter-
+                                                 onlineexploration,asillustratedinFig.4.Unlikeconven-                                                                                                                       acts with an application through step-wise operations.
+                                                 tional GUI agents that follow a strictly sequential per-                                                                                                                   AtstepÌ†µÌ±ñ, the agent observes the current UI screenshot
+                                                 ception‚Äìreasoning‚Äìaction loop, MobileExplorer treats                                                                                                                      Ì†µÌ±†Ì†µÌ±ñ   andreceives a task description T. Due to the partial
+                                                 the long VLM reasoning phase as an exploitable time                                                                                                                        observability of mobile interfaces, the full UI structure
+                                                 windowandexecutesexploration concurrently on the                                                                                                                           is unknown a priori and can only be incrementally re-
+                                                 samedevice. All sensing, reasoning, exploration, and in-                                                                                                                   vealed through interaction.
+                                                 teraction are performed locally, preserving user privacy                                                                                                                          State and Action Space. At step Ì†µÌ±ñ, the agent resides in
+                                                 andavoiding any data transmission.                                                                                                                                         animplicit UI state Ì†µÌ±£ represented by the screenshot Ì†µÌ±†
+                                                        AteachstepÌ†µÌ±ñ, the agent receives the current screen-                                                                                                                                                                          Ì†µÌ±ñ                                                                                           Ì†µÌ±ñ
+                                                 shot and task description as input and feeds them to                                                                                                                       andtheset of parsed interactive UI elements:
+                                                                                                                                                                                                                                                                                          (1)          (2)                      (Ì†µÌ∞æ )
+                                                 the VLM for action reasoning. Meanwhile, instead of                                                                                                                                                               A ={Ì†µÌ±é ,Ì†µÌ±é                                 , . . . , Ì†µÌ±é           Ì†µÌ±ñ   }.
+                                                                                                                                                                                                                                                                         Ì†µÌ±ñ               Ì†µÌ±ñ           Ì†µÌ±ñ                      Ì†µÌ±ñ
+                                                                                                                                                                                                                  5
+                    Figure4:SystemoverviewofMobileExplorer.Duringeachreasoningstep,thesystemperformslightweight
+                    online exploration in parallel with VLM inference, summarizes discovered screen knowledge into compact
+                    hints, and feeds them to the next reasoning step.
+                    EachactioncorrespondstointeractingwithaUIelement                     Reasoning with Exploration Context. The VLM gener-
+                    (e.g., click, scroll), which may trigger a screen transition      ates a task-conditioned representation:
+                    to a new UI state.                                                                    r = Ì†µÌ±ì   (Ì†µÌ±† , T, C ),
+                      Unlike conventional agents that only rely on the cur-                                Ì†µÌ±ñ   vlm  Ì†µÌ±ñ     Ì†µÌ±ñ
+                    rent screen, MobileExplorer performs online local ex-             where C provides exploration-derived hints beyond the
+                                                                                               Ì†µÌ±ñ
+                    ploration during model reasoning. A lightweight con-              current visible screen.
+                    troller probes selected UI elements and observes result-             System Objective. The objective of MobileExplorer is
+                    ing screen transitions, forming a local interaction sub-          to maximize task completion probability while minimiz-
+                    graph:                                                            ing interaction cost under on-device latency constraints:
+                                   Glocal = (Vvisited, Eobserved),                                                           ‚àëÔ∏Å
+                                    Ì†µÌ±ñ         Ì†µÌ±ñ       Ì†µÌ±ñ                                 maxPr(Ì†µÌ±£    ‚àà V     (T))    s.t.      Ì†µÌºèinteract ‚â§ Ì†µÌ∞µ,
+                              visited                                   observed            Ì†µÌºã      Ì†µÌ±Å     goal                   Ì†µÌ±ñ
+                    where V         denotes visited UI states and E                                                            Ì†µÌ±ñ
+                             Ì†µÌ±ñ                                         Ì†µÌ±ñ
+                    denotes observed transitions during exploration.                  whereÌ†µÌ∞µ is the latency budget. The key idea is to utilize
+                      Latency-Constrained Exploration. On-device VLM in-              otherwise idle reasoning latency to gather additional UI
+                    ference incurs significant latency. Let Ì†µÌºèvlm denote the          context online without increasing execution delay.
+                                                                Ì†µÌ±ñ
+                    reasoning latency at step Ì†µÌ±ñ. Online exploration is exe-          5.2     Latency-Constrained
+                    cuted within this idle window:                                            Goal-ConditionedExploration
+                                          Ì†µÌºèexplore ‚â§ Ì†µÌºèvlm,                          Online exploration operates strictly within the latency
+                                           Ì†µÌ±ñ        Ì†µÌ±ñ                               budget defined by the VLM reasoning time at each de-
+                    so that exploration does not introduce additional user-           cision step. Since reasoning itself dominates step la-
+                    perceived delay.                                                  tency, exploration must utilize only the idle window
+                      Exploration Context Augmentation. Instead of directly           without introducing additional delay. Exhaustive traver-
+                    expanding the action space, exploration produces com-             sal of the UI graph is infeasible on resource-constrained
+                    pact contextual knowledge summarizing visited UI ele-             mobile devices. Therefore, we design a time-budgeted,
+                    ments and discovered screen semantics:                            relevance-drivenexplorationmechanismthatmaximizes
+                                                                                      task-relevant coverage within bounded time, as shown
+                                    C ={Ì†µÌ±¢ | Ì†µÌ±¢ ‚àà Uvisited},                          in Figure 5.
+                                      Ì†µÌ±ñ     Ì†µÌ±ó  Ì†µÌ±ó    Ì†µÌ±ñ                                At the beginning of each reasoning step, the explo-
+                    where Uvisited denotes task-relevant UI elements ob-              ration controller parses the current accessibility tree
+                              Ì†µÌ±ñ
+                    served during exploration up to step Ì†µÌ±ñ.                          andextracts all clickable UI elements. Each element is
+                                                                                   6
+                  Figure 5: During each VLM reasoning step, the sys-
+                  temranksclickableUIelementsbytaskrelevance
+                  and performs short exploratory probes under a
+                  strict time budget.
+                  converted into a lightweight textual representation (e.g.,
+                  text label, content description, resource identifier). We
+                  computeasemanticsimilarity score between each ele-
+                  mentrepresentationandthetaskdescriptionembedding
+                  using a lightweight embedding model. This produces a
+                  relevance-ranked candidate list.
+                    Instead of uniformly probing all clickable elements,
+                  the system prioritizes high-relevance candidates while      Figure 6: Ef√ècient rollback for online exploration.
+                  explicitly maintaining diversity. To prevent redundant      Exploratory interactions may lead to different UI
+                  traversal, we maintain interaction history at both el-      branches; some can be reverted via back naviga-
+                  ement level and UI-branch level. Elements that have         tion, while others introduce irreversible context
+                  been previously visited, or that belong to branches al-     changes. MobileExplorer restores the exploration
+                  ready explored in earlier steps, are down-weighted. This    startingUIstatethroughtrace-guidedrollbackand
+                  history-aware scoring encourages discovery of unseen        screen verification.
+                  UI paths while preserving task relevance.
+                    Exploration is executed through short interaction cy-
+                  cles. Each probe consists of a click action followed by
+                  observing the resulting screen transition. The updated
+                  screen is parsed again to collect additional contextual     or state duplication. In contrast, MobileExplorer oper-
+                  information. Because each probe is short and bounded,       ates on a live interactive system, where each exploratory
+                  multiple probes can be executed within a single reason-     action directly modifies the real UI state. To preserve
+                  ingwindow.Explorationisterminatedimmediatelyonce            consistency between the reasoning input screen and
+                  the time budget is exhausted or if an unexpected state      the execution context, the agent must return to the ex-
+                  transition is detected.                                     ploration starting UI state after probing alternative UI
+                    Thisdesignenablestheagenttouncoverdeeperorhid-            branches.
+                  denUIbranches, collect auxiliary contextual evidence,
+                  and build structured exploration memory without in-           5.3.1  Challenge. Rollback in mobile GUI exploration
+                  creasing end-to-end latency. By coupling semantic pri-      is fundamentally dif√ècult due to the partially observable
+                  oritization with diversity-aware history control under      andnon-deterministic nature of UI transitions. Unlike
+                  a strict time budget, the system balances ef√èciency and     simulated environments with explicit state cloning, a
+                  coverage in mobile-scale UI environments.                   real mobile interface exposes only the rendered screen,
+                                                                              while the underlying system state remains hidden. As
+                  5.3   Exploration with Ef√ècient Rollback                    a result, the interaction process is better modeled as a
+                  Online exploration in mobile GUI environments funda-        partially observable Markov decision process (POMDP)
+                  mentallydiffersfromof√íineexplorationinsimulators.In         rather than a fully observable and reversible Markov
+                  of√íine settings, agents can rely on environment cloning     chain.
+                                                                           7
+                          Inpractice,UInavigationisnotstrictlyreversible.The                         Algorithm1ExplorationwithRollback
+                       back operation may skip intermediate states, modal di-                        Require: Task T, start screen Ì†µÌ±† , clickable set A , depth Ì†µÌ±ë,
+                       alogsandpop-upscanalterthetransitionpath,andasyn-                                  budgetÌ†µÌºè , threshold Ì†µÌªø          Ì†µÌ±ñ                  Ì†µÌ±ñ
+                       chronous content loading may lead to state-dependent                                        Ì†µÌ±ñ
+                                                                                                     Ensure: Exploration hints C and restored starting UI state
+                                                                                                                                      Ì†µÌ±ñ
+                       screenvariationsevenunderidenticalactions.Moreover,                            1: C ‚Üê ‚àÖ
+                                                                                                           Ì†µÌ±ñ                   cand
+                       certain interactions (e.g., opening new pages or trigger-                      2: Rank candidates A           bysemantic similarity to T
+                                                                                                                         cand   Ì†µÌ±ñ
+                                                                                                      3: for all Ì†µÌ±é ‚àà A       withinÌ†µÌºè do
+                       ing system UI) introduce irreversible context changes                                             Ì†µÌ±ñ             Ì†µÌ±ñ
+                       that cannot be perfectly undone by a single navigation                         4:     Interact with Ì†µÌ±é and explore transitions up to depth Ì†µÌ±ë
+                                                                                                      5:     Record discovered screens/elements into C
+                       step. Consequently, naive backtracking cannot reliably                                                                                 Ì†µÌ±ñ
+                       restore the exact exploration starting UI state, requiring                     6:     Issue back forÌ†µÌ±ë steps                   (Level-1 rollback)
+                       a rollback mechanism that is both ef√ècient and robust                          7:     Capture current screenÌ†µÌ±†‚Ä≤
+                       to non-deterministic transitions.                                              8:     if pHashDist(Ì†µÌ±†‚Ä≤,Ì†µÌ±†Ì†µÌ±ñ) > Ì†µÌªø then
+                                                                                                      9:        GohomeandreplayreasoningactionstorecoverÌ†µÌ±†Ì†µÌ±ñ
+                                                                                                                (Level-2 recovery)
+                          5.3.2    Two-LevelRollbackStrategy. AsshowninFig.6,                        10:     endif
+                       MobileExplorer adopts a two-level rollback strategy.                          11: end for
+                                                                                                     12: return C
+                          Level-1:Depth-boundedbacktracking.Weperformdepth-                                         Ì†µÌ±ñ
+                       boundedexploration with a fixed depthÌ†µÌ±ë. After finish-
+                       ing one exploratory branch, we issue back exactly Ì†µÌ±ë
+                       times to return to the starting page. We then verify roll-                       Step Alignment via Relevance Matching. After execut-
+                       back correctness by comparing the current screen with                         ing the reasoning action and reaching Ì†µÌ±†Ì†µÌ±ñ+1, MobileEx-
+                       the exploration starting screen using perceptual hash                         plorer performs a relevance matching process between
+                       (pHash) [29], a lightweight image similarity metric ro-                       the current screen and previously explored observations.
+                       busttominorvisualvariations(e.g.,scrollingordynamic                           Specifically, the systemcomparesthesemanticsimilarity
+                       content). If the pHash distance is below a threshold Ì†µÌªø,                      between UI elements observed during exploration and
+                       the rollback is considered successful.                                        theelementsvisibleonÌ†µÌ±†Ì†µÌ±ñ+1.Onlyexplorationresultsthat
+                          Level-2: Home-and-replay recovery. If Level-1 rollback                     are semantically aligned with the current UI context are
+                       fails (e.g., due to non-reversible transitions or unex-                       retained, while irrelevant branches are discarded. This
+                       pected UI states), we fall back to a robust recovery rou-                     prevents outdated or off-trajectory exploration knowl-
+                       tine. The agent returns to the Home screen and replays                        edge from polluting the reasoning context.
+                       the original reasoning actions that led to the exploration                       CompactExploration Memory. Instead of storing full
+                       starting UI state. This recovery guarantees that explo-                       interaction trajectories, which are noisy and redundant,
+                       ration does not permanently drift the agent away from                         MobileExplorermaintainsalightweightexplorationmem-
+                       the main decision trajectory.                                                 ory that records visited UI elements, discovered screens,
+                          This two-level design keeps rollback fast in the com-                      and their task relevance. This structured memory ab-
+                       moncase (Level-1) while maintaining correctness un-                           stracts raw exploration into a compact representation
+                       der non-deterministic UI behaviors (Level-2), thereby                         suitable for on-device VLM prompting.
+                       preserving the latency-hiding benefit of parallel explo-                         During exploration, task-related elements discovered
+                       ration.                                                                       along different branches are marked (e.g., highlighted
+                                                                                                     regions on screenshots) and associated with textual de-
+                       5.4     Exploration MemoryandReasoning                                        scriptions such as newly revealed pages, actionable con-
+                               Augmentation                                                          trols, and observed interaction outcomes. This marking
+                       Exploration is performed at step Ì†µÌ±ñ starting from the                         mechanismpreserves spatial grounding while keeping
+                       screen Ì†µÌ±† , while the actual reasoning action leads the                       the memory size small.
+                                 Ì†µÌ±ñ
+                       agenttoanewscreenÌ†µÌ±†Ì†µÌ±ñ+1.Asaresult,notallexploration                              Hint Generation and Context Augmentation. Based on
+                       trajectories are directly relevant to the subsequent de-                      thealignedexplorationmemory,thesystemsummarizes
+                       cision. A key design challenge is to align exploration                        key observations into concise textual hints and option-
+                       knowledge with the actual reasoning progress, rather                          ally masked or highlighted visual cues. These hints are
+                       than blindly injecting all explored information into the                      appended to the prompt of the next reasoning step as
+                       prompt.                                                                       exploration-derived context C .
+                                                                                                                                           Ì†µÌ±ñ
+                                                                                                8
+                      Consequently, the VLM no longer reasons solely over             Baselines.WecompareMobileExplorerwiththefollow-
+                    thestaticscreenshotÌ†µÌ±†Ì†µÌ±ñ+1, but over an augmentedcontext           ing representative baselines.
+                    that integrates both the current UI and the aligned lo-               ‚Ä¢ LLM-basedagent:Atext-centricmobileGUIagent
+                    cal interaction structure discovered during exploration.                 that relies on accessibility trees and performs step-
+                    This enriched context reduces uncertainty about hid-                     wise reasoning using an LLM.
+                    denUIbranchesandmitigates repeated trial-and-error                    ‚Ä¢ VLM-basedagent:Ascreenshot-basedagentthat
+                    interactions.                                                            uses a VLM to reason over the current screen in a
+                      By combining step-aligned filtering, compact mem-                      sequential perception‚Äìreasoning‚Äìaction loop.
+                    ory abstraction, and structured hint augmentation, Mo-                ‚Ä¢ Input-pruning VLMagent:Agentthatreduces
+                    bileExplorer converts raw exploration trajectories into                  visual token overhead via screenshot or token
+                    task-relevant knowledge, improving reasoning accuracy                    pruning [13].
+                    while maintaining low on-device overhead for long-                    ‚Ä¢ Offline exploration agent: Agent that construct
+                    horizon mobile GUI tasks.                                                knowledgethroughof√íineexploration[23,30,31].
+                    6 EVALUATION                                                      Evaluation metrics. We evaluate MobileExplorer in
+                                                                                      terms of both effectiveness and system ef√èciency on
+                    6.1    ExperimentSetup                                            real on-device execution. Success rate measures the
+                    Benchmark.WeevaluateMobileExploreronAndroid-                      percentage of tasks successfully completed within a pre-
+                   World[14],atask-orientedmobileGUIinteractionbench-                 defined step budget, indicating the overall task-solving
+                    markthatrequires multi-step reasoning over real smart-            capability of the agent. Total steps denotes the number
+                    phoneinterfaces.UnlikestaticGUIunderstandingdatasets,             of interaction steps required to finish a task, reflecting
+                    AndroidWorldemphasizesclosed-loopinteraction,where                decision ef√èciency and the amount of trial-and-error
+                    the agent must continuously perceive the screen, rea-             during long-horizon execution. Latency is evaluated
+                    son about task progress, and issue sequential actions to          at two granularities. Step latency is defined as the time
+                    reach the goal state. This setting better reflects practical      of a single interaction cycle, measured from capturing
+                    mobile assistant scenarios, where interaction ef√èciency           the current screenshot Ì†µÌ±†Ì†µÌ±ñ to completing the execution of
+                    andsystemresponsiveness are critical.                             the selected action Ì†µÌ±éÌ†µÌ±ñ. This includes perception, model
+                    Devices. We deploy MobileExplorer on multiple real                reasoning,onlineexploration,andactionexecution.End-
+                    on-device platforms, including Samsung Galaxy S24 and             to-end latency is defined as the total task completion
+                    Google Pixel 9 smartphones (12GB RAM, 256GB stor-                 time from task initialization to the final successful state,
+                    age), an NVIDIA Jetson Xavier NX (16GB) representing              i.e., the sum of all step latencies across the task.
+                    anedgeAIdevice,andaMacBookAirM4(24GB)asa
+                    portable on-device computing platform.                            6.2     Overall Performance
+                    Implementation.MobileExplorerisimplementedasan                    WeevaluateMobileExplorerontheAndroidWorldbench-
+                    end-to-endmobileGUIagentsystem.Duringevaluation,                  mark under a fully on-device setting. Compared with
+                    AndroidWorld tasks are executed on real smartphones               baseline agents, MobileExplorer consistently improves
+                    while preserving natural interaction timing. To obtain            task success while reducing interaction cost.
+                    stable latency measurements without interference from                Overall, MobileExplorer achieves a success rate of X%,
+                    resource contention between GUI rendering and model               outperforming the VLM-based baseline by X% and the
+                    inference, we adopt a dual-device execution setup in              LLM-based agent by X%. More importantly, our method
+                    which one device runs the interaction tasks and pro-              significantly reduces the average number of interaction
+                    vides GUI states, while the other performs perception             steps from X to X, indicating that exploration-derived
+                    and decision inference. We empirically verify that the            hints help the agent avoid unnecessary trial-and-error
+                    measured step latency and end-to-end latency closely              operations in long-horizon tasks.
+                    matchthoseobservedwhenrunningonasingledevicein                       In terms of ef√èciency, MobileExplorer lowers the av-
+                    isolation, indicating that the deployment strategy does           erage step latency to X s and reduces the total task com-
+                    not distort system timing. All perception and reason-             pletion time (end-to-end latency) by X% compared to
+                    ing modules are executed on mobile hardware, ensuring             the standard step-wise VLM agent. This improvement
+                    that the evaluation captures the complete perception‚Äì             comesfromoverlapping online exploration with model
+                    reasoning‚Äìaction loop under real device constraints.              reasoning,whichconvertsotherwiseidlereasoningtime
+                                                                                   9
+                              (a) Success rate and average steps.                                 (b) LRWdataset
+                                                 Figure 7: Overall performance on AndroidWorld.
+                                                                               6.4    MemoryandEnergyOverhead
+                                                                               Weevaluate the additional memory footprint and en-
+                                                                               ergy consumption introduced by the online exploration
+                                                                               module, including the exploration controller, rollback
+                                                                               mechanism, and exploration memory buffer.
+                                                                                  As shown in Figure ??, the memory overhead of all
+                                                                               componentsremainsmodest,withthepeakadditional
+                                                                               memoryusagebelowXMB.Inparticular,theexploration
+                                                                               controller consumes X MB, the rollback buffer requires
+                  Figure 8: Success rate comparison across task cate-          XMBforstoringscreenshotsandtraces,andthecompact
+                  gories.                                                      exploration memory adds only X MB. This overhead
+                                                                               is small compared to the memory consumption of on-
+                                                                               device VLM inference and does not affect the feasibility
+                  intousefulenvironmentinteractionwithoutintroducing           of deployment on commodity mobile devices.
+                  extra user-perceived delay.                                     Wefurthermeasuretheruntimeenergyconsumption
+                     These results demonstrate that latency-bounded on-        of our system with and without the exploration module,
+                  line exploration not only enhances decision quality but      as illustrated in Figure ??. The proposed design intro-
+                  also improves system ef√èciency for multi-step mobile         duces only a marginal increase in energy usage, with an
+                  GUItasks on resource-constrained devices.                    average additional power consumption of X W during
+                                                                               inference. This is because exploration operations consist
+                  6.3    UnderstandingPerformanceof                            of lightweight UI interactions and embedding computa-
+                         MobileExplorer                                        tions, which are significantly less energy-intensive than
+                  Figure 8 breaks down performance by task category.           VLMreasoning.Overall, the slight energy overhead is
+                  MobileExplorer significantly improves navigation- and        well justified by the reduction in total steps and end-to-
+                  interaction-intensivetasks,includingrequires_setup,search,   end latency achieved by MobileExplorer.
+                  data_edit, and parameterized. These tasks require discov-
+                  eringhiddenUIelementsorexploringmultiplebranches,
+                  where time-budgeted exploration provides additional          6.5    CaseStudy
+                  structural cues.                                             7 DISCUSSION
+                     In contrast, performance decreases on perception-         Discuss the limitation and future work.
+                  driventaskssuchasinformation_retrievalandscreen_reading,
+                  whichprimarily depend on direct visual interpretation
+                  rather than UI exploration.
+                     Overall, the results indicate that online exploration is  8 CONCLUSION
+                  mostbeneficial for tasks involving structural UI uncer-      In this paper, we introduce MobileExplorer, a new xx
+                  tainty.
+                                                                            10
+                    REFERENCES                                                         [15] Christopher Rawles, Alice Li, Daniel Rodriguez, Oriana Riva,
+                     [1] Josh Achiam, Steven Adler, Sandhini Agarwal, Lama Ahmad,           and Timothy Lillicrap. [n. d.]. Android in the wild: A large-
+                        Ilge Akkaya, Florencia Leoni Aleman, Diogo Almeida, Janko           scale dataset for android device control, 2023. URL https://arxiv.
+                        Altenschmidt, Sam Altman, Shyamal Anadkat, et al. 2023. Gpt-4       org/abs/2307.10088 ([n. d.]).
+                        technical report. arXiv preprint arXiv:2303.08774 (2023).      [16] Nils Reimers and Iryna Gurevych. 2019. Sentence-bert: Sen-
+                     [2] ShuaiBai,KeqinChen,XuejingLiu,JialinWang,WenbinGe,Sibo             tence embeddings using siamese bert-networks. arXiv preprint
+                        Song, Kai Dang, Peng Wang, Shijie Wang, Jun Tang, et al. 2025.      arXiv:1908.10084 (2019).
+                        Qwen2. 5-vl technical report. arXiv preprint arXiv:2502.13923  [17] Gemini Team, Rohan Anil, Sebastian Borgeaud, Jean-Baptiste
+                        (2025).                                                             Alayrac, Jiahui Yu, Radu Soricut, Johan Schalkwyk, Andrew M
+                     [3] Kanzhi Cheng, Qiushi Sun, Yougang Chu, Fangzhi Xu, Li YanTao,      Dai, Anja Hauth, Katie Millican, et al. 2023. Gemini: a fam-
+                        Jianbing Zhang, and Zhiyong Wu. 2024. Seeclick: Harnessing          ily of highly capable multimodal models.   arXiv preprint
+                        gui grounding for advanced visual gui agents. In Proceedings of     arXiv:2312.11805 (2023).
+                        the 62nd Annual Meeting of the Association for Computational   [18] ShizuoTian,HaoWen,YuxuanChen,JiachengLiu,ShanhuiZhao,
+                        Linguistics (Volume 1: Long Papers). 9313‚Äì9332.                     GuohongLiu,JuRen,YunxinLiu,andYuanchunLi.2025. Agent-
+                     [4] Gaole Dai, Shiqi Jiang, Ting Cao, Yuanchun Li, Yuqing Yang, Rui    Prog: Empowering Long-Horizon GUI Agents with Program-
+                        Tan, Mo Li, and Lili Qiu. 2025. Advancing mobile gui agents: A      Guided Context Management. arXiv preprint arXiv:2512.10371
+                        verifier-driven approach to practical deployment. arXiv preprint    (2025).
+                        arXiv:2503.15937 (2025).                                       [19] Haoming Wang, Haoyang Zou, Huatong Song, Jiazhan Feng,
+                     [5] Tinghe Ding. 2024. Mobileagent: enhancing mobile control via       Junjie Fang, Junting Lu, Longxiang Liu, Qinyu Luo, Shihao Liang,
+                        human-machineinteraction and sop integration. arXiv preprint        Shijue Huang, et al. 2025. Ui-tars-2 technical report: Advancing
+                        arXiv:2401.04124 (2024).                                            gui agent with multi-turn reinforcement learning. arXiv preprint
+                     [6] Abhimanyu Dubey, Abhinav Jauhri, Abhinav Pandey, Abhishek          arXiv:2509.02544 (2025).
+                        Kadian, Ahmad Al-Dahle, Aiesha Letman, Akhil Mathur, Alan      [20] Junyang Wang, Haiyang Xu, Haitao Jia, Xi Zhang, Ming Yan,
+                        Schelten, Amy Yang, Angela Fan, et al. 2024. The llama 3 herd of    WeizhouShen,JiZhang,FeiHuang,andJitaoSang.2024. Mobile-
+                        models. arXiv e-prints (2024), arXiv‚Äì2407.                          agent-v2: Mobile device operation assistant with effective navi-
+                     [7] Google Android Developers. [n. d.]. Android Debug Bridge (adb).    gation via multi-agent collaboration. Advances in Neural Infor-
+                        https://developer.android.com/tools/adb. ([n. d.]).                 mation Processing Systems 37 (2024), 2686‚Äì2710.
+                     [8] Wenyi Hong, Weihan Wang, Qingsong Lv, Jiazheng Xu, Wen-       [21] Hao Wen, Yuanchun Li, Guohong Liu, Shanhui Zhao, Tao Yu,
+                        mengYu,JunhuiJi, Yan Wang, Zihan Wang, Yuxiao Dong, Ming            TobyJia-JunLi,ShiqiJiang,YunhaoLiu,YaqinZhang,andYunxin
+                        Ding, et al. 2024. Cogagent: A visual language model for gui        Liu. 2024. Autodroid: Llm-powered task automation in android.
+                        agents. In Proceedings of the IEEE/CVF Conference on Computer       In Proceedings of the 30th Annual International Conference on
+                        Vision and Pattern Recognition. 14281‚Äì14290.                        Mobile Computing and Networking. 543‚Äì557.
+                     [9] Sunjae Lee, Junyoung Choi, Jungjae Lee, Munim Hasan Wasi,     [22] HaoWen,ShizuoTian,BorislavPavlov,WenjieDu,YixuanLi,Ge
+                        HojunChoi,Steve Ko, Sangeun Oh, and Insik Shin. 2024. Mobi-         Chang, Shanhui Zhao, Jiacheng Liu, Yunxin Liu, Ya-Qin Zhang,
+                        legpt: Augmenting llm with human-like app memory for mobile         et al. 2025. Autodroid-v2: Boosting slm-based gui agents via
+                        task automation. In Proceedings of the 30th Annual International    code generation. In Proceedings of the 23rd Annual International
+                        Conference on Mobile Computing and Networking. 1119‚Äì1133.           ConferenceonMobileSystems,ApplicationsandServices.223‚Äì235.
+                    [10] Gang Li and Yang Li. 2022. Spotlight: Mobile ui understand-   [23] Bin Xie, Rui Shao, Gongwei Chen, Kaiwen Zhou, Yinchuan Li,
+                        ing using vision-language models with a focus. arXiv preprint       Jie Liu, Min Zhang, and Liqiang Nie. 2025. Gui-explorer: Au-
+                        arXiv:2209.14927 (2022).                                            tonomousexplorationandminingoftransition-awareknowledge
+                    [11] Ning Li, Xiangmou Qu, Jiamu Zhou, Jun Wang, Muning Wen,            for gui agent. arXiv preprint arXiv:2505.16827 (2025).
+                        Kounianhua Du, Xingyu Lou, Qiuying Peng, and Weinan Zhang.     [24] YifanXu,XiaoLiu,XinghanLiu,JiaqiFu,HanchenZhang,Bohao
+                        [n. d.]. MobileUse: A Hierarchical Reflection-Driven GUI Agent      Jing, ShudanZhang,YutingWang,WenyiZhao,andYuxiaoDong.
+                        for Autonomous Mobile Operation. In The Thirty-ninth Annual         2025. Mobilerl: Online agentic reinforcement learning for mobile
+                        Conference on Neural Information Processing Systems, 2025b. URL     gui agents. arXiv preprint arXiv:2509.18119 (2025).
+                        https://openreview. net/forum.                                 [25] Yifan Xu, Xiao Liu, Xueqiao Sun, Siyi Cheng, Hao Yu, Hanyu
+                    [12] WeiLi,WilliamEBishop,AliceLi,ChristopherRawles,Folawiyo            Lai, Shudan Zhang, Dan Zhang, Jie Tang, and Yuxiao Dong. 2025.
+                        Campbell-Ajala, Divya Tyamagundlu, and Oriana Riva. 2024. On        Androidlab: Training and systematic benchmarking of android
+                        the effects of data scale on ui control agents. Advances in Neural  autonomous agents. In Proceedings of the 63rd Annual Meeting
+                        Information Processing Systems 37 (2024), 92130‚Äì92154.              of the Association for Computational Linguistics (Volume 1: Long
+                    [13] Kevin Qinghong Lin, Linjie Li, Difei Gao, Zhengyuan Yang,          Papers). 2144‚Äì2166.
+                        Shiwei Wu, Zechen Bai, Stan Weixian Lei, Lijuan Wang, and      [26] Haolong Yan, Jia Wang, Xin Huang, Yeqing Shen, Ziyang Meng,
+                        Mike Zheng Shou. 2025. Showui: One vision-language-action           Zhimin Fan, Kaijun Tan, Jin Gao, Lieyu Shi, Mi Yang, et al. 2025.
+                        model for gui visual agent. In Proceedings of the Computer Vision   Step-gui technical report. arXiv preprint arXiv:2512.15431 (2025).
+                        and Pattern Recognition Conference. 19498‚Äì19508.               [27] Jiabo Ye, Xi Zhang, Haiyang Xu, Haowei Liu, Junyang Wang,
+                    [14] ChristopherRawles,SarahClinckemaillie,YifanChang,Jonathan          Zhaoqing Zhu, Ziwei Zheng, Feiyu Gao, Junjie Cao, Zhengxi
+                        Waltz, Gabrielle Lau, Marybeth Fair, Alice Li, William Bishop,      Lu, et al. 2025. Mobile-agent-v3: Fundamental agents for gui
+                        WeiLi, Folawiyo Campbell-Ajala, et al. 2024. Androidworld: A        automation. arXiv preprint arXiv:2508.15144 (2025).
+                        dynamic benchmarking environment for autonomous agents.        [28] Keen You, Haotian Zhang, Eldon Schoop, Floris Weers, Amanda
+                        arXiv preprint arXiv:2405.14573 (2024).                             Swearngin, Jeffrey Nichols, Yinfei Yang, and Zhe Gan. 2024.
+                                                                                            Ferret-ui: Grounded mobile ui understanding with multimodal
+                                                                                   11
+             llms. In European Conference on Computer Vision. Springer, 240‚Äì
+             255.
+           [29] Christoph Zauner. 2010. Implementation and Benchmarking of
+             Perceptual Image Hash Functions. (2010).
+           [30] Yao Zhang, Zijian Ma, Yunpu Ma, Zhen Han, Yu Wu, and Volker
+             Tresp. 2025. Webpilot: A versatile and autonomous multi-agent
+             system for web task execution with strategic exploration. In Pro-
+             ceedings of the AAAI Conference on Artificial Intelligence, Vol. 39.
+             23378‚Äì23386.
+           [31] Shanhui Zhao, Hao Wen, Wenjie Du, Cheng Liang, Yunxin Liu,
+             Xiaozhou Ye, Ye Ouyang, and Yuanchun Li. 2025. LLM-Explorer:
+             Towards Ef√ècient and Affordable LLM-based Exploration for
+             Mobile Apps. In Proceedings of the 31st Annual International Con-
+             ference on Mobile Computing and Networking. 589‚Äì603.
+           [32] Hanzhang Zhou, Xu Zhang, Panrong Tong, Jianan Zhang,
+             Liangyu Chen, Quyu Kong, Chenglin Cai, Chen Liu, Yue Wang,
+             Jingren Zhou, et al. 2025. MAI-UI Technical Report: Real-World
+             Centric Foundation GUI Agents. arXiv preprint arXiv:2512.22047
+             (2025).
+                                            12

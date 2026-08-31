@@ -1,0 +1,69 @@
+{
+  "config": {
+    "task": "Explore non-destructive launcher controls",
+    "duration_sec": 30.0,
+    "budgets_mb": "0",
+    "max_steps": 100,
+    "max_depth": 2,
+    "leaf_width": 2,
+    "output_dir": "./evaluation_results/graph_memory_adb_growth_30s",
+    "adb_path": "/opt/homebrew/bin/adb -P 5037 -s emulator-5554",
+    "adb_serial": "",
+    "adb_port": 5037,
+    "adb_cmd_timeout": 8.0,
+    "adb_retries": 3,
+    "scale": 1.0,
+    "on_device": false,
+    "_current_screenshot_path": "./evaluation_results/graph_memory_adb_growth_30s/budget_0mb/root.jpg",
+    "_current_xml_path": "./evaluation_results/graph_memory_adb_growth_30s/budget_0mb/root.xml",
+    "_current_width": 1080,
+    "_current_height": 2400
+  },
+  "results": [
+    {
+      "record_type": "budget_summary",
+      "run_index": 1,
+      "budget_mb": 0.0,
+      "budget_bytes": 0,
+      "target_duration_sec": 30.0,
+      "exploration_window_elapsed_sec": 30.016637086868286,
+      "actual_duration_sec": 36.92936301231384,
+      "exploration_probe_count": 3,
+      "explorer_action_count": 3,
+      "probes_per_second": 0.09994457378146614,
+      "node_count": 4,
+      "edge_count": 3,
+      "rollback_success_count": 3,
+      "rollback_failure_count": 0,
+      "graph_python_bytes": 22519,
+      "graph_serialized_bytes": 6785,
+      "host_rss_start_kb": 52416,
+      "host_rss_end_kb": 79248,
+      "host_rss_delta_kb": 26832,
+      "device_mem_start": {
+        "MemTotal": 2012188,
+        "MemFree": 220456,
+        "MemAvailable": 526880,
+        "Cached": 592868,
+        "SwapFree": 580292,
+        "foreground_package": "com.google.android.apps.nexuslauncher",
+        "foreground_app_pss_kb": 61246
+      },
+      "device_mem_end": {
+        "MemTotal": 2012188,
+        "MemFree": 222476,
+        "MemAvailable": 495132,
+        "Cached": 559496,
+        "SwapFree": 571552,
+        "foreground_package": "com.google.android.apps.nexuslauncher",
+        "foreground_app_pss_kb": 61838
+      },
+      "device_mem_available_delta_kb": -31748,
+      "bytes_per_node_slope": 7318.0,
+      "rss_kb_per_node_slope": 28872.0,
+      "pruned_edges": 0,
+      "pruned_nodes": 0,
+      "bytes": 6785
+    }
+  ]
+}

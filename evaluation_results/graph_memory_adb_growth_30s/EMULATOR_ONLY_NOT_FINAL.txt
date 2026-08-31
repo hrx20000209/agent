@@ -1,0 +1,2 @@
+These measurements were collected from emulator-5554 (sdk_gphone64_arm64).
+They are smoke-test data only and must not be reported as physical-device results.

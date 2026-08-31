@@ -1,0 +1,4 @@
+budget_mb,target_duration_sec,actual_duration_sec,exploration_probe_count,probes_per_second,node_count,edge_count,graph_python_bytes,graph_serialized_bytes,host_rss_delta_kb,device_mem_available_delta_kb,rollback_success_count,rollback_failure_count
+0.001,8.0,10.692946910858154,1,0.12431965929041738,2,0,4862,1043,59520,-18472,0,0
+0.005,8.0,8.935105085372925,1,0.12483848666003687,2,1,10131,2167,-2256,40416,1,0
+0.0,8.0,11.697717666625977,1,0.12438570474711778,2,1,10120,2155,-16304,10756,1,0
