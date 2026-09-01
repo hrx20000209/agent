@@ -316,6 +316,7 @@ def main() -> int:
         for index in range(1, max(1, int(args.runs)) + 1):
             sampler.current_request = index
             before = process_memory(server_pid)
+            request_started_timestamp = time.time()
             try:
                 result = request_once(args.api_url, api_key, payload, args.timeout_sec, args.stream)
                 row = {"request_index": index, "ok": True, **result}
@@ -327,6 +328,8 @@ def main() -> int:
                 }
             after = process_memory(server_pid)
             row.update({
+                "request_started_timestamp": request_started_timestamp,
+                "request_ended_timestamp": time.time(),
                 "server_rss_before_bytes": before.get("rss_bytes"),
                 "server_rss_after_bytes": after.get("rss_bytes"),
                 "server_uss_before_bytes": before.get("uss_bytes"),
@@ -355,7 +358,8 @@ def main() -> int:
                 row[f"{owner}_{metric.removesuffix('_bytes')}_peak_bytes"] = max(values) if values else None
 
     fieldnames = [
-        "request_index", "ok", "latency_sec", "time_to_first_token_sec",
+        "request_index", "request_started_timestamp", "request_ended_timestamp",
+        "ok", "latency_sec", "time_to_first_token_sec",
         "prompt_tokens", "completion_tokens", "total_tokens", "response_bytes",
         "response_chars", "server_rss_before_bytes", "server_rss_after_bytes",
         "server_rss_peak_bytes", "server_uss_before_bytes", "server_uss_after_bytes",

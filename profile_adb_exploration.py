@@ -15,6 +15,7 @@ import json
 import multiprocessing
 import os
 import queue as queue_module
+import re
 import statistics
 import threading
 import time
@@ -66,10 +67,25 @@ def require_empty_output_dir(path: Path) -> None:
     path.mkdir(parents=True, exist_ok=True)
 
 
-def start_target(args: argparse.Namespace) -> None:
+def foreground_package(adb_path: str, timeout: float) -> str:
+    window = _run_adb(adb_path, "shell", "dumpsys", "window", "windows", timeout=timeout)
+    match = re.search(r"mCurrentFocus=.*?\s([A-Za-z0-9_.]+)/", window)
+    if match:
+        return match.group(1)
+    activity = _run_adb(adb_path, "shell", "dumpsys", "activity", "activities", timeout=timeout)
+    match = re.search(
+        r"(?:topResumedActivity=|ResumedActivity:|mFocusedApp=).*?\su\d+\s+([A-Za-z0-9_.]+)/",
+        activity,
+    )
+    return match.group(1) if match else ""
+
+
+def start_target(args: argparse.Namespace) -> Dict[str, Any]:
+    started = time.perf_counter()
     if args.package:
         if args.force_stop_between_repeats:
             _run_adb(args.adb_path, "shell", "am", "force-stop", args.package)
+        launch_command_started = time.perf_counter()
         _run_adb(
             args.adb_path,
             "shell",
@@ -81,9 +97,90 @@ def start_target(args: argparse.Namespace) -> None:
             "1",
             timeout=max(8.0, args.adb_cmd_timeout),
         )
+        launch_command_sec = time.perf_counter() - launch_command_started
     else:
+        launch_command_started = time.perf_counter()
         home(args.adb_path)
-    time.sleep(max(0.0, float(args.launch_wait_sec)))
+        launch_command_sec = time.perf_counter() - launch_command_started
+
+    reached = not bool(args.package)
+    observed_package = ""
+    time_to_foreground_sec: Optional[float] = None
+    if args.package:
+        deadline = time.perf_counter() + max(0.1, float(args.launch_timeout_sec))
+        while time.perf_counter() < deadline:
+            observed_package = foreground_package(args.adb_path, args.adb_cmd_timeout)
+            if observed_package == args.package:
+                reached = True
+                time_to_foreground_sec = time.perf_counter() - started
+                break
+            time.sleep(max(0.01, float(args.launch_poll_sec)))
+    if args.launch_wait_sec > 0:
+        time.sleep(float(args.launch_wait_sec))
+    return {
+        "launch_started_perf_counter": started,
+        "launch_command_sec": launch_command_sec,
+        "foreground_reached": reached,
+        "foreground_package_after_launch": observed_package,
+        "time_to_foreground_sec": time_to_foreground_sec,
+    }
+
+
+def capture_initial_state(
+    args: argparse.Namespace,
+    run_dir: Path,
+    launch_started: float,
+) -> Dict[str, Any]:
+    screenshot_path = run_dir / "root.png"
+    xml_path = run_dir / "root.xml"
+    screenshot_started = time.perf_counter()
+    get_screenshot(args, str(screenshot_path), scale=args.scale)
+    initial_screenshot_sec = time.perf_counter() - screenshot_started
+    time_to_first_frame_sec = time.perf_counter() - launch_started
+    width, height = Image.open(screenshot_path).size
+
+    required_stable = max(1, int(args.ui_stability_checks))
+    stable_count = 0
+    last_signature = None
+    first_a11y_sec: Optional[float] = None
+    tree_capture_count = 0
+    root = None
+    candidates = []
+    state = None
+    deadline = time.perf_counter() + max(0.1, float(args.ui_stability_timeout_sec))
+    while time.perf_counter() < deadline:
+        get_a11y_tree(args, str(xml_path))
+        tree_capture_count += 1
+        root = parse_a11y_tree(xml_path=str(xml_path))
+        candidates = collect_clickable_nodes(root)
+        state = describe_ui_state(root, len(candidates))
+        if first_a11y_sec is None:
+            first_a11y_sec = time.perf_counter() - launch_started
+        if state.signature == last_signature:
+            stable_count += 1
+        else:
+            last_signature = state.signature
+            stable_count = 1
+        if stable_count >= required_stable:
+            break
+        time.sleep(max(0.01, float(args.ui_stability_poll_sec)))
+    if root is None or state is None:
+        raise RuntimeError("Could not capture an accessibility tree after launching the target")
+    return {
+        "screenshot_path": screenshot_path,
+        "xml_path": xml_path,
+        "width": width,
+        "height": height,
+        "root": root,
+        "candidates": candidates,
+        "state": state,
+        "initial_screenshot_sec": initial_screenshot_sec,
+        "time_to_first_frame_sec": time_to_first_frame_sec,
+        "time_to_first_a11y_sec": first_a11y_sec,
+        "time_to_stable_ui_sec": time.perf_counter() - launch_started,
+        "ui_stable": stable_count >= required_stable,
+        "ui_tree_capture_count": tree_capture_count,
+    }
 
 
 def run_once(
@@ -94,16 +191,15 @@ def run_once(
     gc.collect()
     run_dir = Path(args.output_dir) / f"run_{run_index:03d}"
     ensure_dir(str(run_dir))
-    start_target(args)
-
-    screenshot_path = run_dir / "root.png"
-    xml_path = run_dir / "root.xml"
-    get_screenshot(args, str(screenshot_path), scale=args.scale)
-    get_a11y_tree(args, str(xml_path))
-    width, height = Image.open(screenshot_path).size
-    root = parse_a11y_tree(xml_path=str(xml_path))
-    candidates = collect_clickable_nodes(root)
-    state = describe_ui_state(root, len(candidates))
+    launch = start_target(args)
+    capture = capture_initial_state(
+        args, run_dir, float(launch["launch_started_perf_counter"])
+    )
+    screenshot_path = capture["screenshot_path"]
+    xml_path = capture["xml_path"]
+    width, height = capture["width"], capture["height"]
+    candidates = capture["candidates"]
+    state = capture["state"]
 
     graph = ProgressiveBeliefGraph()
     live_node_id = graph.observe_state(state)
@@ -166,6 +262,7 @@ def run_once(
             row = {
                 "record_type": "sample",
                 "run_index": run_index,
+                "timestamp": time.time(),
                 "elapsed_sec": elapsed,
                 "probe_interval_sec": (
                     elapsed - last_probe_elapsed
@@ -205,6 +302,18 @@ def run_once(
     summary = {
         "record_type": "run_summary",
         "run_index": run_index,
+        "exploration_started_timestamp": started,
+        "exploration_ended_timestamp": time.time(),
+        "launch_command_sec": launch["launch_command_sec"],
+        "foreground_reached": launch["foreground_reached"],
+        "foreground_package_after_launch": launch["foreground_package_after_launch"],
+        "time_to_foreground_sec": launch["time_to_foreground_sec"],
+        "initial_screenshot_sec": capture["initial_screenshot_sec"],
+        "time_to_first_frame_sec": capture["time_to_first_frame_sec"],
+        "time_to_first_a11y_sec": capture["time_to_first_a11y_sec"],
+        "time_to_stable_ui_sec": capture["time_to_stable_ui_sec"],
+        "ui_stable": capture["ui_stable"],
+        "ui_tree_capture_count": capture["ui_tree_capture_count"],
         "target_duration_sec": args.duration_sec,
         "exploration_window_elapsed_sec": window_elapsed_sec,
         "total_elapsed_sec": total_elapsed_sec,
@@ -256,6 +365,8 @@ def worker(args_dict: Dict[str, Any], run_index: int, samples_path: str, result_
 
 def aggregate(summaries: List[Dict[str, Any]]) -> Dict[str, Any]:
     metrics = [
+        "launch_command_sec", "time_to_foreground_sec", "initial_screenshot_sec",
+        "time_to_first_frame_sec", "time_to_first_a11y_sec", "time_to_stable_ui_sec",
         "verified_probe_count", "explorer_action_count", "verified_probes_per_sec",
         "actions_per_sec", "probe_latency_mean_sec", "steady_probe_latency_mean_sec",
         "selection_latency_mean_sec", "action_latency_mean_sec", "screenshot_latency_mean_sec",
@@ -284,7 +395,17 @@ def main() -> int:
     parser.add_argument("--max_steps", type=int, default=1000)
     parser.add_argument("--max_depth", type=int, default=2)
     parser.add_argument("--leaf_width", type=int, default=2)
-    parser.add_argument("--launch_wait_sec", type=float, default=2.0)
+    parser.add_argument(
+        "--launch_wait_sec",
+        type=float,
+        default=0.0,
+        help="Optional extra fixed delay after foreground detection; normally leave at 0.",
+    )
+    parser.add_argument("--launch_poll_sec", type=float, default=0.10)
+    parser.add_argument("--launch_timeout_sec", type=float, default=15.0)
+    parser.add_argument("--ui_stability_poll_sec", type=float, default=0.25)
+    parser.add_argument("--ui_stability_checks", type=int, default=2)
+    parser.add_argument("--ui_stability_timeout_sec", type=float, default=20.0)
     parser.add_argument("--force_stop_between_repeats", action="store_true")
     parser.add_argument("--scale", type=float, default=1.0)
     parser.add_argument("--on_device", action="store_true")
@@ -332,7 +453,11 @@ def main() -> int:
             summaries.append(run_once(args, run_index, samples_path))
 
     flat_fields = [
-        "run_index", "target_duration_sec", "exploration_window_elapsed_sec",
+        "run_index", "launch_command_sec", "foreground_reached",
+        "foreground_package_after_launch", "time_to_foreground_sec",
+        "initial_screenshot_sec", "time_to_first_frame_sec", "time_to_first_a11y_sec",
+        "time_to_stable_ui_sec", "ui_stable", "ui_tree_capture_count",
+        "target_duration_sec", "exploration_window_elapsed_sec",
         "total_elapsed_sec", "verified_probe_count", "explorer_action_count",
         "verified_probes_per_sec", "actions_per_sec", "probe_latency_mean_sec",
         "probe_latency_p50_sec", "probe_latency_p95_sec", "steady_probe_latency_mean_sec",
