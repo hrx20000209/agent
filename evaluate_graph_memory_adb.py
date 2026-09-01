@@ -49,6 +49,17 @@ def _run_adb(adb_prefix: str, *args: str, timeout: float = 8.0) -> str:
 
 
 def _host_rss_kb() -> int:
+    try:
+        import psutil  # type: ignore
+
+        return int(psutil.Process(os.getpid()).memory_info().rss / 1024)
+    except Exception:
+        pass
+    if os.name == "nt":
+        # Windows does not provide the Unix `ps` command. psutil is part of the
+        # profiling requirements; return an explicit unavailable value if it
+        # could not be imported instead of crashing the ADB experiment.
+        return 0
     proc = subprocess.run(
         ["ps", "-o", "rss=", "-p", str(os.getpid())], capture_output=True, text=True
     )

@@ -80,23 +80,94 @@ def foreground_package(adb_path: str, timeout: float) -> str:
     return match.group(1) if match else ""
 
 
+def resolve_launcher_component(adb_path: str, package: str, timeout: float) -> str:
+    output = _run_adb(
+        adb_path,
+        "shell",
+        "cmd",
+        "package",
+        "resolve-activity",
+        "--brief",
+        "-c",
+        "android.intent.category.LAUNCHER",
+        package,
+        timeout=timeout,
+    )
+    pattern = re.compile(rf"\b({re.escape(package)}/[^\s]+)")
+    matches = pattern.findall(output)
+    return matches[-1] if matches else ""
+
+
+def parse_am_start_w(output: str) -> Dict[str, Any]:
+    parsed: Dict[str, Any] = {}
+    string_fields = {
+        "Status": "am_status",
+        "LaunchState": "am_launch_state",
+        "Activity": "am_activity",
+    }
+    int_fields = {
+        "ThisTime": "am_this_time_ms",
+        "TotalTime": "am_total_time_ms",
+        "WaitTime": "am_wait_time_ms",
+    }
+    for source, destination in string_fields.items():
+        match = re.search(rf"^\s*{source}:\s*(.+)$", output, re.M)
+        parsed[destination] = match.group(1).strip() if match else None
+    for source, destination in int_fields.items():
+        match = re.search(rf"^\s*{source}:\s*(\d+)$", output, re.M)
+        parsed[destination] = int(match.group(1)) if match else None
+    return parsed
+
+
 def start_target(args: argparse.Namespace) -> Dict[str, Any]:
-    started = time.perf_counter()
+    force_stop_sec = 0.0
     if args.package:
         if args.force_stop_between_repeats:
+            force_stop_started = time.perf_counter()
             _run_adb(args.adb_path, "shell", "am", "force-stop", args.package)
+            force_stop_sec = time.perf_counter() - force_stop_started
+    started = time.perf_counter()
+    launch_method_used = "home"
+    launcher_component = ""
+    am_metrics: Dict[str, Any] = parse_am_start_w("")
+    if args.package:
         launch_command_started = time.perf_counter()
-        _run_adb(
-            args.adb_path,
-            "shell",
-            "monkey",
-            "-p",
-            args.package,
-            "-c",
-            "android.intent.category.LAUNCHER",
-            "1",
-            timeout=max(8.0, args.adb_cmd_timeout),
-        )
+        launcher_component = str(getattr(args, "launcher_component", "") or "")
+        if args.launch_method in {"auto", "am_start_w"}:
+            if not launcher_component:
+                launcher_component = resolve_launcher_component(
+                    args.adb_path, args.package, args.adb_cmd_timeout
+                )
+        if launcher_component:
+            launch_method_used = "am_start_w"
+            launch_output = _run_adb(
+                args.adb_path,
+                "shell",
+                "am",
+                "start",
+                "-W",
+                "-n",
+                launcher_component,
+                timeout=max(15.0, args.launch_timeout_sec + args.adb_cmd_timeout),
+            )
+            am_metrics = parse_am_start_w(launch_output)
+        else:
+            if args.launch_method == "am_start_w":
+                raise RuntimeError(
+                    f"Could not resolve a launcher activity for package {args.package}"
+                )
+            launch_method_used = "monkey"
+            _run_adb(
+                args.adb_path,
+                "shell",
+                "monkey",
+                "-p",
+                args.package,
+                "-c",
+                "android.intent.category.LAUNCHER",
+                "1",
+                timeout=max(8.0, args.adb_cmd_timeout),
+            )
         launch_command_sec = time.perf_counter() - launch_command_started
     else:
         launch_command_started = time.perf_counter()
@@ -119,10 +190,14 @@ def start_target(args: argparse.Namespace) -> Dict[str, Any]:
         time.sleep(float(args.launch_wait_sec))
     return {
         "launch_started_perf_counter": started,
+        "force_stop_sec": force_stop_sec,
+        "launch_method_used": launch_method_used,
+        "launcher_component": launcher_component,
         "launch_command_sec": launch_command_sec,
         "foreground_reached": reached,
         "foreground_package_after_launch": observed_package,
         "time_to_foreground_sec": time_to_foreground_sec,
+        **am_metrics,
     }
 
 
@@ -252,6 +327,7 @@ def run_once(
         max_steps=args.max_steps,
         max_depth=args.max_depth,
         leaf_width=args.leaf_width,
+        max_branches=(args.max_branches if args.max_branches > 0 else None),
         time_budget_sec=args.duration_sec,
         trigger_reason="standalone_exploration_profile",
     )
@@ -304,7 +380,16 @@ def run_once(
         "run_index": run_index,
         "exploration_started_timestamp": started,
         "exploration_ended_timestamp": time.time(),
+        "force_stop_sec": launch["force_stop_sec"],
+        "launch_method_used": launch["launch_method_used"],
+        "launcher_component": launch["launcher_component"],
         "launch_command_sec": launch["launch_command_sec"],
+        "am_status": launch["am_status"],
+        "am_launch_state": launch["am_launch_state"],
+        "am_activity": launch["am_activity"],
+        "am_this_time_ms": launch["am_this_time_ms"],
+        "am_total_time_ms": launch["am_total_time_ms"],
+        "am_wait_time_ms": launch["am_wait_time_ms"],
         "foreground_reached": launch["foreground_reached"],
         "foreground_package_after_launch": launch["foreground_package_after_launch"],
         "time_to_foreground_sec": launch["time_to_foreground_sec"],
@@ -318,6 +403,7 @@ def run_once(
         "exploration_window_elapsed_sec": window_elapsed_sec,
         "total_elapsed_sec": total_elapsed_sec,
         "verified_probe_count": int(explorer.graph_probe_ingest_count),
+        "profiling_revisit_reset_count": int(explorer.profiling_revisit_reset_count),
         "explorer_action_count": int(explorer.cur_steps),
         "verified_probes_per_sec": int(explorer.graph_probe_ingest_count) / max(1e-9, window_elapsed_sec),
         "actions_per_sec": int(explorer.cur_steps) / max(1e-9, window_elapsed_sec),
@@ -365,9 +451,11 @@ def worker(args_dict: Dict[str, Any], run_index: int, samples_path: str, result_
 
 def aggregate(summaries: List[Dict[str, Any]]) -> Dict[str, Any]:
     metrics = [
-        "launch_command_sec", "time_to_foreground_sec", "initial_screenshot_sec",
+        "force_stop_sec", "launch_command_sec", "am_this_time_ms", "am_total_time_ms",
+        "am_wait_time_ms", "time_to_foreground_sec", "initial_screenshot_sec",
         "time_to_first_frame_sec", "time_to_first_a11y_sec", "time_to_stable_ui_sec",
         "verified_probe_count", "explorer_action_count", "verified_probes_per_sec",
+        "profiling_revisit_reset_count",
         "actions_per_sec", "probe_latency_mean_sec", "steady_probe_latency_mean_sec",
         "selection_latency_mean_sec", "action_latency_mean_sec", "screenshot_latency_mean_sec",
         "a11y_tree_latency_mean_sec", "host_rss_delta_kb", "device_mem_available_delta_kb",
@@ -395,6 +483,26 @@ def main() -> int:
     parser.add_argument("--max_steps", type=int, default=1000)
     parser.add_argument("--max_depth", type=int, default=2)
     parser.add_argument("--leaf_width", type=int, default=2)
+    parser.add_argument("--max_branches", type=int, default=0, help="0 lets the explorer derive the branch budget.")
+    parser.add_argument(
+        "--allow_revisit_root",
+        action="store_true",
+        help=(
+            "Profiling only: revisit safe root controls after unique candidates are "
+            "exhausted so a fixed window measures throughput instead of coverage ceiling."
+        ),
+    )
+    parser.add_argument(
+        "--launch_method",
+        choices=("auto", "am_start_w", "monkey"),
+        default="auto",
+        help="auto prefers framework am start -W and falls back to monkey.",
+    )
+    parser.add_argument(
+        "--launcher_component",
+        default="",
+        help="Optional PACKAGE/ACTIVITY; auto-resolved once when omitted.",
+    )
     parser.add_argument(
         "--launch_wait_sec",
         type=float,
@@ -419,6 +527,18 @@ def main() -> int:
     args.adb_path = resolve_adb_prefix(args.adb_path, args.adb_serial, args.adb_port)
     ensure_adb_ready(args.adb_path)
     device = _require_physical_device(args.adb_path, allow_emulator=False)
+    if (
+        args.package
+        and args.launch_method in {"auto", "am_start_w"}
+        and not args.launcher_component
+    ):
+        args.launcher_component = resolve_launcher_component(
+            args.adb_path, args.package, args.adb_cmd_timeout
+        )
+        if args.launch_method == "am_start_w" and not args.launcher_component:
+            raise RuntimeError(
+                f"Could not resolve a launcher activity for package {args.package}"
+            )
     output_dir = Path(args.output_dir).resolve()
     require_empty_output_dir(output_dir)
     args.output_dir = str(output_dir)
@@ -453,12 +573,15 @@ def main() -> int:
             summaries.append(run_once(args, run_index, samples_path))
 
     flat_fields = [
-        "run_index", "launch_command_sec", "foreground_reached",
+        "run_index", "force_stop_sec", "launch_method_used", "launcher_component",
+        "launch_command_sec", "am_status", "am_launch_state", "am_activity",
+        "am_this_time_ms", "am_total_time_ms", "am_wait_time_ms", "foreground_reached",
         "foreground_package_after_launch", "time_to_foreground_sec",
         "initial_screenshot_sec", "time_to_first_frame_sec", "time_to_first_a11y_sec",
         "time_to_stable_ui_sec", "ui_stable", "ui_tree_capture_count",
         "target_duration_sec", "exploration_window_elapsed_sec",
         "total_elapsed_sec", "verified_probe_count", "explorer_action_count",
+        "profiling_revisit_reset_count",
         "verified_probes_per_sec", "actions_per_sec", "probe_latency_mean_sec",
         "probe_latency_p50_sec", "probe_latency_p95_sec", "steady_probe_latency_mean_sec",
         "selection_latency_mean_sec", "action_latency_mean_sec", "screenshot_latency_mean_sec",

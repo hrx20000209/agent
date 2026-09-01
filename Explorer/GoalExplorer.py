@@ -265,6 +265,7 @@ class A11yTreeOnlineExplorer:
         self._root_candidate_ranking = []
         self._pending_probe_edge_ids = []
         self.graph_probe_ingest_count = 0
+        self.profiling_revisit_reset_count = 0
 
     def prepare_graph_iteration(
         self,
@@ -1585,6 +1586,30 @@ class A11yTreeOnlineExplorer:
                     hard_avoid=hard_avoid,
                     semantic_low=0.30 if depth == 0 else 0.35,
                 )
+                # Throughput profiling can intentionally revisit safe root controls
+                # after exhausting unique bounds. This is opt-in and disabled for
+                # normal MobileExplorer runs so production exploration semantics do
+                # not change.
+                if (
+                    node is None
+                    and depth == 0
+                    and self.collection_mode
+                    and bool(getattr(self.args, "allow_revisit_root", False))
+                    and explored_root_bounds
+                ):
+                    explored_root_bounds.clear()
+                    self.profiling_revisit_reset_count += 1
+                    node, sim, node_txt, n_candidates, score_detail = self._semantic_pick(
+                        root,
+                        avoid_bounds=set(),
+                        hard_avoid=False,
+                        semantic_low=0.30,
+                    )
+                    self.log_step({
+                        "type": "profiling_revisit_reset",
+                        "branch": branch_id,
+                        "reason": "root_candidates_exhausted",
+                    })
                 self.selection_latency.append(time.time() - s0)
                 log_event(
                     "[Explorer]",

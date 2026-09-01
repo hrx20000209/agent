@@ -155,6 +155,15 @@ def main() -> int:
     parser.add_argument("--target_nodes", type=int, default=20000)
     parser.add_argument("--sample_every", type=int, default=500)
     parser.add_argument("--snapshot_every", type=int, default=1000)
+    parser.add_argument(
+        "--expensive_measure_every",
+        type=int,
+        default=-1,
+        help=(
+            "Measure deep/serialized graph size every N nodes. -1 follows "
+            "--sample_every (legacy behavior); 0 measures only the final graph."
+        ),
+    )
     parser.add_argument("--labels_per_node", type=int, default=4)
     parser.add_argument("--evidence_chars", type=int, default=32)
     parser.add_argument("--gc_at_sample", action="store_true")
@@ -179,6 +188,10 @@ def main() -> int:
     target_nodes = max(1, args.target_nodes)
     sample_every = max(1, args.sample_every)
     snapshot_every = max(0, args.snapshot_every)
+    expensive_measure_every = (
+        sample_every if args.expensive_measure_every < 0
+        else max(0, int(args.expensive_measure_every))
+    )
     output_dir = Path(args.output_dir).expanduser().resolve()
     require_empty_output_dir(output_dir)
     config = {**vars(args), "output_dir": str(output_dir), "pid": os.getpid()}
@@ -215,7 +228,7 @@ def main() -> int:
     started = time.perf_counter()
     started_timestamp = time.time()
 
-    def sample(snapshot_due: bool) -> None:
+    def sample(snapshot_due: bool, expensive_due: bool) -> None:
         nonlocal retained_snapshot, retained_snapshot_bytes
         gc_sec = 0.0
         if args.gc_at_sample:
@@ -230,20 +243,26 @@ def main() -> int:
             snapshot_started = time.perf_counter()
             new_snapshot = graph.snapshot()
             snapshot_build_sec = time.perf_counter() - snapshot_started
-            snapshot_size_started = time.perf_counter()
-            retained_snapshot_bytes = _deep_size(
-                {"nodes": new_snapshot.nodes, "edges": new_snapshot.edges}
-            )
-            snapshot_size_measure_sec = time.perf_counter() - snapshot_size_started
             overlap_memory = process_memory()
             retained_snapshot = new_snapshot
+            if expensive_due:
+                snapshot_size_started = time.perf_counter()
+                retained_snapshot_bytes = _deep_size(
+                    {"nodes": new_snapshot.nodes, "edges": new_snapshot.edges}
+                )
+                snapshot_size_measure_sec = time.perf_counter() - snapshot_size_started
 
-        live_size_started = time.perf_counter()
-        live_python_bytes = graph.approximate_python_bytes()
-        live_size_measure_sec = time.perf_counter() - live_size_started
-        serialized_started = time.perf_counter()
-        serialized_bytes = graph.approximate_serialized_bytes()
-        serialized_size_measure_sec = time.perf_counter() - serialized_started
+        live_python_bytes = None
+        live_size_measure_sec = None
+        serialized_bytes = None
+        serialized_size_measure_sec = None
+        if expensive_due:
+            live_size_started = time.perf_counter()
+            live_python_bytes = graph.approximate_python_bytes()
+            live_size_measure_sec = time.perf_counter() - live_size_started
+            serialized_started = time.perf_counter()
+            serialized_bytes = graph.approximate_serialized_bytes()
+            serialized_size_measure_sec = time.perf_counter() - serialized_started
         memory = process_memory()
         row: Dict[str, Any] = {
             "timestamp": time.time(),
@@ -255,9 +274,13 @@ def main() -> int:
             "insertion_p95_ms": percentile(insertion_latencies, 0.95) * 1000.0 if insertion_latencies else None,
             "live_graph_python_bytes": live_python_bytes,
             "immutable_snapshot_python_bytes": retained_snapshot_bytes,
-            "total_graph_python_bytes": live_python_bytes + retained_snapshot_bytes,
+            "total_graph_python_bytes": (
+                live_python_bytes + retained_snapshot_bytes
+                if live_python_bytes is not None else None
+            ),
             "serialized_graph_bytes": serialized_bytes,
             "snapshot_refreshed": snapshot_due,
+            "expensive_size_measured": expensive_due,
             "snapshot_build_sec": snapshot_build_sec,
             "snapshot_size_measure_sec": snapshot_size_measure_sec,
             "live_size_measure_sec": live_size_measure_sec,
@@ -269,7 +292,7 @@ def main() -> int:
         }
         rows.append(row)
 
-    sample(snapshot_due=False)
+    sample(snapshot_due=False, expensive_due=target_nodes == 1)
     for index in range(1, target_nodes):
         insertion_started = time.perf_counter()
         destination = graph.observe_state(
@@ -282,9 +305,16 @@ def main() -> int:
         source = destination
         node_count = len(graph.nodes)
         if node_count % sample_every == 0 or node_count == target_nodes:
-            sample(snapshot_due=bool(
-                snapshot_every and (node_count % snapshot_every == 0 or node_count == target_nodes)
-            ))
+            is_final = node_count == target_nodes
+            sample(
+                snapshot_due=bool(
+                    snapshot_every and (node_count % snapshot_every == 0 or is_final)
+                ),
+                expensive_due=bool(
+                    is_final
+                    or (expensive_measure_every and node_count % expensive_measure_every == 0)
+                ),
+            )
 
     fieldnames = sorted({key for row in rows for key in row})
     with (output_dir / "growth.csv").open("w", newline="", encoding="utf-8") as stream:
@@ -292,6 +322,7 @@ def main() -> int:
         writer.writeheader()
         writer.writerows(rows)
 
+    growth_elapsed_sec = time.perf_counter() - started
     ready = {
         "ready": True,
         "timestamp": time.time(),
@@ -332,7 +363,12 @@ def main() -> int:
         "started_timestamp": started_timestamp,
         "ended_timestamp": time.time(),
         "metrics": {
-            "elapsed_sec": time.perf_counter() - started,
+            # Backward-compatible name now means graph construction only; hold
+            # duration is reported separately instead of inflating build time.
+            "elapsed_sec": growth_elapsed_sec,
+            "total_elapsed_sec": time.perf_counter() - started,
+            "growth_elapsed_sec": growth_elapsed_sec,
+            "configured_hold_sec": max(0.0, float(args.hold_sec)),
             "final_node_count": len(graph.nodes),
             "final_edge_count": len(graph.edges),
             "insertion_total_sec": insertion_total_sec,
