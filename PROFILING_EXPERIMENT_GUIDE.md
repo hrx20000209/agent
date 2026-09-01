@@ -29,6 +29,8 @@
 
 ### 3.1 电脑端
 
+**运行位置：连接真机的 Windows/macOS/Linux 电脑，在仓库根目录执行。**
+
 在仓库根目录运行：
 
 ```bash
@@ -38,16 +40,20 @@ adb devices -l
 
 后续每条命令都应使用 `adb devices -l` 显示的真机 serial。不要依赖 ADB 自动选择设备，避免误连模拟器或其他手机。
 
-如果 Termux 中的 llama.cpp 监听 8081 端口，将它映射到电脑上的空闲端口：
+当前实验环境中的电脑端 `8084` 是 SSH tunnel，对应远端
+GELAB-ZERO-4B，**不是手机 llama.cpp**。不要用 8084 测量手机模型延迟。
+
+如果 Termux 中的 llama.cpp 监听手机 8081 端口，将它映射到电脑上的另一个空闲端口，例如 8085：
 
 ```bash
-adb -s PHYSICAL_SERIAL forward tcp:8084 tcp:8081
+adb -s PHYSICAL_SERIAL forward tcp:8085 tcp:8081
 ```
 
-因此，后面的例子使用：
+两个 endpoint 的含义必须始终保持清楚：
 
 ```text
-http://127.0.0.1:8084/v1/chat/completions
+远端 GELAB： http://127.0.0.1:8084/v1/chat/completions
+手机 llama：  http://127.0.0.1:8085/v1/chat/completions
 ```
 
 模型实验开始前，保存一张有代表性的手机截图到：
@@ -65,6 +71,8 @@ evaluation_inputs/fixed_prompt.txt
 所有实验条件必须复用完全相同的 prompt 和截图。
 
 ### 3.2 Android Termux
+
+**运行位置：手机上的 Termux App 内执行，不是在电脑的 ADB shell 中执行。**
 
 安装 Python、Git，并允许 Termux 访问共享存储：
 
@@ -122,6 +130,8 @@ evaluation_results/system_profiling/
 
 ## 5. 通用手机系统采样器
 
+**运行位置：电脑端终端，在仓库根目录执行。**
+
 每次实验开始前，先在电脑端启动下面的采样器。根据实际目标 App package 和进程名称调整参数：
 
 ```bash
@@ -172,19 +182,22 @@ adb -s PHYSICAL_SERIAL shell ps -A
 
 #### 条件 A：模型已经加载，但处于 idle
 
-1. 启动 Termux 中的 llama.cpp server。
-2. 发送两次 warm-up 请求。
-3. 停止发送请求，只运行手机系统采样器 120 秒。
+1. **手机 Termux**：启动 llama.cpp server，监听手机 8081。
+2. **电脑端**：通过映射后的 8085 发送两次 warm-up 请求。
+3. **电脑端**：停止发送请求，只运行手机系统采样器 120 秒。
 
 这组结果给出模型权重加载后的常驻内存。
 
 #### 条件 B：模型持续进行推理
 
-同时运行手机系统采样器和下面的电脑端命令：
+**运行位置：电脑端终端。** 手机 Termux 中的 llama.cpp server 必须已经启动。
+
+同时运行手机系统采样器和下面的命令。这个命令测量的是手机 8081
+llama.cpp，因此 URL 必须使用映射后的 8085：
 
 ```bash
 python profile_model_inference.py \
-  --api_url http://127.0.0.1:8084/v1/chat/completions \
+  --api_url http://127.0.0.1:8085/v1/chat/completions \
   --model GELAB-ZERO-4B \
   --prompt_file evaluation_inputs/fixed_prompt.txt \
   --image evaluation_inputs/fixed_screen.png \
@@ -209,6 +222,8 @@ python profile_model_inference.py \
 
 ### 6.3 Termux 建图 Profiling
 
+**运行位置：手机 Termux。** 同时在电脑端另开一个终端运行第 5 节的手机系统采样器。
+
 每次实验只测试一个 graph size。在 Termux 中运行：
 
 ```bash
@@ -217,9 +232,9 @@ python profile_graph_growth_termux.py \
   --target_nodes 10000 \
   --sample_every 250 \
   --snapshot_every 1000 \
+  --expensive_measure_every 1000 \
   --labels_per_node 4 \
   --evidence_chars 32 \
-  --gc_at_sample \
   --baseline_sec 10 \
   --baseline_sample_sec 1 \
   --hold_sec 180 \
@@ -230,7 +245,25 @@ python profile_graph_growth_termux.py \
 建议测试：
 
 ```text
-1,000 / 5,000 / 10,000 / 20,000 nodes
+10,000 / 50,000 / 100,000 nodes（逐级 pilot，出现持续压力时停止增大）
+```
+
+这里的 `--sample_every 250` 只控制轻量的 RSS/PSS/system memory 采样；
+`--expensive_measure_every 1000` 才控制 deep-size 和 serialized-size 全图扫描。
+
+如果目的是比较模型是否让真实建图变慢，使用低开销模式：
+
+```bash
+--expensive_measure_every 0
+```
+
+这会只在最终节点测量一次逻辑图大小，中间仅保留轻量内存采样和真实
+snapshot build。延迟干扰实验不要使用 `--gc_at_sample`，否则主动 GC 也会成为 workload。
+
+如果目的是得到逻辑 graph size 随节点数增长的曲线，使用：
+
+```bash
+--expensive_measure_every 1000
 ```
 
 还应增加 snapshot-disabled 对照组：
@@ -249,6 +282,13 @@ Graph profiling 的主要输出：
 - `hold_memory.csv`：图和最新 snapshot 保持存活期间的内存；
 - `summary.json`：graph RSS over baseline 和延迟汇总。
 
+`summary.json` 中应优先使用：
+
+- `growth_elapsed_sec`：真正的 graph growth 阶段；
+- `total_elapsed_sec`：growth 加 hold 的总运行时间；
+- `insertion_mean_ms`/`insertion_p95_ms`：纯节点和边插入延迟；
+- `snapshot_build_mean_sec`：真实 snapshot 构建延迟。
+
 实验结束后，把 Termux 私有目录结果复制到共享存储，再由电脑拉取：
 
 ```bash
@@ -259,6 +299,8 @@ adb -s PHYSICAL_SERIAL pull /sdcard/Download/graph_10000_r01 \
 
 ### 6.4 ADB Exploration Profiling
 
+**运行位置：电脑端终端。** 脚本通过 ADB 控制目标 Android App；不要在 Termux 中运行该脚本。
+
 冷启动实验：
 
 ```bash
@@ -268,10 +310,13 @@ python profile_adb_exploration.py \
   --duration_sec 60 \
   --repeats 10 \
   --force_stop_between_repeats \
+  --launch_method am_start_w \
   --launch_wait_sec 0 \
   --launch_poll_sec 0.10 \
   --ui_stability_poll_sec 0.25 \
   --ui_stability_checks 2 \
+  --allow_revisit_root \
+  --max_branches 1000 \
   --output_dir evaluation_results/system_profiling/exploration_cold_r01/exploration
 ```
 
@@ -283,6 +328,27 @@ python profile_adb_exploration.py \
 
 在整个 exploration 命令运行期间，同时运行手机系统采样器。
 
+`--allow_revisit_root` 仅用于 throughput profiling：唯一安全根节点全部探索完后，允许重新访问安全根节点，避免 60 秒实验固定停在 5 probes。正常 MobileExplorer 和 coverage 实验不要传这个参数，默认生产探索语义没有改变。
+
+正式矩阵前先做 duration-scaling pilot：
+
+```text
+30s / 60s / 120s
+```
+
+只有 probe count 随时间明显增长后，`probes/s` 才能作为 throughput 指标。
+
+`--launch_method am_start_w` 会额外输出 Android framework 指标：
+
+- `am_this_time_ms`
+- `am_total_time_ms`
+- `am_wait_time_ms`
+- `am_launch_state`
+
+它们比 screenshot/A11y proxy 更适合回答“App 是否打开得更慢”。默认
+`--launch_method auto` 会优先使用 `am start -W`，无法解析 launcher activity
+时才回退到 monkey。
+
 最终报告目标 App PSS、设备 `MemAvailable`、每 60 秒 verified probes 数、probe latency、time to foreground、first screenshot proxy、first A11y tree 和 stable UI time。
 
 `time_to_first_frame_sec` 是第一次截图成功完成的 proxy，不是 Android framework 提供的精确 first-frame 指标，因此结果中不要把它表述为精确 first-frame time。
@@ -293,13 +359,13 @@ python profile_adb_exploration.py \
 
 ### 7.1 图大小是否影响模型推理
 
-对 `0 / 1k / 5k / 10k / 20k nodes` 分别测试：
+对 `0 / 10k / 50k / 100k nodes` 分别测试：
 
-1. 启动手机系统采样器。
-2. 在 Termux 中建图，并设置 `--hold_sec 300`。
-3. 等待 Termux 输出已经 flush 的 `GRAPH_READY`。
-4. 图保持在内存中时，运行 30 次 model inference profiling。
-5. 模型 profiling 结束后停止本组实验。
+1. **电脑端终端 A**：启动手机系统采样器。
+2. **手机 Termux**：建图，使用 `--expensive_measure_every 0 --hold_sec 300`。
+3. **手机 Termux**：等待输出已经 flush 的 `GRAPH_READY`。
+4. **电脑端终端 B**：图保持在内存中时，通过 8085 运行 30 次手机 model inference profiling。
+5. **电脑端/Termux**：模型 profiling 结束后停止本组实验。
 
 分析模型 TTFT、总延迟、tokens/s 与 graph node count、`live_graph_python_bytes`、Termux Python retained PSS 的关系。
 
@@ -307,10 +373,11 @@ python profile_adb_exploration.py \
 
 ### 7.2 持续模型推理是否影响建图
 
-1. 启动手机系统采样器。
-2. 在电脑端启动较长的 active model run，例如 `--runs 500`。
-3. 在模型持续处理请求时，在 Termux 中开始建图。
-4. Graph 输出 `GRAPH_READY` 后停止持续模型请求。
+1. **电脑端终端 A**：启动手机系统采样器。
+2. **手机 Termux**：启动手机 llama.cpp server，监听 8081。
+3. **电脑端终端 B**：通过 8085 启动较长的 active model run，例如 `--runs 500`。
+4. **手机 Termux 另一个 session**：模型持续处理请求时，使用 `--expensive_measure_every 0` 开始建图。
+5. Graph 输出 `GRAPH_READY` 后停止持续模型请求。
 
 将结果与“不运行模型时建图”的结果比较：
 
@@ -326,12 +393,12 @@ python profile_adb_exploration.py \
 
 ### 7.3 图大小是否影响 Exploration
 
-对 `0 / 1k / 5k / 10k / 20k nodes` 分别测试：
+对 `0 / 10k / 50k / 100k nodes` 分别测试：
 
-1. 启动手机系统采样器。
-2. 在 Termux 中构建并 hold 对应大小的图。
-3. 等待 `GRAPH_READY`。
-4. 图仍在内存中时，运行 60 秒 exploration profiling。
+1. **电脑端终端 A**：启动手机系统采样器。
+2. **手机 Termux**：构建并 hold 对应大小的图。
+3. **手机 Termux**：等待 `GRAPH_READY`。
+4. **电脑端终端 B**：图仍在内存中时，运行带 `--allow_revisit_root` 的 60 秒 exploration profiling。
 
 比较 time to foreground、stable UI time、probes per 60 seconds、probe latency、A11y latency、screenshot latency 和目标 App PSS。
 
@@ -339,21 +406,29 @@ python profile_adb_exploration.py \
 
 ### 7.4 持续模型推理是否影响 Exploration
 
-1. 不在 Termux 中建图。
-2. 启动手机系统采样器。
-3. 启动持续 model inference。
-4. 模型仍持续推理时，运行 exploration profiling。
+1. **手机 Termux**：不建图，只启动 llama.cpp server。
+2. **电脑端终端 A**：启动手机系统采样器。
+3. **电脑端终端 B**：通过 8085 启动持续 model inference。
+4. **电脑端终端 C**：模型仍持续推理时，运行 exploration profiling。
 
 与单独 exploration 对照组比较。这组实验测试：**model inference → exploration**，也可以帮助区分 CPU contention、thermal throttling 和 memory pressure。
 
 ### 7.5 三部分同时运行
 
-1. 启动手机系统采样器。
-2. 在 Termux 中建图并保持图存活。
-3. 启动持续 model inference。
-4. 运行 60 秒 exploration profiling。
+1. **电脑端终端 A**：启动手机系统采样器。
+2. **手机 Termux session A**：启动 llama.cpp server。
+3. **手机 Termux session B**：建图并保持图存活。
+4. **电脑端终端 B**：通过 8085 启动持续 model inference。
+5. **电脑端终端 C**：运行 60 秒 exploration profiling。
 
-至少测试 `0 / 10k / 20k nodes`。这组实验测量三部分共同运行的整体影响，但必须先完成两两实验，再解释三者组合结果。
+10k 图只增加约 122 MiB PSS，对这台手机可能压力不足。建议先逐级 pilot：
+
+```text
+0 / 10k / 50k / 100k nodes
+```
+
+每一级都检查 PSI、Swap 和温度；如果出现持续 memory full PSI、明显 Swap
+或进程被杀，应停止继续增大，而不是强行运行到 OOM。这组实验测量三部分共同运行的整体影响，但必须先完成两两实验，再解释三者组合结果。
 
 ## 8. 最小完整实验矩阵
 
@@ -361,13 +436,13 @@ python profile_adb_exploration.py \
 |---|---:|---|---|
 | baseline | 0 | off | phone idle |
 | model isolated | 0 | loaded-idle / active | model |
-| graph isolated | 1k/5k/10k/20k | off | graph |
+| graph isolated | 10k/50k/100k（逐级 pilot） | off | graph |
 | exploration isolated | 0 | off | exploration |
-| graph → model | 1k/5k/10k/20k | active | model |
-| model → graph | 1k/5k/10k/20k | active | graph |
-| graph → exploration | 1k/5k/10k/20k | off | exploration |
+| graph → model | 0/10k/50k/100k | active | 手机 8081 model |
+| model → graph | 10k/50k/100k | active | graph |
+| graph → exploration | 0/10k/50k/100k | off | exploration |
 | model → exploration | 0 | active | exploration |
-| combined | 0/10k/20k | active | exploration + model |
+| combined | 0/10k/50k/100k | active | exploration + 手机 model |
 
 如果时间有限，每个 cell 至少重复 5 次。如果需要得出较强的 latency 结论，建议重复 10 次，并报告置信区间，而不仅是 mean。
 
