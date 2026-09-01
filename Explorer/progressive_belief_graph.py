@@ -64,8 +64,14 @@ class UIStateDescriptor:
 
 
 def describe_ui_state(root: Any, candidate_element_count: int = 0) -> UIStateDescriptor:
-    """Build a stable-enough structural state key from an accessibility tree."""
-    structural: List[str] = []
+    """Build a loose layout identity from an accessibility tree.
+
+    This is deliberately separate from the strict screenshot/tree checks used
+    during recovery.  Text and exact bounds do not belong in the node identity:
+    text changes frequently, and repeated controls otherwise create unstable
+    duplicate states.
+    """
+    structural_entries: List[Tuple[str, str]] = []
     labels: List[str] = []
     packages: Dict[str, int] = {}
 
@@ -75,15 +81,22 @@ def describe_ui_state(root: Any, candidate_element_count: int = 0) -> UIStateDes
         rid = str(getattr(node, "resource_id", "") or "").strip().lower()
         cls = str(getattr(node, "class_name", "") or "").strip().lower()
         role = cls.rsplit(".", 1)[-1] if cls else "node"
-        bounds = str(getattr(node, "bounds", "") or "")
         package = str(getattr(node, "package", "") or "").strip().lower()
         text = str(getattr(node, "text", "") or getattr(node, "content_desc", "") or "").strip()
         if package:
             packages[package] = packages.get(package, 0) + 1
-        # Resource-id and geometry carry identity; text is only a fallback.
-        clickable = bool(getattr(node, "clickable", False))
-        identity_text = rid.rsplit("/", 1)[-1] if rid else (" ".join(_tokens(text)[:3]) if clickable else "structural")
-        structural.append(f"{package}|{role}|{identity_text}|{bounds}")
+        interactive = any(bool(getattr(node, name, False)) for name in ("clickable", "scrollable", "focusable", "long_clickable", "checkable"))
+        if interactive:
+            raw_bounds = str(getattr(node, "bounds", "") or "")
+            numbers = re.findall(r"-?\d+", raw_bounds)
+            if len(numbers) == 4:
+                x1, y1, x2, y2 = (int(value) for value in numbers)
+                center_x, center_y = (x1 + x2) // 2, (y1 + y2) // 2
+                position = f"{max(0, center_x // 64)}:{max(0, center_y // 64)}"
+            else:
+                position = "na"
+            stable_id = rid.rsplit("/", 1)[-1] if rid else "no_id"
+            structural_entries.append((f"{package}|{role}|{stable_id}", position))
         if text and len(labels) < 80:
             cleaned = re.sub(r"\s+", " ", text).strip()
             if cleaned and cleaned not in labels:
@@ -93,12 +106,20 @@ def describe_ui_state(root: Any, candidate_element_count: int = 0) -> UIStateDes
 
     walk(root)
     package = max(packages, key=packages.get) if packages else ""
+    multiplicity: Dict[str, int] = {}
+    for identity, _ in structural_entries:
+        multiplicity[identity] = multiplicity.get(identity, 0) + 1
+    structural = []
+    for identity, position in structural_entries:
+        # Repeated controls are represented by kind only; their position is
+        # not a reliable state identity when list rows are recycled.
+        structural.append(f"{identity}|{position if multiplicity[identity] == 1 else 'repeated'}")
     role_counts: Dict[str, int] = {}
     for item in structural:
-        role = item.split("|", 2)[1]
+        role = item.split("|", 2)[1] if "|" in item else "node"
         role_counts[role] = role_counts.get(role, 0) + 1
     coarse = ",".join(f"{k}:{v}" for k, v in sorted(role_counts.items())[:8]) or "generic"
-    payload = "\n".join(sorted(structural))
+    payload = f"package={package}\n" + "\n".join(sorted(structural))
     signature = hashlib.sha256(payload.encode("utf-8", errors="ignore")).hexdigest()[:24]
     return UIStateDescriptor(
         signature=signature,
@@ -143,6 +164,10 @@ class GraphEdge:
     action: Dict[str, Any] = field(default_factory=dict)
     bounds: Optional[Tuple[int, int, int, int]] = None
     destination_node_id: Optional[str] = None
+    # A single control can legitimately reach different destinations across
+    # repeated task iterations.  Keep the set instead of turning those
+    # observations into duplicate edges.
+    observed_destinations: List[str] = field(default_factory=list)
     discovered_labels: List[str] = field(default_factory=list)
     edge_status: str = "SPECULATIVE"
     confidence: float = 0.20
@@ -310,7 +335,10 @@ class GraphSnapshot:
                 continue
             if self.generation - edge.last_updated_generation > max_age_generations:
                 continue
-            if edge.destination_node_id and edge.destination_node_id in recent:
+            destinations = set(edge.observed_destinations or [])
+            if edge.destination_node_id:
+                destinations.add(edge.destination_node_id)
+            if destinations & recent:
                 continue
             rb = edge.rollback_success_rate
             if rb is not None and rb < 0.8:
@@ -373,6 +401,82 @@ class ProgressiveBeliefGraph:
             self._recompute_node_entropy(node_id)
             return node_id
 
+    @staticmethod
+    def _canonical_action_key(action: Dict[str, Any]) -> str:
+        """Return an edge identity that is independent of raw coordinates."""
+        action = action or {}
+        inputs = action.get("action_inputs") or {}
+        action_type = str(action.get("action_type") or action.get("action") or "unknown").lower()
+        control_key = action.get("control_key") or inputs.get("control_key")
+        if control_key:
+            return f"{action_type}|{control_key}"
+        label = inputs.get("label") or inputs.get("content") or inputs.get("app_name")
+        if label:
+            return f"{action_type}|{str(label).strip().lower()}"
+        role = inputs.get("role") or action.get("role") or "action"
+        return f"{action_type}|{str(role).strip().lower()}"
+
+    def add_speculative_transition(
+        self,
+        source_node_id: str,
+        action: Dict[str, Any],
+        destination_node_id: Optional[str],
+        role: str = "",
+        probe_type: str = "execution",
+        coarse_context: str = "generic",
+        information_need_type: str = "generic",
+        discovered_labels: Iterable[str] = (),
+        bounds: Optional[Tuple[int, int, int, int]] = None,
+        risk_level: float = 0.0,
+    ) -> str:
+        """Record a real transition without pretending it was a probe.
+
+        The original prototype only exposed ``record_probe``.  Real-phone
+        execution needs a separate path so execution evidence does not inflate
+        exploration counts or make an unprobed action look observed.
+        """
+        action_type = str((action or {}).get("action_type") or "unknown").lower()
+        identity = str(
+            (action or {}).get("control_key")
+            or ((action or {}).get("action_inputs") or {}).get("control_key")
+            or self._canonical_action_key(action)
+        )
+        with self._lock:
+            key = (source_node_id, identity, action_type)
+            edge_id = self._edge_key_to_id.get(key)
+            if edge_id is None:
+                digest = hashlib.sha1("|".join(key).encode("utf-8", errors="ignore")).hexdigest()[:16]
+                edge_id = f"e_{digest}"
+                self._edge_key_to_id[key] = edge_id
+                self.edges[edge_id] = GraphEdge(
+                    edge_id=edge_id,
+                    source_node_id=source_node_id,
+                    element_identity=identity,
+                    action_type=action_type,
+                )
+                if source_node_id in self.nodes:
+                    self.nodes[source_node_id].outgoing_edge_ids.append(edge_id)
+            edge = self.edges[edge_id]
+            gen = self._advance()
+            edge.role = role or edge.role
+            edge.probe_type = probe_type or edge.probe_type
+            edge.coarse_context = coarse_context or edge.coarse_context
+            edge.information_need_type = information_need_type or edge.information_need_type
+            edge.action = copy.deepcopy(action or edge.action)
+            edge.bounds = tuple(bounds) if bounds else edge.bounds
+            edge.destination_node_id = destination_node_id or edge.destination_node_id
+            if destination_node_id and destination_node_id not in edge.observed_destinations:
+                edge.observed_destinations.append(destination_node_id)
+            for label in discovered_labels or ():
+                clean = re.sub(r"\s+", " ", str(label)).strip()
+                if clean and clean not in edge.discovered_labels and len(edge.discovered_labels) < 80:
+                    edge.discovered_labels.append(clean[:80])
+            edge.risk_level = max(edge.risk_level, _clip(risk_level))
+            edge.last_updated_generation = gen
+            edge.recompute_belief()
+            self._recompute_node_entropy(source_node_id)
+            return edge_id
+
     def record_probe(
         self,
         source_node_id: str,
@@ -414,6 +518,8 @@ class ProgressiveBeliefGraph:
             edge.action = copy.deepcopy(action)
             edge.bounds = bounds
             edge.destination_node_id = destination_node_id or edge.destination_node_id
+            if destination_node_id and destination_node_id not in edge.observed_destinations:
+                edge.observed_destinations.append(destination_node_id)
             src_node = self.nodes.get(source_node_id)
             dst_node = self.nodes.get(destination_node_id) if destination_node_id else None
             if src_node and dst_node and src_node.package and dst_node.package and src_node.package != dst_node.package:
@@ -453,6 +559,8 @@ class ProgressiveBeliefGraph:
                 edge.execution_hit_count += 1
                 if actual_destination:
                     edge.destination_node_id = actual_destination
+                    if actual_destination not in edge.observed_destinations:
+                        edge.observed_destinations.append(actual_destination)
             else:
                 edge.execution_miss_count += 1
         self._record(edge_id, update)
@@ -687,9 +795,27 @@ class GenerationGuardedGraph:
 
     def __init__(self, graph: ProgressiveBeliefGraph):
         self.graph = graph
+        self._committed_snapshot = graph.snapshot()
+        self._committed_step = -1
 
     def begin_step(self) -> GraphSnapshot:
         return self.graph.snapshot()
+
+    def snapshot_for_step(self, step: Optional[int] = None) -> GraphSnapshot:
+        """Return the immutable snapshot committed before the current step."""
+        if step is not None and int(step) < self._committed_step:
+            raise RuntimeError(
+                f"Cannot read an older graph step: requested={step}, committed={self._committed_step}"
+            )
+        snapshot = self._committed_snapshot
+        return GraphSnapshot(snapshot.generation, snapshot.nodes, snapshot.edges)
+
+    def commit_step(self, step: Optional[int] = None) -> GraphSnapshot:
+        """Publish live writes only after the step's execution boundary."""
+        if step is not None:
+            self._committed_step = max(self._committed_step, int(step))
+        self._committed_snapshot = self.graph.snapshot()
+        return self._committed_snapshot
 
     @staticmethod
     def assert_snapshot(snapshot: GraphSnapshot, expected_generation: int) -> None:
