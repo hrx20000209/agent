@@ -4,6 +4,8 @@
 
 ## 从这里看
 
+- [两张表差距的逐题核查（10月29日）](reports/difference_diagnosis_20261029.md)
+
 - [结果对比与统计限制](analysis/comparison.md)
 - [机器可读结果](analysis/comparison.json)、[统计代码](analysis/compare_mai_runs.py)
 - [三轮原始逐题 runs.jsonl](data/summary/)

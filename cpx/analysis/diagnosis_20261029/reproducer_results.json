@@ -1,0 +1,7 @@
+{
+  "sms_parsed_message": "The library book is due back on the 15th. in Simple SMS Messenger",
+  "parser_identical_to_senior_base": true,
+  "alternating_clicks": 50,
+  "max_repetition_guard_count": 1,
+  "guard_stops": false
+}

@@ -6,8 +6,8 @@
   },
   {
     "path": "README.md",
-    "bytes": 2304,
-    "sha256": "e00c327613b1f4d82c063179d5e8b0115090e3a92a846ed107efc510dfa6573e"
+    "bytes": 2398,
+    "sha256": "74b46650779378bc7f19e050b6ebe6b8dd73d0004ebfba86125c318ed13aadf3"
   },
   {
     "path": "VALIDATION.md",
@@ -28,6 +28,36 @@
     "path": "analysis/comparison.md",
     "bytes": 2308,
     "sha256": "71b59719931f75a23760fa345a1a3f04f6252c9eadca4267fe6ba49b0ea251b9"
+  },
+  {
+    "path": "analysis/diagnosis_20261029/audit.json",
+    "bytes": 469223,
+    "sha256": "3eddc93fae35f4a552022caa65efd80cf617f6a26dbabbcaa31cdf389716f527"
+  },
+  {
+    "path": "analysis/diagnosis_20261029/base_markor_ui.json",
+    "bytes": 1238,
+    "sha256": "723162c3730c14776c127e885056b8482a0c84713dd12a0fcf137cbc4019d9f5"
+  },
+  {
+    "path": "analysis/diagnosis_20261029/e2e116n_runs.jsonl",
+    "bytes": 62840,
+    "sha256": "acbfbe7a1071adf1ce5974ffc1f97ca4f4b99309748b8541bce66e0ec031697e"
+  },
+  {
+    "path": "analysis/diagnosis_20261029/e2e116n_task_order.txt",
+    "bytes": 2879,
+    "sha256": "595290a05c7c4a3012f04086dc50ff6631126b62c66700ea527e4ed275ff8074"
+  },
+  {
+    "path": "analysis/diagnosis_20261029/reproducer_results.json",
+    "bytes": 226,
+    "sha256": "11dd31ac05b40cefe0d2f244d7f254ba0ed0f1da48ca503a08921d69e38f9fde"
+  },
+  {
+    "path": "analysis/diagnosis_20261029/ui_text.jsonl",
+    "bytes": 18750,
+    "sha256": "b20c93867151388e2e596eae39f64bbc6ffe0ac97e112e13c7319bae2942757d"
   },
   {
     "path": "code_overlay/android_world/env/interface.py",
@@ -113,6 +143,11 @@
     "path": "code_overlay/experiments/trace_reachability_validation/configs/statistics_rxhuang_20261023/restoration_manifest.json",
     "bytes": 1553,
     "sha256": "6e37b5738b4d02fc2072cee53c61b08313883cacc25a15aa40539733232af562"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/__pycache__/recovery_guard.cpython-312.pyc",
+    "bytes": 3563,
+    "sha256": "0a4a52f247cb5274a67958ca501fa821c5973cd9babaf843256309e4b4b0211c"
   },
   {
     "path": "code_overlay/experiments/trace_reachability_validation/scripts/explore_value.py",
@@ -683,6 +718,11 @@
     "path": "reference/runtime_source.tar.gz",
     "bytes": 1398621,
     "sha256": "a4f942b991600e242596940a6635d9ea23e682fc028d211bf4f0898cc26f6c32"
+  },
+  {
+    "path": "reports/difference_diagnosis_20261029.md",
+    "bytes": 6165,
+    "sha256": "61a64f64267949066780d8d1a6d2859d235e7d864085cb236483a824cc9b3b7f"
   },
   {
     "path": "reports/mai_base50_failed67_20261025.md",
