@@ -1,0 +1,11 @@
+--- a/experiments/trace_reachability_validation/scripts/full_run.py
++++ b/experiments/trace_reachability_validation/scripts/full_run.py
+@@ -501,6 +501,8 @@
+         elif ARM == "FULL35" and not R.same_state(v["ui"], ui) and self._restore_for_decision(ex, ui, d, k, m):
+           pass                               # FULL35: the screen the model decided on was restored; execute
+         elif not R.same_state(v["ui"], ui):
++          if m["calls"] >= self.max_steps():
++            break  # Do not issue a recovery requery beyond the declared budget.
+           requery = True
+           m["requery"] += 1
+           pre = self.dev.capture(f"s{k}_pre_requery", settle=True, full_res=True)
