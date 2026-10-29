@@ -8,6 +8,8 @@
 cp -R cpx/code_overlay/. /path/to/android_world/
 ```
 
+先将 `data/archives/mai8b_full232_shared_20261025.tar.gz` 解压到独立 AndroidWorld 目录下的 `experiments/trace_reachability_validation/raw/mai_official/`，以提供原始任务顺序和 run_config。此操作仅恢复数据，不会启动任务。
+
 覆盖层包括修改源码、新增 MAI runner、配置、官方系统提示词和词频先验。`patches/` 仅用于审阅，不要在复制覆盖层之后再次 apply patch。实验使用 Python3.11 容器环境，模型服务 vLLM0.30.0；依赖并非锁版本环境，不保证逐 token 重现。
 
 ## 原始启动顺序（历史脚本）
@@ -41,5 +43,9 @@ python -u experiments/trace_reachability_validation/scripts/mai_full45_full50_wo
 ```
 
 历史脚本使用 `docker exec -d ... sh -c 'exec nohup ... > log 2>&1 < /dev/null'`，并启动 `mai_completion_watch.py --tag TAG`，无需 SSH 会话存活。共享图目录由 worker 初始化；不要把上轮共享图复制成新轮初始图。worker 的已完成目录保护不允许静默覆盖/择优重跑。
+
+## 模型服务原始启动脚本
+
+`service/` 保留服务器服务目录中的 shell 脚本及配置，包括当时的启动脚本和历史配置备份；默认先检查内容、调整权重路径及 GPU。不要把旧备份脚本误当成本轮配置，实际参数以 run_config 与下列说明为准。
 
 服务参数：MAI-UI-8B BF16、max_model_len24576、max_num_seqs8、max_num_batched_tokens1024、max_images3、TRITON_ATTN、enforce_eager、gpu_memory_utilization0.97。12个容器并不代表模型服务有12路完整上下文并发。

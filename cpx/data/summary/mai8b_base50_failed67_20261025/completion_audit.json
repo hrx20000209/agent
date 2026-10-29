@@ -1,0 +1,35 @@
+{
+  "tag": "mai8b_base50_failed67_20261025",
+  "checked_at": "2026-10-25T06:30:58.214472+00:00",
+  "status": "FINISHED",
+  "expected": 67,
+  "completed": 67,
+  "missing": [],
+  "errors": [],
+  "worker_statuses": [
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED"
+  ],
+  "full_success_counts": {
+    "BASE": 22
+  },
+  "cohort_note": "BASE 50-call budget diagnostic on 67 previous zero-score tasks. Retain previous 48 successes and one partial score; FULL45 unchanged.",
+  "budget_comparison": {
+    "tasks": 116,
+    "previous_full_success": 48,
+    "rerun_tasks": 67,
+    "rescued_full_success": 22,
+    "full_success": 70,
+    "full_success_rate": 0.603448275862069,
+    "score_sum": 70.5,
+    "budget_exhausted": 24,
+    "total_rerun_model_calls": 1869,
+    "interpretation": "Targeted BASE budget diagnostic: rerun only prior zero-score tasks with up to 50 calls. Retain 48 prior successes and one partial. FULL45 unchanged. Not a fresh uniform-budget full-suite run."
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "BASE": [
+    "pxchen-mai8b-official-20261024",
+    "pxchen-mai8b-base-w1-20261025",
+    "pxchen-mai8b-base-w2-20261025",
+    "pxchen-mai8b-base-w3-20261025"
+  ],
+  "FULL45": [
+    "pxchen-mai8b-shared-w1-20261024",
+    "pxchen-mai8b-full-w1-20261025",
+    "pxchen-mai8b-full-w2-20261025",
+    "pxchen-mai8b-full-w3-20261025"
+  ]
+}

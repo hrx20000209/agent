@@ -1,0 +1,24 @@
+{
+  "tag": "mai8b_sms_repair14_20261025",
+  "checked_at": "2026-10-25T03:41:37.525337+00:00",
+  "status": "FINISHED",
+  "expected": 14,
+  "completed": 14,
+  "missing": [],
+  "errors": [],
+  "worker_statuses": [
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED"
+  ],
+  "full_success_counts": {
+    "FULL45": 4,
+    "BASE": 3
+  },
+  "cohort_note": "Independent SMS repair supplement with its own initially empty graph; keep separate from original full232."
+}

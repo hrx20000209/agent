@@ -76,39 +76,3 @@ def reconcile_budget(run, config):
   D.SS.atomic_text(run / 'reconciled_base_runs.jsonl', ''.join(json.dumps(r) + '\n' for r in chosen))
   D.SS.atomic_text(run / 'budget_comparison.json', json.dumps(result, indent=2))
   return result
-
-
-def reconcile_full45_budget(run, config):
-  """Replace exactly prior zero-score FULL45 rows; preserve all other outcomes."""
-  run = Path(run)
-  prior = run.parent / config['full45_budget_reconciliation']['prior_run']
-  old = [r for r in D.SS.rows(prior / 'reconciled_runs.jsonl') if r['arm'] == 'FULL45']
-  assert len(old) == len({r['task'] for r in old}) == 116
-  assert all(r['rc'] == 0 and not r.get('error') and r.get('success') is not None for r in old)
-  expected = {r['task'] for r in old if r['success'] == 0}
-  new = list(D.SS.rows(run / 'runs.jsonl'))
-  replacement = {r['task']: r for r in new}
-  assert len(new) == len(replacement) == len(expected) == 61
-  assert set(replacement) == expected == set(config['tasks'])
-  assert all(r['arm'] == 'FULL45' and r['rc'] == 0 and not r.get('error')
-             and r.get('success') is not None and r['max_model_calls'] == 50
-             and r['model_calls'] <= 50 for r in new)
-  chosen = []
-  for original in old:
-    row = dict(replacement[original['task']] if original['task'] in expected else original)
-    row['budget_rerun'] = original['task'] in expected
-    if row['budget_rerun']:
-      row['source_run'] = run.name
-    chosen.append(row)
-  successes = sum(r['success'] == 1 for r in chosen)
-  result = dict(arm='FULL45', tasks=116, previous_full_success=53,
-      rerun_tasks=61, rescued_full_success=sum(r['success'] == 1 for r in new),
-      full_success=successes, full_success_rate=successes / 116,
-      score_sum=sum(r['success'] for r in chosen),
-      budget_exhausted=sum(r['termination'] == 'budget' for r in new),
-      total_rerun_model_calls=sum(r.get('model_calls') or 0 for r in new),
-      snapshot_sha256=config['snapshot_sha256'],
-      interpretation='Targeted FULL45 diagnostic: 61 previous zero-score tasks, up to 50 calls, shared mutable graph initialized from final full232 snapshot. Retain 53 successes and two partial scores. BASE unchanged. Warm same-task graph; not a fresh cold-start full-suite evaluation.')
-  D.SS.atomic_text(run / 'reconciled_full45_runs.jsonl', ''.join(json.dumps(r) + '\n' for r in chosen))
-  D.SS.atomic_text(run / 'budget_comparison.json', json.dumps(result, indent=2))
-  return result

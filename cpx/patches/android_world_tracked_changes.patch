@@ -1,8 +1,6 @@
-diff --git a/android_world/env/interface.py b/android_world/env/interface.py
-index 9c5a4ca..e08fa19 100644
 --- a/android_world/env/interface.py
 +++ b/android_world/env/interface.py
-@@ -327,12 +327,15 @@ class AsyncAndroidEnv(AsyncEnv):
+@@ -327,12 +327,14 @@
          )
  
      def display_message(self, message: str, header: str = '') -> None:
@@ -14,8 +12,7 @@ index 9c5a4ca..e08fa19 100644
 -        )
 +        import shlex
 +
-+        # adb shell joins its arguments before invoking the device shell. Quote
-+        # the complete command so model answers containing quotes stay data.
++        # Quote the complete device-shell command so answer text stays data.
 +        command = shlex.join([
 +            'am', 'broadcast', '-a', 'com.example.ACTION_UPDATE_OVERLAY',
 +            '--es', 'task_type_string', header, '--es', 'goal_string', message,
@@ -24,11 +21,9 @@ index 9c5a4ca..e08fa19 100644
  
      def ask_question(
              self, question: str, timeout_seconds: float = -1.0
-diff --git a/experiments/runtime_graph_exploration/scripts/fgraph.py b/experiments/runtime_graph_exploration/scripts/fgraph.py
-index 97931d0..25df80a 100644
 --- a/experiments/runtime_graph_exploration/scripts/fgraph.py
 +++ b/experiments/runtime_graph_exploration/scripts/fgraph.py
-@@ -28,6 +28,7 @@ from collections import Counter, defaultdict
+@@ -28,6 +28,7 @@
  from pathlib import Path
  
  import memory as M
@@ -36,7 +31,7 @@ index 97931d0..25df80a 100644
  
  C, U, R = M.C, M.U, M.R
  STOP = M.STOP | set("following named with into from the in on at to of for by app apps".split())
-@@ -244,6 +245,11 @@ def self_reported_done(ep):
+@@ -244,6 +245,11 @@
  
  
  def build_online(run_dir, out):
@@ -48,7 +43,7 @@ index 97931d0..25df80a 100644
    """FULL33 online function library: functions extracted from the episodes of THIS run that the model itself
    completed, in run order; nothing from earlier runs. Appends episodes not yet processed."""
    out = Path(out)
-@@ -253,6 +259,8 @@ def build_online(run_dir, out):
+@@ -253,6 +259,8 @@
    new = []
    for ep in sorted(Path(run_dir).glob("*/p0")):
      key = ep.parent.name
@@ -57,7 +52,7 @@ index 97931d0..25df80a 100644
      if key in done or not (ep / "result.json").exists() or not (ep / "steps.jsonl").exists():
        continue
      done.add(key)
-@@ -269,7 +277,7 @@ def build_online(run_dir, out):
+@@ -269,7 +277,7 @@
    with out.open("a") as fo:
      for f in new:
        fo.write(json.dumps(f) + "\n")
@@ -66,7 +61,7 @@ index 97931d0..25df80a 100644
    return len(new)
  
  
-@@ -277,10 +285,11 @@ class Library:
+@@ -277,10 +285,11 @@
    """Leave-one-template-out view of the function cache (+ functions added during the run)."""
  
    def __init__(self, task, cache=CACHE):
@@ -80,11 +75,9 @@ index 97931d0..25df80a 100644
        if f["template"] == tk:
          continue
        sig = (f["entry_act"], tuple((s["op"], s.get("field") or s.get("fam")) for s in f["steps"]))
-diff --git a/experiments/runtime_graph_study/scripts/rgs_run.py b/experiments/runtime_graph_study/scripts/rgs_run.py
-index a2a482d..c136b75 100644
 --- a/experiments/runtime_graph_study/scripts/rgs_run.py
 +++ b/experiments/runtime_graph_study/scripts/rgs_run.py
-@@ -44,7 +44,7 @@ os.environ.setdefault("ANDROID_WORLD_A11Y_METHOD", "fast_provider")
+@@ -44,7 +44,7 @@
  os.environ.setdefault("ANDROID_WORLD_FAST_A11Y_SOCKET_PORT", "8765")
  os.environ.setdefault("ANDROID_WORLD_LLM_NO_PREFIX_CACHE", "1")
  
@@ -93,7 +86,7 @@ index a2a482d..c136b75 100644
  from android_world.agents import gelab_agent, infer, seeact_utils  # noqa: E402
  from android_world.env import adb_utils, env_launcher, json_action  # noqa: E402
  
-@@ -204,18 +204,21 @@ class Graph:
+@@ -204,18 +204,21 @@
      self.path = path
      self.app_memory = app_memory
      self.app_unrestorable: set[tuple] = set()
@@ -123,7 +116,7 @@ index a2a482d..c136b75 100644
  
    def _node(self, s: dict[str, Any], instance: str):
      n = self.nodes.setdefault(s["struct_sig"], {
-@@ -238,16 +241,16 @@ class Graph:
+@@ -238,16 +241,16 @@
      return (pkg, sel.get("cls", ""), sel.get("rid", ""), sel.get("label", ""))
  
    def add(self, obs: dict[str, Any]):
@@ -145,11 +138,9 @@ index a2a482d..c136b75 100644
  
    def match(self, ui: U.UIState) -> tuple[str, list[str]]:
      if ui.struct_sig in self.nodes:
-diff --git a/experiments/trace_reachability_validation/scripts/explore_value.py b/experiments/trace_reachability_validation/scripts/explore_value.py
-index 4a84fdd..beb1460 100644
 --- a/experiments/trace_reachability_validation/scripts/explore_value.py
 +++ b/experiments/trace_reachability_validation/scripts/explore_value.py
-@@ -27,6 +27,8 @@ import re
+@@ -27,6 +27,8 @@
  import sys
  from collections import Counter
  from pathlib import Path
@@ -158,7 +149,7 @@ index 4a84fdd..beb1460 100644
  
  HERE = Path(__file__).resolve().parent
  sys.path.insert(0, str(HERE))
-@@ -212,7 +214,7 @@ def load_cap(raw, instance, cid):
+@@ -212,7 +214,7 @@
    if key not in _CAP:
      task, var = instance.split("/")
      try:
@@ -167,11 +158,9 @@ index 4a84fdd..beb1460 100644
      except Exception:  # pylint: disable=broad-except
        _CAP[key] = None
    return _CAP[key]
-diff --git a/experiments/trace_reachability_validation/scripts/full7.py b/experiments/trace_reachability_validation/scripts/full7.py
-index e52b934..75818fd 100644
 --- a/experiments/trace_reachability_validation/scripts/full7.py
 +++ b/experiments/trace_reachability_validation/scripts/full7.py
-@@ -21,6 +21,8 @@ import json
+@@ -21,6 +21,8 @@
  import re
  import sys
  from pathlib import Path
@@ -180,7 +169,7 @@ index e52b934..75818fd 100644
  
  HERE = Path(__file__).resolve().parent
  sys.path.insert(0, str(HERE.parent.parent / "runtime_graph_exploration" / "scripts"))
-@@ -61,24 +63,28 @@ def _known_from_history(task):
+@@ -61,23 +63,27 @@
  
  
  class StuckExplorer:
@@ -207,17 +196,16 @@ index e52b934..75818fd 100644
 +    self._mem_offset = 0
 +    self.refresh_shared()
      self.onboarded = set()
- 
++
 +  def refresh_shared(self):
 +    self.known |= set(SS.read_text(self.gdir / "known_states.txt").split())
 +    rows, self._mem_offset = SS.read_delta(self.mem_path, self._mem_offset)
 +    for row in rows:
 +      self.mem[(row["key"], row["fam"])] = row
-+
+ 
    # ------------------------------------------------------------ effects
    def _record(self, key, fam, label, changed, ui_dst):
-     e = self.effect.setdefault((key, fam), {"label": label or fam.split("|")[-1], "changed": False, "n": 0,
-@@ -184,8 +190,7 @@ class StuckExplorer:
+@@ -184,8 +190,7 @@
        r = {"key": key, "fam": fam, "label": e["label"], "changed": e["changed"], "moves": e.get("moves", False), "title": e["title"],
             "known": e["known"], "rollback_ok": p["rollback_ok"], "episode": self.ep.args.variant}
        self.mem[(key, fam)] = r
@@ -227,7 +215,7 @@ index e52b934..75818fd 100644
        rec["probes"].append({"why": "STUCK", "slot": sl.slot_id, "family": fam, "outcome": p["outcome"],
                              "rollback_ok": p["rollback_ok"], "t": p["t_total_s"], "dst_ui": dst})
        if not p["rollback_ok"]:
-@@ -232,8 +237,7 @@ class StuckExplorer:
+@@ -232,8 +237,7 @@
    def finish(self):
      new = self.visited - self.known
      if new:
@@ -237,11 +225,9 @@ index e52b934..75818fd 100644
  
  
  # ------------------------------------------------------------------ FULL8 helpers
-diff --git a/experiments/trace_reachability_validation/scripts/full9.py b/experiments/trace_reachability_validation/scripts/full9.py
-index b147258..e93d46a 100644
 --- a/experiments/trace_reachability_validation/scripts/full9.py
 +++ b/experiments/trace_reachability_validation/scripts/full9.py
-@@ -21,6 +21,8 @@ import re
+@@ -21,6 +21,8 @@
  import sys
  from collections import Counter
  from pathlib import Path
@@ -250,7 +236,7 @@ index b147258..e93d46a 100644
  
  HERE = Path(__file__).resolve().parent
  sys.path.insert(0, str(HERE.parent.parent / "runtime_graph_exploration" / "scripts"))
-@@ -106,6 +108,7 @@ class FuncExec:
+@@ -106,6 +108,7 @@
        cache.parent.mkdir(parents=True, exist_ok=True)
        FG.build_online(Path(episode.out).parents[1], cache)
        self.lib = FG.Library(episode.args.task, cache=cache)
@@ -258,10 +244,11 @@ index b147258..e93d46a 100644
        if _base_arm() in ("FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45"):
          self.lib.funcs = self.lib.funcs + _role_adapted(self.lib.funcs, self.recs)
      else:
-@@ -121,6 +124,16 @@ class FuncExec:
+@@ -120,6 +123,16 @@
+         for i, v in enumerate(vs):
            self.vals.setdefault(FG.norm(v), i)
      self.own = []
- 
++
 +  def refresh_shared(self):
 +    if not hasattr(self, "online_cache"):
 +      return
@@ -271,11 +258,10 @@ index b147258..e93d46a 100644
 +    if _base_arm() in tuple(f"FULL{i}" for i in range(35, 46)):
 +      self.lib.funcs += _role_adapted(self.lib.funcs, self.recs)
 +    self.lib.add(own)
-+
+ 
    def _n_recs(self):
      return max([len(v) for v in self.recs.values()] + [1])
- 
-@@ -317,7 +330,7 @@ class FuncExec:
+@@ -317,7 +330,7 @@
            continue
          task, var = o["instance"].split("/")
          try:
@@ -284,7 +270,7 @@ index b147258..e93d46a 100644
          except Exception:  # pylint: disable=broad-except
            continue
          if any(f["entry_act"] == dui.activity and self._ground_first(f, dui, rec) for f in funcs):
-@@ -549,7 +562,7 @@ class FuncExec:
+@@ -549,7 +562,7 @@
            continue
          task, var = o["instance"].split("/")
          try:
@@ -293,7 +279,7 @@ index b147258..e93d46a 100644
          except Exception:  # pylint: disable=broad-except
            continue
          if len(self._form_plan(dui, rec)) >= 2:
-@@ -652,6 +665,7 @@ def relaunch_restore(ep, target_ui, step):
+@@ -652,6 +665,7 @@
    launch. Only when that path contains no commit (re-executing a commit would repeat its side effect)."""
    import subprocess
    import time as _t
@@ -301,7 +287,7 @@ index b147258..e93d46a 100644
    log = getattr(ep, "_exec_log", [])
    if (not log or log[0]["action"] is None or log[0]["action"].get("action_type") != "open_app"
        or any(e["commit"] or e["action"] is None for e in log) or len(log) > 12):
-@@ -663,10 +677,13 @@ def relaunch_restore(ep, target_ui, step):
+@@ -663,10 +677,13 @@
      ep._agent._execute_action(a, {})  # pylint: disable=protected-access
      _t.sleep(1.0)
    cap = ep.dev.capture(f"s{step}_relaunch", settle=True, pause=1.0)
@@ -317,11 +303,9 @@ index b147258..e93d46a 100644
    return ok
  
  
-diff --git a/experiments/trace_reachability_validation/scripts/full_run.py b/experiments/trace_reachability_validation/scripts/full_run.py
-index 8449fc0..813c6d6 100644
 --- a/experiments/trace_reachability_validation/scripts/full_run.py
 +++ b/experiments/trace_reachability_validation/scripts/full_run.py
-@@ -31,6 +31,8 @@ import threading
+@@ -31,6 +31,8 @@
  import time
  from collections import Counter
  from pathlib import Path
@@ -330,7 +314,7 @@ index 8449fc0..813c6d6 100644
  
  HERE = Path(__file__).resolve().parent
  sys.path.insert(0, str(HERE))
-@@ -41,6 +43,7 @@ import rgs_run as R  # noqa: E402
+@@ -41,6 +43,7 @@
  import proc_replay as P  # noqa: E402
  import full7  # noqa: E402
  import full9  # noqa: E402
@@ -338,7 +322,7 @@ index 8449fc0..813c6d6 100644
  import explore_value as EV  # noqa: E402
  import joint_graph as JG  # noqa: E402
  import intent_graph as IG  # noqa: E402
-@@ -92,7 +95,7 @@ class FullEpisode(S.SeqEpisode):
+@@ -92,7 +95,7 @@
      self._last_model_commit = False
      # FULL9: the function graph subsumes episode-local replay (its own segments become functions)
      pr = P.ProcReplay(goal, enum_only=(ARM in ("FULL7", "FULL8"))) if ARM in ("FULL5", "FULL7", "FULL8") else None
@@ -347,7 +331,7 @@ index 8449fc0..813c6d6 100644
      fn = full9.FuncExec(self, goal) if ARM in ("FULL9", "FULL10", "FULL11", "FULL12", "FULL13", "FULL14", "FULL15", "FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45") else None
      # FULL33: the task has record fields to fill -> creation entries ("New Event", "+") may be explored
      self._create_task = bool(fn is not None and ARM in ("FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45") and fn.recs and fn.P.get("verb") in ENTRY_VERBS)
-@@ -100,6 +103,8 @@ class FullEpisode(S.SeqEpisode):
+@@ -100,6 +103,8 @@
        # creation entries are explored in every task: the editors they open become graph pages that later tasks'
        # form routes reach (cross-task reuse of exploration)
        self._create_task = True
@@ -356,7 +340,7 @@ index 8449fc0..813c6d6 100644
      self._exec_log = []           # FULL11: actions executed since the last app launch (replayable path)
      self._agent = agent
      self._probe_states = {}       # FULL11: (layout key, slot family) first observed by exploration -> step
-@@ -126,15 +131,15 @@ class FullEpisode(S.SeqEpisode):
+@@ -126,15 +131,15 @@
      self._eff_path = gdir / "effectful.jsonl"
      self._learned_eff = set()
      if ARM in ("FULL15", "FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45") and self._eff_path.exists():
@@ -375,7 +359,7 @@ index 8449fc0..813c6d6 100644
      if fn is not None and ARM in ("FULL14", "FULL15", "FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45"):
        fn.strict_done = True
      if fn is not None and ARM in ("FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45"):
-@@ -165,6 +170,8 @@ class FullEpisode(S.SeqEpisode):
+@@ -165,6 +170,8 @@
      # FULL37: the step budget is the INFERENCE budget (as for BASE: 20 model calls); graph executions do not use
      # it. A separate cap on all counted steps (2x) guards against graph loops.
      while ((m["calls"] < self.max_steps() and k < 2 * self.max_steps()) if ARM in ("FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45") else k < self.max_steps()):
@@ -384,7 +368,7 @@ index 8449fc0..813c6d6 100644
        if reuse_next is not None:
          # R2: model picked the probed slot; check the page without the fixed pause
          pre = self.dev.capture(f"s{k}_pre_reuse", settle=True, pause=None, full_res=True)
-@@ -425,15 +432,21 @@ class FullEpisode(S.SeqEpisode):
+@@ -425,15 +432,21 @@
                if ARM in ("FULL41", "FULL42", "FULL43", "FULL44", "FULL45"):
                  xrec = dict(xrec or {}, probes=list((xrec or {}).get("probes") or []) +
                              [{"why": "PARK", "family": sp["fam"], "rollback_ok": False, "dst_ui": None}])
@@ -409,7 +393,7 @@ index 8449fc0..813c6d6 100644
            # same activity and the control the model chose is still on screen (moved): the decision stands, it is
            # executed at the control's current position
            m["verify_relocated"] += 1
-@@ -457,7 +470,10 @@ class FullEpisode(S.SeqEpisode):
+@@ -457,7 +470,10 @@
              continue
          elif ARM == "FULL35" and not R.same_state(v["ui"], ui) and self._restore_for_decision(ex, ui, d, k, m):
            pass                               # FULL35: the screen the model decided on was restored; execute
@@ -421,7 +405,7 @@ index 8449fc0..813c6d6 100644
            requery = True
            m["requery"] += 1
            pre = self.dev.capture(f"s{k}_pre_requery", settle=True, full_res=True)
-@@ -471,6 +487,17 @@ class FullEpisode(S.SeqEpisode):
+@@ -471,6 +487,17 @@
        full7.EXTRA["text"] = ""
        a = d["action"]
        tok, fam, sel = C.action_token(ui, a.__dict__)
@@ -439,7 +423,7 @@ index 8449fc0..813c6d6 100644
        if gx is not None and gx.check_undo(instance, k, a.__dict__):
          m["gx_misuse"] += 1
        if xrec and fam:
-@@ -548,6 +575,7 @@ class FullEpisode(S.SeqEpisode):
+@@ -548,12 +575,33 @@
      self._own_seq = own
      res = {"steps": (k if ARM in ("FULL8", "FULL9", "FULL10", "FULL11", "FULL12", "FULL13", "FULL14", "FULL15", "FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45") else len(steps)), "env_actions": len(steps), "agent_steps": len(steps),
             "done": done, "model_calls": m["calls"],
@@ -447,10 +431,10 @@ index 8449fc0..813c6d6 100644
             "final_cid": final["cid"], "n_probes": ex.n_probes, "explore_disabled": ex.disabled_reason,
             "store_eps": len(store.data) if store else 0}
      m["jump_absent"] = getattr(self, "_jump_absent", 0)
-@@ -555,6 +583,26 @@ class FullEpisode(S.SeqEpisode):
+     m["jump_mismatch"] = getattr(self, "_jump_mismatch", 0)
      res.update({f"m_{kk}": vv for kk, vv in m.items()})
      return res
- 
++
 +  def refresh_shared(self, graph, store, fx, fn, gx):
 +    """Refresh peer evidence at a decision boundary, without holding device locks."""
 +    graph.refresh()
@@ -470,11 +454,10 @@ index 8449fc0..813c6d6 100644
 +             "nodes": len(graph.nodes), "observations": sum(map(len, graph.slots.values())),
 +             "functions": len(fn.lib.funcs) if fn else 0,
 +             "successful_episodes": len(store.data) if store else 0})
-+
+ 
    def plan_jump(self, store, graph, own, ui, used):
      if ARM in ("FULL3", "FULL4", "FULL5", "FULL7", "FULL8", "FULL9", "FULL10", "FULL11", "FULL12", "FULL13", "FULL14", "FULL15", "FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45"):
-       return self.plan_jump_invariant(store, graph, own, ui, used)
-@@ -862,6 +910,8 @@ class FullEpisode(S.SeqEpisode):
+@@ -862,6 +910,8 @@
            targets.append(("E2", s))
      rec["mode"] = targets[0][0] if targets else "none"
      for i_t, (why, s) in enumerate(targets):
@@ -483,7 +466,7 @@ index 8449fc0..813c6d6 100644
        if time.time() - t0 >= ex.cfg.budget_s:
          rec["stop"] = "budget"
          break
-@@ -885,6 +935,9 @@ class FullEpisode(S.SeqEpisode):
+@@ -885,6 +935,9 @@
            ok_j, _ = JG.restore(self, ex.graph, ui, step)
            if not ok_j and not full9.relaunch_restore(self, ui, step):
              rec["drift_unrestored"] = True
@@ -493,7 +476,7 @@ index 8449fc0..813c6d6 100644
            break
        if why == "D2":
          p = self.probe_depth2(ex, pre, s, step)
-@@ -909,16 +962,14 @@ class FullEpisode(S.SeqEpisode):
+@@ -909,16 +962,14 @@
          gk = full9.container_key(ui.package, ui.activity, s.sel)
          if gk not in self._bad_groups:
            self._bad_groups.add(gk)
@@ -513,7 +496,7 @@ index 8449fc0..813c6d6 100644
        rec["probes"].append({"why": why, "slot": s.slot_id, "family": C.family_of_sel(s.sel), "outcome": p["outcome"],
                              "rollback_ok": p["rollback_ok"], "t": p["t_total_s"], "dst_ui": dst_ui if why != "D2" else None})
        if not p["rollback_ok"] and ARM in ("FULL15", "FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45") and why != "D2":
-@@ -926,15 +977,13 @@ class FullEpisode(S.SeqEpisode):
+@@ -926,15 +977,13 @@
          gk = full9.container_key(ui.package, ui.activity, s.sel)
          if gk not in self._bad_groups:
            self._bad_groups.add(gk)
@@ -531,7 +514,7 @@ index 8449fc0..813c6d6 100644
        if not p["rollback_ok"] and ARM in ("FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45"):
          # restoration ladder, second rung: a safe path over the joint graph back to the origin page
          ok_j, orgs = JG.restore(self, ex.graph, ui, step)
-@@ -946,22 +995,24 @@ class FullEpisode(S.SeqEpisode):
+@@ -946,22 +995,24 @@
          rec["relaunch_restore"] = ok_r
          if ok_r:
            p["rollback_ok"] = True
@@ -565,7 +548,7 @@ index 8449fc0..813c6d6 100644
              ex.disabled_reason = f"rollback_failed_x2@{step}"
          else:
            ex.disabled_reason = f"rollback_failed@{step}"
-@@ -1003,7 +1054,7 @@ def _depth2_target(self, ex, ui, known, reversible, exclude=()):
+@@ -1003,7 +1054,7 @@
          continue
        task, var = o["instance"].split("/")
        try:
@@ -574,7 +557,7 @@ index 8449fc0..813c6d6 100644
        except Exception:  # pylint: disable=broad-except
          continue
        if full9.transient(dui):
-@@ -1013,7 +1064,8 @@ def _depth2_target(self, ex, ui, known, reversible, exclude=()):
+@@ -1013,7 +1064,8 @@
                 and full9.p_reversible(dui, t.sel, evid) >= P_REV_MIN
                 and (dui.package, dui.activity, C.family_of_sel(t.sel)) not in known
                 and (dui.package, C.family_of_sel(t.sel)) not in self._learned_eff
@@ -584,7 +567,7 @@ index 8449fc0..813c6d6 100644
        if fresh and ARM in ("FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45"):
          cands.append((sl, dd, dui, fresh, (o["instance"], o["dst_cid"], dd.get("layout_sig"))))
          break
-@@ -1043,7 +1095,8 @@ def _probe_depth2(self, ex, pre, sl, step):
+@@ -1043,7 +1095,8 @@
    self.dev.tap(x, y)
    mid = self.dev.capture(f"s{step}_d2_mid", settle=True, pause=0.8)
    inner_fam = C.family_of_sel(sl.d2["inner"])
@@ -594,7 +577,7 @@ index 8449fc0..813c6d6 100644
    if mid["ui"].activity != sl.d2["via_dst"]["activity"] or target is None or full9.transient(mid["ui"]):
      self.dev.back()
      chk = self.dev.capture(f"s{step}_d2_back", settle=True)
-@@ -1071,11 +1124,11 @@ def _adaptive_wait(self, prev, m):
+@@ -1071,11 +1124,11 @@
    ui0 = prev["pre"]["ui"]
    sig0 = (ui0.exact_sig, ui0.content_sig)
    key = f"{ui0.package}|{ui0.activity}|{prev.get('fam') or prev.get('slot_id')}"
@@ -608,7 +591,7 @@ index 8449fc0..813c6d6 100644
      except Exception:  # pylint: disable=broad-except
        waits = {}
      self._edge_wait = waits
-@@ -1102,7 +1155,7 @@ def _adaptive_wait(self, prev, m):
+@@ -1102,7 +1155,7 @@
      hist.append(round(t_w, 3))
      waits[key] = hist[-9:]
      try:
@@ -617,7 +600,7 @@ index 8449fc0..813c6d6 100644
      except Exception:  # pylint: disable=broad-except
        pass
    m["adaptive_wait_changed" if changed else "adaptive_wait_nochange"] += 1
-@@ -1151,7 +1204,7 @@ def _risky_slot(ep, ui, sl):
+@@ -1151,7 +1204,7 @@
    n = ui.nodes[sl.node_idx]
    cls = (n.cls or "").lower()
    rid = str(sl.sel.get("rid") or "").lower()
@@ -626,7 +609,7 @@ index 8449fc0..813c6d6 100644
       or any(w in rid for w in ("switch", "toggle", "checkbox")):
      return True
    return C.family_of_sel(sl.sel) == getattr(ep, "_last_act_fam", None)
-@@ -1510,7 +1563,8 @@ def _park(self, ex, pre, rec, step, instance):
+@@ -1510,7 +1563,8 @@
    for sl in U.enumerate_slots(ui):
      fam = C.family_of_sel(sl.sel)
      key = (ui.package, ui.activity, fam)
@@ -636,11 +619,9 @@ index 8449fc0..813c6d6 100644
        continue
      if fam not in probed_ok and key not in reversible:
        continue
-diff --git a/experiments/trace_reachability_validation/scripts/graph_exec.py b/experiments/trace_reachability_validation/scripts/graph_exec.py
-index 1f514fb..2b0bd49 100644
 --- a/experiments/trace_reachability_validation/scripts/graph_exec.py
 +++ b/experiments/trace_reachability_validation/scripts/graph_exec.py
-@@ -19,7 +19,10 @@ from __future__ import annotations
+@@ -19,7 +19,10 @@
  import json
  import time
  from collections import Counter
@@ -651,7 +632,7 @@ index 1f514fb..2b0bd49 100644
  
  HERE = Path(__file__).resolve().parent
  PROFILING_OBS = HERE.parent.parent / "runtime_graph_exploration" / "graph" / "observations.jsonl"
-@@ -62,12 +65,9 @@ class GraphReuse:
+@@ -62,12 +65,9 @@
      self.valid = Counter()       # (type, key) -> graph executions that landed as expected
      self.misuse = Counter()      # (type, key) -> executions the model undid
      self._offset = 0
@@ -665,7 +646,7 @@ index 1f514fb..2b0bd49 100644
      self.refresh()
      self.last = None             # the latest execution in this episode (for the misuse check)
  
-@@ -89,19 +89,13 @@ class GraphReuse:
+@@ -89,19 +89,13 @@
  
    def refresh(self):
      """Fold in the runtime graph's new agent / exploration edges (cross-task evidence of this run)."""
@@ -692,7 +673,7 @@ index 1f514fb..2b0bd49 100644
  
    def _apply(self, r):
      k = (r["type"], tuple(r["key"]) if isinstance(r["key"], list) else r["key"])
-@@ -129,9 +123,8 @@ class GraphReuse:
+@@ -129,9 +123,8 @@
           "step": step, "ok": bool(ok), "n_actions": n_actions, "t": time.time(),
           "src": {"package": _pkg(src), "activity": _act(src)} if src else None,
           "dst": {"package": _pkg(dst), "activity": _act(dst)} if dst else None}
@@ -704,7 +685,7 @@ index 1f514fb..2b0bd49 100644
      self.last = (typ, key, step)
  
    def check_undo(self, instance, step, action):
-@@ -147,7 +140,6 @@ class GraphReuse:
+@@ -147,7 +140,6 @@
      if undo:
        r = {"event": "misuse", "type": typ, "key": list(key) if isinstance(key, tuple) else key,
             "instance": instance, "step": step, "t": time.time()}
@@ -714,11 +695,9 @@ index 1f514fb..2b0bd49 100644
 +      SS.append_json(self.path, r)
 +      self.refresh()
      return undo
-diff --git a/experiments/trace_reachability_validation/scripts/intent_graph.py b/experiments/trace_reachability_validation/scripts/intent_graph.py
-index b2f91ee..30e1be0 100644
 --- a/experiments/trace_reachability_validation/scripts/intent_graph.py
 +++ b/experiments/trace_reachability_validation/scripts/intent_graph.py
-@@ -16,6 +16,7 @@ from __future__ import annotations
+@@ -16,6 +16,7 @@
  import json
  import math
  from collections import Counter
@@ -726,7 +705,7 @@ index b2f91ee..30e1be0 100644
  
  import full7
  import full9
-@@ -42,46 +43,45 @@ class EdgeIntent:
+@@ -42,46 +43,45 @@
    def __init__(self, path, task):
      self.path, self.task = path, task
      self.use, self.n_valid, self.n_misuse = {}, Counter(), Counter()
@@ -802,11 +781,9 @@ index b2f91ee..30e1be0 100644
  
  
  def _candidates(ep, ui, graph):
-diff --git a/experiments/trace_reachability_validation/scripts/seq_run.py b/experiments/trace_reachability_validation/scripts/seq_run.py
-index 171cccf..c73f097 100644
 --- a/experiments/trace_reachability_validation/scripts/seq_run.py
 +++ b/experiments/trace_reachability_validation/scripts/seq_run.py
-@@ -34,6 +34,7 @@ import common as C  # noqa: E402
+@@ -34,6 +34,7 @@
  import pa_trace as PA  # noqa: E402
  import rgs_run as R  # noqa: E402
  from android_world.env import json_action  # noqa: E402
@@ -814,7 +791,7 @@ index 171cccf..c73f097 100644
  
  U = C.U
  ARM = os.environ.get("SEQ_ARM", "BASE")
-@@ -50,7 +51,9 @@ class Store:
+@@ -50,7 +51,9 @@
  
    def __init__(self, path: Path, only_task: str | None = None):
      self.path = path
@@ -825,7 +802,7 @@ index 171cccf..c73f097 100644
      if only_task is not None:
        self.data = [d for d in self.data if d["task"] == only_task]
      self.idx = {"struct": PA.Index(), "layout": PA.Index()}
-@@ -103,8 +106,11 @@ class Store:
+@@ -103,8 +106,11 @@
      return c.most_common(1)[0][0] if c else None
  
    def append(self, seq, task):

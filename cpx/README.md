@@ -10,9 +10,11 @@
 - [与学长代码的区别](DIFFERENCES.md)
 - [启动与复现说明](launch/README.md)
 - [历史启动脚本](launch/historical/)
+- [服务器部署源码参考](reference/)
 - [修改后的源码覆盖层](code_overlay/)、[相对基线的 tracked diff](patches/android_world_tracked_changes.patch)
 - [实验日志及诊断报告](reports/)
 - [原始数据归档说明](data/README.md)
+- [本次归档验证](VALIDATION.md)
 
 ## 版本和口径
 

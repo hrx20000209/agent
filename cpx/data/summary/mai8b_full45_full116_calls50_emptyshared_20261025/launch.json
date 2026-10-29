@@ -1,0 +1,24 @@
+{
+  "tag": "mai8b_full45_full116_calls50_emptyshared_20261025",
+  "started_at": "2026-10-25T12:43:41.061395+00:00",
+  "containers": [
+    "pxchen-mai8b-official-20261024",
+    "pxchen-mai8b-base-w1-20261025",
+    "pxchen-mai8b-base-w2-20261025",
+    "pxchen-mai8b-base-w3-20261025",
+    "pxchen-mai8b-shared-w1-20261024",
+    "pxchen-mai8b-full-w1-20261025",
+    "pxchen-mai8b-full-w2-20261025",
+    "pxchen-mai8b-full-w3-20261025"
+  ],
+  "partition_counts": [
+    15,
+    15,
+    15,
+    15,
+    14,
+    14,
+    14,
+    14
+  ]
+}

@@ -1,0 +1,460 @@
+{
+  "label": "limit8",
+  "requests": 8,
+  "images_per_request": 1,
+  "successful": 8,
+  "batch_wall_s": 10.711825475096703,
+  "requests_per_minute": 44.810289442814764,
+  "latency_mean_s": 7.685817686840892,
+  "latency_max_s": 10.707155343145132,
+  "peak_running": 7.0,
+  "peak_waiting": 6.0,
+  "peak_kv_usage": 0.9974979149291076,
+  "preemptions_delta": 2.0,
+  "payload_sha256": [
+    "b270079ba1a748ff36bee831ba9c25dc3d518085dac8607322d9ed70987b433c",
+    "e592f0663509d6fedd56640a54fa525c40d0b25ca722c695f4dbdb7dd71a8f08",
+    "d4502a80b67178f1f1111a7e0fb91ba71fc2594dc91146a66760022e78f87a08",
+    "adf772e3b133af274caa4987caba99e239851a2b157eaca98ed01287d0b4174b",
+    "21f4793ae9b10d87e74b4876fada45f4638cbdb8e19e83d2220dcb9b71e769ad",
+    "140489b8f348203344143d523d2e56a003b994e948c4a5290f5b58e3f18d1bad",
+    "dbede214d12f2c40f523bf7307c863922490615f5447c87a24dea26430dcff6f",
+    "4122eae1a85f4be9861535ba7fbfb3cb415f5ca16084df7c8cdfcae5c9bcaf6c"
+  ],
+  "results": [
+    {
+      "case": 0,
+      "ok": true,
+      "usage": {
+        "prompt_tokens": 3072,
+        "total_tokens": 3194,
+        "completion_tokens": 122,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": null
+      },
+      "action": {
+        "action": "swipe",
+        "direction": "up",
+        "coordinate": [
+          500,
+          800
+        ]
+      },
+      "latency_s": 10.27521095238626
+    },
+    {
+      "case": 1,
+      "ok": true,
+      "usage": {
+        "prompt_tokens": 3072,
+        "total_tokens": 3162,
+        "completion_tokens": 90,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": null
+      },
+      "action": {
+        "action": "click",
+        "coordinate": [
+          607,
+          354
+        ]
+      },
+      "latency_s": 6.675489781424403
+    },
+    {
+      "case": 2,
+      "ok": true,
+      "usage": {
+        "prompt_tokens": 3072,
+        "total_tokens": 3163,
+        "completion_tokens": 91,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": null
+      },
+      "action": {
+        "action": "click",
+        "coordinate": [
+          899,
+          925
+        ]
+      },
+      "latency_s": 5.44389009475708
+    },
+    {
+      "case": 3,
+      "ok": true,
+      "usage": {
+        "prompt_tokens": 3072,
+        "total_tokens": 3185,
+        "completion_tokens": 113,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": null
+      },
+      "action": {
+        "action": "click",
+        "coordinate": [
+          205,
+          386
+        ]
+      },
+      "latency_s": 6.679858256131411
+    },
+    {
+      "case": 4,
+      "ok": true,
+      "usage": {
+        "prompt_tokens": 3072,
+        "total_tokens": 3200,
+        "completion_tokens": 128,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": null
+      },
+      "action": {
+        "action": "type",
+        "text": "A healthy salad with kale and quinoa."
+      },
+      "latency_s": 6.922934353351593
+    },
+    {
+      "case": 5,
+      "ok": true,
+      "usage": {
+        "prompt_tokens": 3072,
+        "total_tokens": 3236,
+        "completion_tokens": 164,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": null
+      },
+      "action": {
+        "action": "swipe",
+        "direction": "up",
+        "coordinate": [
+          500,
+          800
+        ]
+      },
+      "latency_s": 8.559010691940784
+    },
+    {
+      "case": 6,
+      "ok": true,
+      "usage": {
+        "prompt_tokens": 3072,
+        "total_tokens": 3173,
+        "completion_tokens": 101,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": null
+      },
+      "action": {
+        "action": "open",
+        "text": "Broccoli APP"
+      },
+      "latency_s": 6.222992021590471
+    },
+    {
+      "case": 7,
+      "ok": true,
+      "usage": {
+        "prompt_tokens": 3072,
+        "total_tokens": 3303,
+        "completion_tokens": 231,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": null
+      },
+      "action": {
+        "action": "open",
+        "text": "Broccoli APP"
+      },
+      "latency_s": 10.707155343145132
+    }
+  ],
+  "metrics": [
+    {
+      "t": 15331670.974875985,
+      "num_requests_running": 0.0,
+      "num_requests_waiting": 0.0,
+      "kv_cache_usage_perc": 0.0,
+      "num_preemptions_total": 0.0
+    },
+    {
+      "t": 15331671.240570735,
+      "num_requests_running": 2.0,
+      "num_requests_waiting": 6.0,
+      "kv_cache_usage_perc": 0.21434528773978312,
+      "num_preemptions_total": 0.0
+    },
+    {
+      "t": 15331671.505278485,
+      "num_requests_running": 3.0,
+      "num_requests_waiting": 5.0,
+      "kv_cache_usage_perc": 0.3211009174311926,
+      "num_preemptions_total": 0.0
+    },
+    {
+      "t": 15331671.770514224,
+      "num_requests_running": 3.0,
+      "num_requests_waiting": 5.0,
+      "kv_cache_usage_perc": 0.42869057547956635,
+      "num_preemptions_total": 0.0
+    },
+    {
+      "t": 15331672.035744924,
+      "num_requests_running": 4.0,
+      "num_requests_waiting": 4.0,
+      "kv_cache_usage_perc": 0.48206839032527105,
+      "num_preemptions_total": 0.0
+    },
+    {
+      "t": 15331672.300679699,
+      "num_requests_running": 5.0,
+      "num_requests_waiting": 3.0,
+      "kv_cache_usage_perc": 0.5896580483736447,
+      "num_preemptions_total": 0.0
+    },
+    {
+      "t": 15331672.565738743,
+      "num_requests_running": 5.0,
+      "num_requests_waiting": 3.0,
+      "kv_cache_usage_perc": 0.6430358632193495,
+      "num_preemptions_total": 0.0
+    },
+    {
+      "t": 15331672.830713123,
+      "num_requests_running": 6.0,
+      "num_requests_waiting": 2.0,
+      "kv_cache_usage_perc": 0.749791492910759,
+      "num_preemptions_total": 0.0
+    },
+    {
+      "t": 15331673.095943572,
+      "num_requests_running": 6.0,
+      "num_requests_waiting": 2.0,
+      "kv_cache_usage_perc": 0.749791492910759,
+      "num_preemptions_total": 0.0
+    },
+    {
+      "t": 15331673.357501147,
+      "num_requests_running": 7.0,
+      "num_requests_waiting": 1.0,
+      "kv_cache_usage_perc": 0.8565471226021685,
+      "num_preemptions_total": 0.0
+    },
+    {
+      "t": 15331673.619163183,
+      "num_requests_running": 7.0,
+      "num_requests_waiting": 1.0,
+      "kv_cache_usage_perc": 0.9107589658048374,
+      "num_preemptions_total": 0.0
+    },
+    {
+      "t": 15331673.88496676,
+      "num_requests_running": 7.0,
+      "num_requests_waiting": 1.0,
+      "kv_cache_usage_perc": 0.9774812343619683,
+      "num_preemptions_total": 0.0
+    },
+    {
+      "t": 15331674.150346704,
+      "num_requests_running": 7.0,
+      "num_requests_waiting": 1.0,
+      "kv_cache_usage_perc": 0.9799833194328608,
+      "num_preemptions_total": 0.0
+    },
+    {
+      "t": 15331674.415028593,
+      "num_requests_running": 7.0,
+      "num_requests_waiting": 1.0,
+      "kv_cache_usage_perc": 0.9833194328607172,
+      "num_preemptions_total": 0.0
+    },
+    {
+      "t": 15331674.680600964,
+      "num_requests_running": 7.0,
+      "num_requests_waiting": 1.0,
+      "kv_cache_usage_perc": 0.9858215179316097,
+      "num_preemptions_total": 0.0
+    },
+    {
+      "t": 15331674.946177045,
+      "num_requests_running": 7.0,
+      "num_requests_waiting": 1.0,
+      "kv_cache_usage_perc": 0.9891576313594662,
+      "num_preemptions_total": 0.0
+    },
+    {
+      "t": 15331675.208804475,
+      "num_requests_running": 7.0,
+      "num_requests_waiting": 1.0,
+      "kv_cache_usage_perc": 0.9916597164303587,
+      "num_preemptions_total": 0.0
+    },
+    {
+      "t": 15331675.473959245,
+      "num_requests_running": 7.0,
+      "num_requests_waiting": 1.0,
+      "kv_cache_usage_perc": 0.9949958298582152,
+      "num_preemptions_total": 0.0
+    },
+    {
+      "t": 15331675.74022882,
+      "num_requests_running": 7.0,
+      "num_requests_waiting": 1.0,
+      "kv_cache_usage_perc": 0.9974979149291076,
+      "num_preemptions_total": 0.0
+    },
+    {
+      "t": 15331676.00058352,
+      "num_requests_running": 6.0,
+      "num_requests_waiting": 2.0,
+      "kv_cache_usage_perc": 0.8615512927439533,
+      "num_preemptions_total": 1.0
+    },
+    {
+      "t": 15331676.26568585,
+      "num_requests_running": 6.0,
+      "num_requests_waiting": 2.0,
+      "kv_cache_usage_perc": 0.8640533778148457,
+      "num_preemptions_total": 1.0
+    },
+    {
+      "t": 15331676.53093767,
+      "num_requests_running": 7.0,
+      "num_requests_waiting": 0.0,
+      "kv_cache_usage_perc": 0.914095079232694,
+      "num_preemptions_total": 1.0
+    },
+    {
+      "t": 15331676.79732562,
+      "num_requests_running": 7.0,
+      "num_requests_waiting": 0.0,
+      "kv_cache_usage_perc": 0.9674728940783986,
+      "num_preemptions_total": 1.0
+    },
+    {
+      "t": 15331677.062507577,
+      "num_requests_running": 6.0,
+      "num_requests_waiting": 1.0,
+      "kv_cache_usage_perc": 0.8665554628857381,
+      "num_preemptions_total": 1.0
+    },
+    {
+      "t": 15331677.327683274,
+      "num_requests_running": 6.0,
+      "num_requests_waiting": 0.0,
+      "kv_cache_usage_perc": 0.8640533778148457,
+      "num_preemptions_total": 2.0
+    },
+    {
+      "t": 15331677.594821077,
+      "num_requests_running": 6.0,
+      "num_requests_waiting": 0.0,
+      "kv_cache_usage_perc": 0.865721434528774,
+      "num_preemptions_total": 2.0
+    },
+    {
+      "t": 15331677.858767899,
+      "num_requests_running": 4.0,
+      "num_requests_waiting": 0.0,
+      "kv_cache_usage_perc": 0.5871559633027523,
+      "num_preemptions_total": 2.0
+    },
+    {
+      "t": 15331678.12260252,
+      "num_requests_running": 3.0,
+      "num_requests_waiting": 0.0,
+      "kv_cache_usage_perc": 0.445371142618849,
+      "num_preemptions_total": 2.0
+    },
+    {
+      "t": 15331678.38660542,
+      "num_requests_running": 3.0,
+      "num_requests_waiting": 0.0,
+      "kv_cache_usage_perc": 0.44787322768974147,
+      "num_preemptions_total": 2.0
+    },
+    {
+      "t": 15331678.646436205,
+      "num_requests_running": 3.0,
+      "num_requests_waiting": 0.0,
+      "kv_cache_usage_perc": 0.44787322768974147,
+      "num_preemptions_total": 2.0
+    },
+    {
+      "t": 15331678.91070224,
+      "num_requests_running": 3.0,
+      "num_requests_waiting": 0.0,
+      "kv_cache_usage_perc": 0.4503753127606339,
+      "num_preemptions_total": 2.0
+    },
+    {
+      "t": 15331679.168981409,
+      "num_requests_running": 3.0,
+      "num_requests_waiting": 0.0,
+      "kv_cache_usage_perc": 0.4503753127606339,
+      "num_preemptions_total": 2.0
+    },
+    {
+      "t": 15331679.428760124,
+      "num_requests_running": 3.0,
+      "num_requests_waiting": 0.0,
+      "kv_cache_usage_perc": 0.45287739783152625,
+      "num_preemptions_total": 2.0
+    },
+    {
+      "t": 15331679.687133947,
+      "num_requests_running": 2.0,
+      "num_requests_waiting": 0.0,
+      "kv_cache_usage_perc": 0.3085904920767306,
+      "num_preemptions_total": 2.0
+    },
+    {
+      "t": 15331679.95232282,
+      "num_requests_running": 2.0,
+      "num_requests_waiting": 0.0,
+      "kv_cache_usage_perc": 0.31025854879065884,
+      "num_preemptions_total": 2.0
+    },
+    {
+      "t": 15331680.212964524,
+      "num_requests_running": 2.0,
+      "num_requests_waiting": 0.0,
+      "kv_cache_usage_perc": 0.31025854879065884,
+      "num_preemptions_total": 2.0
+    },
+    {
+      "t": 15331680.473728625,
+      "num_requests_running": 2.0,
+      "num_requests_waiting": 0.0,
+      "kv_cache_usage_perc": 0.3119266055045872,
+      "num_preemptions_total": 2.0
+    },
+    {
+      "t": 15331680.73603433,
+      "num_requests_running": 2.0,
+      "num_requests_waiting": 0.0,
+      "kv_cache_usage_perc": 0.3119266055045872,
+      "num_preemptions_total": 2.0
+    },
+    {
+      "t": 15331680.997425774,
+      "num_requests_running": 2.0,
+      "num_requests_waiting": 0.0,
+      "kv_cache_usage_perc": 0.3135946622185154,
+      "num_preemptions_total": 2.0
+    },
+    {
+      "t": 15331681.258809112,
+      "num_requests_running": 1.0,
+      "num_requests_waiting": 0.0,
+      "kv_cache_usage_perc": 0.1718098415346122,
+      "num_preemptions_total": 2.0
+    },
+    {
+      "t": 15331681.520461328,
+      "num_requests_running": 1.0,
+      "num_requests_waiting": 0.0,
+      "kv_cache_usage_perc": 0.17264386989157632,
+      "num_preemptions_total": 2.0
+    }
+  ]
+}

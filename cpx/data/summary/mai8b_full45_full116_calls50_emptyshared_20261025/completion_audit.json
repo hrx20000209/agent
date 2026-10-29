@@ -1,0 +1,33 @@
+{
+  "tag": "mai8b_full45_full116_calls50_emptyshared_20261025",
+  "checked_at": "2026-10-25T14:54:44.910742+00:00",
+  "status": "FINISHED",
+  "expected": 116,
+  "completed": 116,
+  "missing": [],
+  "errors": [],
+  "worker_statuses": [
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED"
+  ],
+  "full_success_counts": {
+    "FULL45": 57
+  },
+  "cohort_note": "Fresh FULL45 full-suite evaluation: 116 tasks, 50 model calls per task, eight workers sharing one initially empty graph. No reused task outcomes or historical graph.",
+  "summary": {
+    "tasks": 116,
+    "complete_success": 57,
+    "full_success_rate": 0.49137931034482757,
+    "score_sum": 58.0,
+    "total_model_calls": 2741,
+    "mean_model_calls": 23.629310344827587,
+    "budget_exhausted": 41,
+    "cohort_note": "Fresh FULL45 full-suite evaluation: 116 tasks, 50 model calls per task, eight workers sharing one initially empty graph. No reused task outcomes or historical graph."
+  }
+}

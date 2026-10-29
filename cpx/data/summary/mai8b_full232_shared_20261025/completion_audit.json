@@ -1,0 +1,61 @@
+{
+  "checked_at": "2026-10-25T03:26:01.512474+00:00",
+  "tag": "mai8b_full232_shared_20261025",
+  "arms": {
+    "BASE": {
+      "coverage": 116,
+      "normal": 115,
+      "errors": [
+        {
+          "task": "SimpleSmsReplyMostRecent",
+          "arm": "BASE",
+          "rc": 0,
+          "e2e_s": 21.73,
+          "success": null,
+          "model_calls": null,
+          "http_attempts": 0,
+          "error": "IndexError('list index out of range')",
+          "worker_id": 2
+        }
+      ],
+      "success_1": 45,
+      "partial": [
+        [
+          "VlcCreateTwoPlaylists",
+          0.5
+        ]
+      ],
+      "score_sum": 45.5
+    },
+    "FULL45": {
+      "coverage": 116,
+      "normal": 115,
+      "errors": [
+        {
+          "task": "SimpleSmsReplyMostRecent",
+          "arm": "FULL45",
+          "rc": 0,
+          "e2e_s": 21.95,
+          "success": null,
+          "model_calls": null,
+          "http_attempts": 0,
+          "error": "IndexError('list index out of range')",
+          "worker_id": 2
+        }
+      ],
+      "success_1": 49,
+      "partial": [
+        [
+          "TurnOffWifiAndTurnOnBluetooth",
+          0.5
+        ],
+        [
+          "TurnOnWifiAndOpenApp",
+          0.5
+        ]
+      ],
+      "score_sum": 50.0
+    }
+  },
+  "interpretation": "232 attempted; SMS environment invalid, do not treat as a clean full-benchmark comparison"
+}

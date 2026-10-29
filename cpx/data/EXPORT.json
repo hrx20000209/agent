@@ -1,0 +1,92 @@
+[
+  {
+    "name": "mai8b_full45_full116_calls50_emptyshared_20261025.tar.gz",
+    "bytes": 2960744,
+    "sha256": "e309971c1a6703617378bd72b0d50a44dec0f8d7d17b5321b01e14f954138b47"
+  },
+  {
+    "name": "mai8b_base50_failed67_20261025.tar.gz",
+    "bytes": 816605,
+    "sha256": "5308302ba262c2bc3e79e9d552935f266830eeaf6eb7b506163691e9ea106624"
+  },
+  {
+    "name": "mai8b_full45_full116_calls50_emptyshared_20261025.manifest.json",
+    "bytes": 3287481,
+    "sha256": "59ca8ef90ecc17fb1a8ba19a420ac138b5595013ae44c7a2d718e23b76962305"
+  },
+  {
+    "name": "mai8b_base50_failed67_20261025.manifest.json",
+    "bytes": 927484,
+    "sha256": "75f42ae3fc4e840c9a6c1827a01ec38dc099753755f1a080c8c13e320e7d7021"
+  },
+  {
+    "name": "mai8b_full45_sms_warm7_20261025.manifest.json",
+    "bytes": 151653,
+    "sha256": "41e6f8ca41714bd9d4d6a62c12f80fc835213890bbb63c86b51ad1820fd4355d"
+  },
+  {
+    "name": "mai8b_full45_full116_calls50_recoveryfix_20261026.manifest.json",
+    "bytes": 2901627,
+    "sha256": "2f62a38420f5b52568a49ddfddf52b76f9a3725570123dd282962cc1079e306b"
+  },
+  {
+    "name": "mai8b_base_full116_calls50_12w_20261026.tar.gz",
+    "bytes": 1247355,
+    "sha256": "ba4977c8de9f4554773fd90707402f6581b9f425087e81f582dc8cb457b4dbff"
+  },
+  {
+    "name": "service_launch.tar.gz",
+    "bytes": 8852,
+    "sha256": "44f9203fb3faf7b49aac8a7a3d3ed830b527b8f781209223ef46a16d3f45cce1"
+  },
+  {
+    "name": "mai8b_warm_smoke2_20261025.manifest.json",
+    "bytes": 31918,
+    "sha256": "ae434ff288dd07111d39c455783a1c76ac669840d7d8c93327e69ae604b036e1"
+  },
+  {
+    "name": "mai8b_full45_sms_warm7_20261025.tar.gz",
+    "bytes": 1476239,
+    "sha256": "58de018d7d5cbcfafe955dda297b0ff6be3f9197f2efcbacc5d7dbe5f6f2624a"
+  },
+  {
+    "name": "mai8b_full232_shared_20261025.manifest.json",
+    "bytes": 2517828,
+    "sha256": "37db3fda3683e0599692e169f22849c00a3ddcf80f07ec8d17052b6d8a9fe046"
+  },
+  {
+    "name": "mai8b_sms_repair14_20261025.tar.gz",
+    "bytes": 196021,
+    "sha256": "0da94ad16f19f5e6ada7cb2b62dbe17230181c779a4591e66a7a8459eb35f503"
+  },
+  {
+    "name": "mai8b_full45_full116_calls50_recoveryfix_20261026.tar.gz",
+    "bytes": 3234802,
+    "sha256": "7263f524dbee5b06943f14247a8f35fb0fe200d8361381b60120f39ecaff3e51"
+  },
+  {
+    "name": "mai8b_sms_repair14_20261025.manifest.json",
+    "bytes": 161115,
+    "sha256": "5336e4a8a7e7ddf529902f5592acaa3ce44247196cfc9e0ff74698ab3a56adf0"
+  },
+  {
+    "name": "mai8b_full232_shared_20261025.tar.gz",
+    "bytes": 3140848,
+    "sha256": "4e9da79f8e9585c4dd7e78f531a2688285de07720a1d51f595e3d2204d2b9878"
+  },
+  {
+    "name": "mai8b_warm_smoke2_20261025.tar.gz",
+    "bytes": 219476,
+    "sha256": "81a97b78b12f704ebc3627ca149936f1ace618652a9d6061a3c1ed365ca9c0ae"
+  },
+  {
+    "name": "runtime_source.tar.gz",
+    "bytes": 1398621,
+    "sha256": "a4f942b991600e242596940a6635d9ea23e682fc028d211bf4f0898cc26f6c32"
+  },
+  {
+    "name": "mai8b_base_full116_calls50_12w_20261026.manifest.json",
+    "bytes": 1317314,
+    "sha256": "3cbc1e155a33a08607e21c2a11ecfcbe8b45f2c50b44323bb1d278e2257dde3f"
+  }
+]

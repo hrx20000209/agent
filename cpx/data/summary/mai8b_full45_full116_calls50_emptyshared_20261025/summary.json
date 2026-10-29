@@ -1,0 +1,10 @@
+{
+  "tasks": 116,
+  "complete_success": 57,
+  "full_success_rate": 0.49137931034482757,
+  "score_sum": 58.0,
+  "total_model_calls": 2741,
+  "mean_model_calls": 23.629310344827587,
+  "budget_exhausted": 41,
+  "cohort_note": "Fresh FULL45 full-suite evaluation: 116 tasks, 50 model calls per task, eight workers sharing one initially empty graph. No reused task outcomes or historical graph."
+}

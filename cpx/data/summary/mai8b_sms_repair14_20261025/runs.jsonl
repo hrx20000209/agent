@@ -1,0 +1,14 @@
+{"task": "SimpleSmsReplyMostRecent", "arm": "FULL45", "rc": 0, "e2e_s": 156.17, "success": 1.0, "model_calls": 6, "http_attempts": 6, "error": null, "worker_id": 2}
+{"task": "SimpleSmsReply", "arm": "FULL45", "rc": 0, "e2e_s": 177.57, "success": 0.0, "model_calls": 7, "http_attempts": 7, "error": null, "worker_id": 1}
+{"task": "SimpleSmsReply", "arm": "BASE", "rc": 0, "e2e_s": 238.18, "success": 1.0, "model_calls": 10, "http_attempts": 10, "error": null, "worker_id": 1}
+{"task": "SimpleSmsResend", "arm": "FULL45", "rc": 0, "e2e_s": 263.94, "success": 0.0, "model_calls": 12, "http_attempts": 12, "error": null, "worker_id": 3}
+{"task": "SimpleSmsResend", "arm": "BASE", "rc": 0, "e2e_s": 279.2, "success": 0.0, "model_calls": 12, "http_attempts": 12, "error": null, "worker_id": 3}
+{"task": "SimpleSmsReplyMostRecent", "arm": "BASE", "rc": 0, "e2e_s": 300.67, "success": 0.0, "model_calls": 12, "http_attempts": 12, "error": null, "worker_id": 2}
+{"task": "SimpleSmsSendClipboardContent", "arm": "FULL45", "rc": 0, "e2e_s": 158.38, "success": 1.0, "model_calls": 7, "http_attempts": 7, "error": null, "worker_id": 1}
+{"task": "SimpleSmsSendReceivedAddress", "arm": "FULL45", "rc": 0, "e2e_s": 217.95, "success": 1.0, "model_calls": 10, "http_attempts": 10, "error": null, "worker_id": 2}
+{"task": "MarkorCreateNoteAndSms", "arm": "FULL45", "rc": 0, "e2e_s": 383.91, "success": 0.0, "model_calls": 18, "http_attempts": 18, "error": null, "worker_id": 0}
+{"task": "SimpleSmsSendClipboardContent", "arm": "BASE", "rc": 0, "e2e_s": 158.95, "success": 1.0, "model_calls": 9, "http_attempts": 9, "error": null, "worker_id": 1}
+{"task": "SimpleSmsSend", "arm": "FULL45", "rc": 0, "e2e_s": 70.09, "success": 1.0, "model_calls": 3, "http_attempts": 3, "error": null, "worker_id": 0}
+{"task": "SimpleSmsSendReceivedAddress", "arm": "BASE", "rc": 0, "e2e_s": 190.71, "success": 0.0, "model_calls": 18, "http_attempts": 18, "error": null, "worker_id": 2}
+{"task": "MarkorCreateNoteAndSms", "arm": "BASE", "rc": 0, "e2e_s": 164.42, "success": 0.0, "model_calls": 18, "http_attempts": 18, "error": null, "worker_id": 0}
+{"task": "SimpleSmsSend", "arm": "BASE", "rc": 0, "e2e_s": 92.15, "success": 1.0, "model_calls": 9, "http_attempts": 9, "error": null, "worker_id": 0}

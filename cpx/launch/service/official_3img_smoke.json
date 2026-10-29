@@ -1,0 +1,112 @@
+{
+  "official_message_equivalence": true,
+  "image_count": 3,
+  "resolution": [
+    1080,
+    2400
+  ],
+  "history_actions": 5,
+  "action": {
+    "action_type": "click",
+    "index": null,
+    "x": 535,
+    "y": 1141,
+    "text": null,
+    "direction": null,
+    "goal_status": null,
+    "app_name": null,
+    "keycode": null,
+    "clear_text": null
+  },
+  "response": "<thinking>\nThought: The goal is to tap the START button, which is clearly visible in the center of the screen. After multiple waits, the button remains present and interactive, so the next step is to tap it.\n</thinking>\n<tool_call>\n{\"name\":\"mobile_use\",\"arguments\":{\"action\":\"click\",\"coordinate\":[495,475]}}\n</tool_call>",
+  "latency_s": 4.849,
+  "requests": [
+    {
+      "name": "mai_requests",
+      "message_roles": [
+        "system",
+        "user",
+        "assistant",
+        "assistant",
+        "assistant",
+        "user",
+        "assistant",
+        "user",
+        "assistant",
+        "user"
+      ],
+      "history_actions": 5,
+      "images": 3,
+      "config": {
+        "model": "MAI-UI-8B",
+        "api_url": "http://127.0.0.1:8097/v1/chat/completions",
+        "history_n": 3,
+        "temperature": 0.0,
+        "top_k": -1,
+        "top_p": 1.0,
+        "max_tokens": 2048,
+        "frequency_penalty": 0.0,
+        "presence_penalty": 0.0,
+        "repetition_penalty": 1.0,
+        "request_seed": 42,
+        "max_retries": 3,
+        "request_timeout_s": 180,
+        "max_model_len": 16384,
+        "coordinate_scale": 999,
+        "official_repo": "https://github.com/Tongyi-MAI/MAI-UI",
+        "official_commit": "3deabf1d1fcf31964511929938b7c9485589b29c",
+        "system_prompt_file": "mai_ui_official_system.txt",
+        "system_prompt_sha256": "86b907c1e936b8c92bde65e943d31a5f92379209b2ce4f31d5f3ceadd1a3edf2"
+      },
+      "graph_history_actions": 0
+    },
+    {
+      "name": "mai_decisions",
+      "response": "<thinking>\nThought: The goal is to tap the START button, which is clearly visible in the center of the screen. After multiple waits, the button remains present and interactive, so the next step is to tap it.\n</thinking>\n<tool_call>\n{\"name\":\"mobile_use\",\"arguments\":{\"action\":\"click\",\"coordinate\":[495,475]}}\n</tool_call>",
+      "parsed": {
+        "action": "__TOOL_CALL__",
+        "tool_call": {
+          "name": "mobile_use",
+          "arguments": {
+            "action": "click",
+            "coordinate": [
+              535,
+              1141
+            ]
+          }
+        },
+        "summary": "{\"action\": \"click\", \"coordinate\": [535, 1141]}",
+        "explain": "Thought: The goal is to tap the START button, which is clearly visible in the center of the screen. After multiple waits, the button remains present and interactive, so the next step is to tap it.",
+        "native_arguments": {
+          "action": "click",
+          "coordinate": [
+            495,
+            475
+          ]
+        }
+      },
+      "action": {
+        "action_type": "click",
+        "index": null,
+        "x": 535,
+        "y": 1141,
+        "text": null,
+        "direction": null,
+        "goal_status": null,
+        "app_name": null,
+        "keycode": null,
+        "clear_text": null
+      },
+      "latency_s": 4.849149227142334,
+      "attempt": 1,
+      "usage": {
+        "prompt_tokens": 8316,
+        "total_tokens": 8391,
+        "completion_tokens": 75,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": null
+      },
+      "parse_error": null
+    }
+  ]
+}

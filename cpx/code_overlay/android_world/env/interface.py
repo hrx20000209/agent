@@ -329,8 +329,7 @@ class AsyncAndroidEnv(AsyncEnv):
     def display_message(self, message: str, header: str = '') -> None:
         import shlex
 
-        # adb shell joins its arguments before invoking the device shell. Quote
-        # the complete command so model answers containing quotes stay data.
+        # Quote the complete device-shell command so answer text stays data.
         command = shlex.join([
             'am', 'broadcast', '-a', 'com.example.ACTION_UPDATE_OVERLAY',
             '--es', 'task_type_string', header, '--es', 'goal_string', message,

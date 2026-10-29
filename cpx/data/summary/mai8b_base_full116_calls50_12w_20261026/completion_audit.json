@@ -1,0 +1,37 @@
+{
+  "tag": "mai8b_base_full116_calls50_12w_20261026",
+  "checked_at": "2026-10-26T08:23:08.615711+00:00",
+  "status": "FINISHED",
+  "expected": 116,
+  "completed": 116,
+  "missing": [],
+  "errors": [],
+  "worker_statuses": [
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED"
+  ],
+  "full_success_counts": {
+    "BASE": 64
+  },
+  "cohort_note": "Fresh BASE full-suite evaluation: all 116 tasks, max 50 model calls per task, 12 workers, no graph or exploration. No preserved previous successes or failure-only selection.",
+  "summary": {
+    "tasks": 116,
+    "complete_success": 64,
+    "full_success_rate": 0.5517241379310345,
+    "score_sum": 65.0,
+    "total_model_calls": 2396,
+    "mean_model_calls": 20.655172413793103,
+    "budget_exhausted": 29,
+    "cohort_note": "Fresh BASE full-suite evaluation: all 116 tasks, max 50 model calls per task, 12 workers, no graph or exploration. No preserved previous successes or failure-only selection."
+  }
+}

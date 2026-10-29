@@ -1,0 +1,69 @@
+{
+  "tag": "mai8b_full45_sms_warm7_20261025",
+  "checked_at": "2026-10-25T04:11:34.399833+00:00",
+  "status": "FINISHED",
+  "expected": 7,
+  "completed": 7,
+  "missing": [],
+  "errors": [],
+  "worker_statuses": [
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED"
+  ],
+  "full_success_counts": {
+    "FULL45": 4
+  },
+  "cohort_note": "Same-task warm graph evaluation; BASE no graph; FULL45 final full232 snapshot per episode. Not a cold-start or held-out-task result.",
+  "reconciled_summary": {
+    "arms": {
+      "BASE": {
+        "tasks": 116,
+        "complete_success": 48,
+        "score_sum": 48.5,
+        "full_success_rate": 0.41379310344827586,
+        "replacement_tasks": [
+          "MarkorCreateNoteAndSms",
+          "SimpleSmsReply",
+          "SimpleSmsReplyMostRecent",
+          "SimpleSmsResend",
+          "SimpleSmsSend",
+          "SimpleSmsSendClipboardContent",
+          "SimpleSmsSendReceivedAddress"
+        ]
+      },
+      "FULL45": {
+        "tasks": 116,
+        "complete_success": 53,
+        "score_sum": 54.0,
+        "full_success_rate": 0.45689655172413796,
+        "replacement_tasks": [
+          "MarkorCreateNoteAndSms",
+          "SimpleSmsReply",
+          "SimpleSmsReplyMostRecent",
+          "SimpleSmsResend",
+          "SimpleSmsSend",
+          "SimpleSmsSendClipboardContent",
+          "SimpleSmsSendReceivedAddress"
+        ]
+      }
+    },
+    "total": 232,
+    "interpretation": "Environment repair reconciliation authorized by user: retain BASE and ordinary task outcomes; replace only seven SMS tasks. FULL45 replacement starts from frozen final full232 graph. Not an uninterrupted cold-start run.",
+    "source_recipe": {
+      "original_tag": "mai8b_full232_shared_20261025",
+      "baseline_sms_tag": "mai8b_sms_repair14_20261025",
+      "repair_tasks": [
+        "MarkorCreateNoteAndSms",
+        "SimpleSmsReply",
+        "SimpleSmsReplyMostRecent",
+        "SimpleSmsResend",
+        "SimpleSmsSend",
+        "SimpleSmsSendClipboardContent",
+        "SimpleSmsSendReceivedAddress"
+      ]
+    },
+    "snapshot_sha256": "cd3046c35f2c745b75fa2426510f6cc69bf2bff4a1aae9ab71ede76c8aae6f36"
+  }
+}

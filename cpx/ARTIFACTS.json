@@ -6,8 +6,13 @@
   },
   {
     "path": "README.md",
-    "bytes": 2222,
-    "sha256": "d8b3e19a70c3e83819128f6c8747e4e090964d4f7922e061505c0f446ba79baf"
+    "bytes": 2304,
+    "sha256": "e00c327613b1f4d82c063179d5e8b0115090e3a92a846ed107efc510dfa6573e"
+  },
+  {
+    "path": "VALIDATION.md",
+    "bytes": 1206,
+    "sha256": "0052ee352d21f2dac843154834cffbfc4d386f199fbf678f82386bdf80dce0bf"
   },
   {
     "path": "analysis/compare_mai_runs.py",
@@ -26,8 +31,8 @@
   },
   {
     "path": "code_overlay/android_world/env/interface.py",
-    "bytes": 13194,
-    "sha256": "a918f99d7f29df06698a2c7b9f9a85cfa19cf09fbeaed15d35319bbdec85bddd"
+    "bytes": 13114,
+    "sha256": "2ab27cdc8599bb4e7100dec10d541b2cb5c7360c7ca7ac72623db619f59015e6"
   },
   {
     "path": "code_overlay/android_world/shared_state.py",
@@ -196,8 +201,8 @@
   },
   {
     "path": "code_overlay/experiments/trace_reachability_validation/scripts/mai_reconcile_repair.py",
-    "bytes": 6328,
-    "sha256": "4a0ed260b02129592163b8267a161bfb4cce4fee672508960e0e2af1fa3980e3"
+    "bytes": 4121,
+    "sha256": "712694cc6d9964956509dccea3f1cda3fd62d06af08a567dcdf735a79e53bd60"
   },
   {
     "path": "code_overlay/experiments/trace_reachability_validation/scripts/mai_resume_20261025.py",
@@ -255,9 +260,199 @@
     "sha256": "451524c2aea131788a6f14edd2af0ecb9073a07eba47107ed084b2abecebd26e"
   },
   {
+    "path": "data/EXPORT.json",
+    "bytes": 3065,
+    "sha256": "3c076a0cd1d491d6271c63bc8364c51ffb88e57e2be95dfb3445c20b6b6a7bff"
+  },
+  {
     "path": "data/README.md",
-    "bytes": 1170,
-    "sha256": "8ad3e42b970b48b0090e8c2fd769caffbd535cb524b4f33cc0d3270ed7d79a36"
+    "bytes": 1236,
+    "sha256": "534abec588db63900a9c62a917278d3646670d5e21d52f3898798e65bdc7d2f3"
+  },
+  {
+    "path": "data/archives/mai8b_base50_failed67_20261025.tar.gz",
+    "bytes": 816605,
+    "sha256": "5308302ba262c2bc3e79e9d552935f266830eeaf6eb7b506163691e9ea106624"
+  },
+  {
+    "path": "data/archives/mai8b_base_full116_calls50_12w_20261026.tar.gz",
+    "bytes": 1247355,
+    "sha256": "ba4977c8de9f4554773fd90707402f6581b9f425087e81f582dc8cb457b4dbff"
+  },
+  {
+    "path": "data/archives/mai8b_full232_shared_20261025.tar.gz",
+    "bytes": 3140848,
+    "sha256": "4e9da79f8e9585c4dd7e78f531a2688285de07720a1d51f595e3d2204d2b9878"
+  },
+  {
+    "path": "data/archives/mai8b_full45_full116_calls50_emptyshared_20261025.tar.gz",
+    "bytes": 2960744,
+    "sha256": "e309971c1a6703617378bd72b0d50a44dec0f8d7d17b5321b01e14f954138b47"
+  },
+  {
+    "path": "data/archives/mai8b_full45_full116_calls50_recoveryfix_20261026.tar.gz",
+    "bytes": 3234802,
+    "sha256": "7263f524dbee5b06943f14247a8f35fb0fe200d8361381b60120f39ecaff3e51"
+  },
+  {
+    "path": "data/archives/mai8b_full45_sms_warm7_20261025.tar.gz",
+    "bytes": 1476239,
+    "sha256": "58de018d7d5cbcfafe955dda297b0ff6be3f9197f2efcbacc5d7dbe5f6f2624a"
+  },
+  {
+    "path": "data/archives/mai8b_sms_repair14_20261025.tar.gz",
+    "bytes": 196021,
+    "sha256": "0da94ad16f19f5e6ada7cb2b62dbe17230181c779a4591e66a7a8459eb35f503"
+  },
+  {
+    "path": "data/archives/mai8b_warm_smoke2_20261025.tar.gz",
+    "bytes": 219476,
+    "sha256": "81a97b78b12f704ebc3627ca149936f1ace618652a9d6061a3c1ed365ca9c0ae"
+  },
+  {
+    "path": "data/manifests/mai8b_base50_failed67_20261025.manifest.json",
+    "bytes": 927484,
+    "sha256": "75f42ae3fc4e840c9a6c1827a01ec38dc099753755f1a080c8c13e320e7d7021"
+  },
+  {
+    "path": "data/manifests/mai8b_base_full116_calls50_12w_20261026.manifest.json",
+    "bytes": 1317314,
+    "sha256": "3cbc1e155a33a08607e21c2a11ecfcbe8b45f2c50b44323bb1d278e2257dde3f"
+  },
+  {
+    "path": "data/manifests/mai8b_full232_shared_20261025.manifest.json",
+    "bytes": 2517828,
+    "sha256": "37db3fda3683e0599692e169f22849c00a3ddcf80f07ec8d17052b6d8a9fe046"
+  },
+  {
+    "path": "data/manifests/mai8b_full45_full116_calls50_emptyshared_20261025.manifest.json",
+    "bytes": 3287481,
+    "sha256": "59ca8ef90ecc17fb1a8ba19a420ac138b5595013ae44c7a2d718e23b76962305"
+  },
+  {
+    "path": "data/manifests/mai8b_full45_full116_calls50_recoveryfix_20261026.manifest.json",
+    "bytes": 2901627,
+    "sha256": "2f62a38420f5b52568a49ddfddf52b76f9a3725570123dd282962cc1079e306b"
+  },
+  {
+    "path": "data/manifests/mai8b_full45_sms_warm7_20261025.manifest.json",
+    "bytes": 151653,
+    "sha256": "41e6f8ca41714bd9d4d6a62c12f80fc835213890bbb63c86b51ad1820fd4355d"
+  },
+  {
+    "path": "data/manifests/mai8b_sms_repair14_20261025.manifest.json",
+    "bytes": 161115,
+    "sha256": "5336e4a8a7e7ddf529902f5592acaa3ce44247196cfc9e0ff74698ab3a56adf0"
+  },
+  {
+    "path": "data/manifests/mai8b_warm_smoke2_20261025.manifest.json",
+    "bytes": 31918,
+    "sha256": "ae434ff288dd07111d39c455783a1c76ac669840d7d8c93327e69ae604b036e1"
+  },
+  {
+    "path": "data/source_snapshots/mai8b_base_full116_calls50_12w_20261026/full9.py",
+    "bytes": 46968,
+    "sha256": "a76ef91714ffc5896aea79c78fd0b30176f20ac10d1147e9dcc77b826c16bc0a"
+  },
+  {
+    "path": "data/source_snapshots/mai8b_base_full116_calls50_12w_20261026/full_run.py",
+    "bytes": 115890,
+    "sha256": "5c25530061552e8346f0af4ccf6b4a521687427c6ce9e6fd23c7038f412ffcc2"
+  },
+  {
+    "path": "data/source_snapshots/mai8b_base_full116_calls50_12w_20261026/mai_base_full50_worker.py",
+    "bytes": 6402,
+    "sha256": "1b9022ae680a3f8246e677f9fc7503bfa46cfba538d4da11cb02b2868c298500"
+  },
+  {
+    "path": "data/source_snapshots/mai8b_base_full116_calls50_12w_20261026/mai_client.py",
+    "bytes": 1518,
+    "sha256": "9b31a4354e32e92014ac592d1ba3b1f99457baaf8cc5bad16666fd9b49fd191d"
+  },
+  {
+    "path": "data/source_snapshots/mai8b_base_full116_calls50_12w_20261026/mai_protocol.py",
+    "bytes": 8484,
+    "sha256": "eac0ea4dd6f65d329e2ef83b8d049637494797c4461104782b7da446b20e62bc"
+  },
+  {
+    "path": "data/source_snapshots/mai8b_base_full116_calls50_12w_20261026/mai_run.py",
+    "bytes": 10501,
+    "sha256": "662d6d6ab378a966d97e649c89aac1f138a408a0ed218a8438cc1e6778fbae8a"
+  },
+  {
+    "path": "data/source_snapshots/mai8b_base_full116_calls50_12w_20261026/recovery_guard.py",
+    "bytes": 1394,
+    "sha256": "668fe4dd4d0225b7c1436dca6bb1cb2ce2c5e80dba503a5b716962ca8dc8cf1e"
+  },
+  {
+    "path": "data/source_snapshots/mai8b_full45_full116_calls50_recoveryfix_20261026/scripts/full9.py",
+    "bytes": 46968,
+    "sha256": "a76ef91714ffc5896aea79c78fd0b30176f20ac10d1147e9dcc77b826c16bc0a"
+  },
+  {
+    "path": "data/source_snapshots/mai8b_full45_full116_calls50_recoveryfix_20261026/scripts/full_run.py",
+    "bytes": 115890,
+    "sha256": "5c25530061552e8346f0af4ccf6b4a521687427c6ce9e6fd23c7038f412ffcc2"
+  },
+  {
+    "path": "data/source_snapshots/mai8b_full45_full116_calls50_recoveryfix_20261026/scripts/mai_full45_full50_worker.py",
+    "bytes": 6931,
+    "sha256": "2ede4fae589d7e059d769007cb04835338cf654ee3daf3653f428db7129adef2"
+  },
+  {
+    "path": "data/source_snapshots/mai8b_full45_full116_calls50_recoveryfix_20261026/scripts/mai_run.py",
+    "bytes": 10501,
+    "sha256": "662d6d6ab378a966d97e649c89aac1f138a408a0ed218a8438cc1e6778fbae8a"
+  },
+  {
+    "path": "data/source_snapshots/mai8b_full45_full116_calls50_recoveryfix_20261026/scripts/mai_runtime_test.py",
+    "bytes": 8457,
+    "sha256": "88e038f708758a0475058062771042410dc4e1272552ce35be5a22725469b142"
+  },
+  {
+    "path": "data/source_snapshots/mai8b_full45_full116_calls50_recoveryfix_20261026/scripts/recovery_guard.py",
+    "bytes": 1394,
+    "sha256": "668fe4dd4d0225b7c1436dca6bb1cb2ce2c5e80dba503a5b716962ca8dc8cf1e"
+  },
+  {
+    "path": "data/source_snapshots/mai8b_full45_full116_calls50_recoveryfix_20261026/scripts/recovery_guard_test.py",
+    "bytes": 1780,
+    "sha256": "78d6089935b454a3a6f00c9b7b48b0cbebe53437a86fc5d490deabb145d7b49c"
+  },
+  {
+    "path": "data/source_snapshots/mai8b_full45_full116_calls50_recoveryfix_20261026/sha256.json",
+    "bytes": 690,
+    "sha256": "a460aaa030caa3c83a6a833e228dff0f5c22347b5dca25e2b89c83547425210c"
+  },
+  {
+    "path": "data/summary/mai8b_base50_failed67_20261025/completion_audit.json",
+    "bytes": 1055,
+    "sha256": "0964cbd3b07849d196f740d050321aeb5d49b7f9cb6217bf73dd19854c04ca8f"
+  },
+  {
+    "path": "data/summary/mai8b_base50_failed67_20261025/run_config.json",
+    "bytes": 7249,
+    "sha256": "31c4916aa9ddcb8ed1874abc2b1d2c4a893e2113f6e2ce5145ab510c92a69606"
+  },
+  {
+    "path": "data/summary/mai8b_base50_failed67_20261025/runs.jsonl",
+    "bytes": 16018,
+    "sha256": "0d8d724ce12ee7176dcbf9f4c29680ddfa3eb1788d8bd926b9c5917993a940d5"
+  },
+  {
+    "path": "data/summary/mai8b_base_full116_calls50_12w_20261026/completion_audit.json",
+    "bytes": 1094,
+    "sha256": "ea4cf088ebf5eafe53d140f720e3948f3482190b74170c36b7cc3c595e0d5161"
+  },
+  {
+    "path": "data/summary/mai8b_base_full116_calls50_12w_20261026/launch.json",
+    "bytes": 800,
+    "sha256": "8d3121dd6e12df662fa4ef413f00c7f38629d74b335913de21537fced2f2fe57"
+  },
+  {
+    "path": "data/summary/mai8b_base_full116_calls50_12w_20261026/run_config.json",
+    "bytes": 8728,
+    "sha256": "2460a5abbb024d86dc3d7fbc40aed9bca809edbf7947c3824df44f5a43d4a565"
   },
   {
     "path": "data/summary/mai8b_base_full116_calls50_12w_20261026/runs.jsonl",
@@ -265,9 +460,74 @@
     "sha256": "16765c748ab21f00f7c4fbee4aacf95f4f27e277d5c772905cde2bd9e7c1af51"
   },
   {
+    "path": "data/summary/mai8b_base_full116_calls50_12w_20261026/summary.json",
+    "bytes": 399,
+    "sha256": "4e45330ea0a112768f925c6159751bcdd12892a1050f2b804562af9581b66272"
+  },
+  {
+    "path": "data/summary/mai8b_full232_shared_20261025/completion_audit.json",
+    "bytes": 1396,
+    "sha256": "7fdc47d7f9148f0383e89649bdadcc8a70be21b12d60ecc9bd2890064487496f"
+  },
+  {
+    "path": "data/summary/mai8b_full232_shared_20261025/run_config.json",
+    "bytes": 7405,
+    "sha256": "ef0c1ba7d58c7c98d229fc2aa3e56a24fa56e54807940832cf097d8ddc847edb"
+  },
+  {
+    "path": "data/summary/mai8b_full232_shared_20261025/runs.jsonl",
+    "bytes": 38276,
+    "sha256": "1e6b077755832c841925551bc43d8f364720a34c6c913ba2478dc32d83aa4202"
+  },
+  {
+    "path": "data/summary/mai8b_full45_full116_calls50_emptyshared_20261025/completion_audit.json",
+    "bytes": 1027,
+    "sha256": "191638d59371cf8f1f9e9006c2ad9de1039e85c540ecc8a0675305ac07554982"
+  },
+  {
+    "path": "data/summary/mai8b_full45_full116_calls50_emptyshared_20261025/graph_initialization.json",
+    "bytes": 135,
+    "sha256": "38b2a86714766737545eb1ae1fdef8679055155dc023e7df8d279728eb8e9fd2"
+  },
+  {
+    "path": "data/summary/mai8b_full45_full116_calls50_emptyshared_20261025/launch.json",
+    "bytes": 529,
+    "sha256": "e802d8f0aed08e5b12650628933b587e952cb4916751342e5ae8b5bb9e38f7d1"
+  },
+  {
+    "path": "data/summary/mai8b_full45_full116_calls50_emptyshared_20261025/run_config.json",
+    "bytes": 8598,
+    "sha256": "81fed4aa671513616c6b0c68df8108fce8013b749c295101717cfcc3db309731"
+  },
+  {
     "path": "data/summary/mai8b_full45_full116_calls50_emptyshared_20261025/runs.jsonl",
     "bytes": 27891,
     "sha256": "7b18250c9f7ab5809abfd3155b83f63edbe72331e3b349f12933f1b303059a7a"
+  },
+  {
+    "path": "data/summary/mai8b_full45_full116_calls50_emptyshared_20261025/summary.json",
+    "bytes": 392,
+    "sha256": "ff48dd0b8be3119eb97b3405a026e0d8ce88e2004c5d20ad28aafe2f5f5aa3bd"
+  },
+  {
+    "path": "data/summary/mai8b_full45_full116_calls50_recoveryfix_20261026/completion_audit.json",
+    "bytes": 1114,
+    "sha256": "48b64271b666e4316187cfc7ea1a63f4339ba3a78b78a371778382648cd978b7"
+  },
+  {
+    "path": "data/summary/mai8b_full45_full116_calls50_recoveryfix_20261026/graph_initialization.json",
+    "bytes": 135,
+    "sha256": "02ad8931a1081cfa1e2872550639b18e806870ffc9bfc1488ed2977c8d59b802"
+  },
+  {
+    "path": "data/summary/mai8b_full45_full116_calls50_recoveryfix_20261026/launch.json",
+    "bytes": 529,
+    "sha256": "da53f423f8e1ca83380ae2639fe20c9cf6ede389e441b36347a8528b893a1ee8"
+  },
+  {
+    "path": "data/summary/mai8b_full45_full116_calls50_recoveryfix_20261026/run_config.json",
+    "bytes": 8737,
+    "sha256": "d8c6ca232122c12776b76adbac294ef123cd57a7e45163434f61a44cac4a6fcf"
   },
   {
     "path": "data/summary/mai8b_full45_full116_calls50_recoveryfix_20261026/runs.jsonl",
@@ -275,9 +535,49 @@
     "sha256": "5a943e831e1ff6bd85c9624444e77deeacdf91b7a4de6bf3af066ebb3335c8ab"
   },
   {
+    "path": "data/summary/mai8b_full45_sms_warm7_20261025/completion_audit.json",
+    "bytes": 2168,
+    "sha256": "c31122d4daa523b84eba4557b5fca1f5a53ef6c6ce4dcbcde96b891e1709586f"
+  },
+  {
+    "path": "data/summary/mai8b_full45_sms_warm7_20261025/run_config.json",
+    "bytes": 5438,
+    "sha256": "54821f4e668b272aa20228c74ef39f83626903ab237b239c2be5164b122999ec"
+  },
+  {
+    "path": "data/summary/mai8b_full45_sms_warm7_20261025/runs.jsonl",
+    "bytes": 3090,
+    "sha256": "82867d244eccfa515a8b8426da9673edee6e4b6eded9e71aedef40f81132c49f"
+  },
+  {
+    "path": "data/summary/mai8b_sms_repair14_20261025/completion_audit.json",
+    "bytes": 533,
+    "sha256": "0d968e330fa9b400a039251d45729bdc45654e30da47f37cadaa28ce96a6acfd"
+  },
+  {
+    "path": "data/summary/mai8b_sms_repair14_20261025/run_config.json",
+    "bytes": 4350,
+    "sha256": "65beb999d401e1b5b5828fd0595ca70e680f4a11360564ddab19c32a60e3f4a1"
+  },
+  {
+    "path": "data/summary/mai8b_sms_repair14_20261025/runs.jsonl",
+    "bytes": 2263,
+    "sha256": "db57db8298a5d4f25da401255a9e6caddac8d9921c1afe25f0ec10a05b195d45"
+  },
+  {
+    "path": "data/summary/mai8b_warm_smoke2_20261025/run_config.json",
+    "bytes": 4980,
+    "sha256": "f9ef783b31095a86a14283d3b09d1ccafb8666b4d070e55829c0b73c09c37470"
+  },
+  {
+    "path": "data/summary/mai8b_warm_smoke2_20261025/runs.jsonl",
+    "bytes": 872,
+    "sha256": "c2af65ef70b956187d14a9a05e3785f8b483d9ae87784e0c1e3c892694666d1d"
+  },
+  {
     "path": "launch/README.md",
-    "bytes": 2923,
-    "sha256": "134f1e9b148887a07d2b375120bf6a480795747dc1a3b55cdfaec85e41f5afb7"
+    "bytes": 3491,
+    "sha256": "9b04652d4510ecbd3fe620fd08efa9db4858ef6b8590600f14f5ce90e62c1d97"
   },
   {
     "path": "launch/historical/mai_base12_create.py",
@@ -315,9 +615,74 @@
     "sha256": "db414911eb8726971fab7faa393935b7f40026858d43af5a1c5101f729022217"
   },
   {
+    "path": "launch/service/full232_container_plan_20261025.json",
+    "bytes": 335,
+    "sha256": "594c733ef38053d21c861cece2a48e2245997dfc71606e20c39e98b320cf4a29"
+  },
+  {
+    "path": "launch/service/launch.sh",
+    "bytes": 1176,
+    "sha256": "dc08b802700fedd68f5286af607ce679c4030b4c02b4a6392aa5401a24ab1067"
+  },
+  {
+    "path": "launch/service/launch_before_base50_ctx24k_20261025.sh",
+    "bytes": 1176,
+    "sha256": "10faaf505351227daec95c1fa4d2731b1842a6518220057db45c2d2efe71ea53"
+  },
+  {
+    "path": "launch/service/launch_seq1_before_concurrency8_20261024.sh",
+    "bytes": 1176,
+    "sha256": "2df67a2627f319d21d535afd76b628d80aa9dba0a9d24b8e1bf1f7512e352cab"
+  },
+  {
+    "path": "launch/service/launch_single_image_8192.sh",
+    "bytes": 1175,
+    "sha256": "3489e15d0e1aa44ab8a353fd9ded0b07e99ad985f3d7f877c0e1be4c4f8b8bb6"
+  },
+  {
+    "path": "launch/service/mai_runner_smoke.json",
+    "bytes": 720,
+    "sha256": "b581c64ff78dfe8680d17b754a3b1ad2cc4375e3292bb6ffdbdc004e35e7cdca"
+  },
+  {
+    "path": "launch/service/official_3img_smoke.json",
+    "bytes": 3562,
+    "sha256": "0061f51c21e830ca13e0eca9ad021bc62b8f06a678ec6b0ced85f1800a4e2fae"
+  },
+  {
+    "path": "launch/service/probe_limit1_3img.json",
+    "bytes": 25577,
+    "sha256": "315ae0ec970d46dadd9f132e12aa51d2d2414e8f87c9282e9a95846296744eee"
+  },
+  {
+    "path": "launch/service/probe_limit8_1img.json",
+    "bytes": 12306,
+    "sha256": "50d2e7f9831af4ef05aeb5f3cd09ad260aa77397ca1e36784067c9df66dbadbc"
+  },
+  {
+    "path": "launch/service/probe_limit8_3img.json",
+    "bytes": 19058,
+    "sha256": "3516f977425e7415c12e37c2f54247e5c8a9193e37ecafb78ac237a07fafeed9"
+  },
+  {
+    "path": "launch/service/smoke_result.json",
+    "bytes": 1027,
+    "sha256": "efe5eb9807d3634ee29c8e393a64da2dc95173d0a89da002c88446cb3e9b5273"
+  },
+  {
     "path": "patches/android_world_tracked_changes.patch",
-    "bytes": 49078,
-    "sha256": "eb6133aa60d87434ebffa235b23d4509a560c09192193d90cc100c50fc8abcef"
+    "bytes": 45674,
+    "sha256": "9eec364654ba7e20e17ec93012bce21209a8377055c7f46471ad235e467e5da1"
+  },
+  {
+    "path": "reference/README.md",
+    "bytes": 374,
+    "sha256": "45fd77992b61af6708b0a72d6c71a36246dffded6dfb74bd09302700d4e9bd16"
+  },
+  {
+    "path": "reference/runtime_source.tar.gz",
+    "bytes": 1398621,
+    "sha256": "a4f942b991600e242596940a6635d9ea23e682fc028d211bf4f0898cc26f6c32"
   },
   {
     "path": "reports/mai_base50_failed67_20261025.md",

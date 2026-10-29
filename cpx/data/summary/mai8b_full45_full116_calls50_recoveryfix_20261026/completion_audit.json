@@ -1,0 +1,39 @@
+{
+  "tag": "mai8b_full45_full116_calls50_recoveryfix_20261026",
+  "checked_at": "2026-10-26T05:06:52.316445+00:00",
+  "status": "FAILED",
+  "expected": 116,
+  "completed": 116,
+  "missing": [],
+  "errors": [
+    {
+      "task": "MarkorCreateNoteAndSms",
+      "arm": "FULL45",
+      "worker_id": 3,
+      "rc": 0,
+      "e2e_s": 282.1,
+      "success": null,
+      "model_calls": null,
+      "max_model_calls": 50,
+      "http_attempts": 13,
+      "error": "RuntimeError('MAI failed after 3 attempts; no guessed action executed: Expected mobile_use | Expected mobile_use | Expected mobile_use')",
+      "teardown_error": null,
+      "runtime_stop_reason": null,
+      "termination": "execution_error"
+    }
+  ],
+  "worker_statuses": [
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED_WITH_ERRORS",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED",
+    "FINISHED"
+  ],
+  "full_success_counts": {
+    "FULL45": 62
+  },
+  "cohort_note": "Fresh FULL45 full-suite evaluation: 116 tasks, 50 model calls per task, eight workers sharing one initially empty graph. No reused task outcomes or historical graph."
+}
