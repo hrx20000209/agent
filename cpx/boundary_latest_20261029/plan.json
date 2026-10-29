@@ -1,0 +1,17 @@
+{
+  "upstream_commit": "81a1531758da249c2acb74baa761d2da65e01b1c",
+  "task_order_file": "experiments/trace_reachability_validation/reports/e2e116n_task_order.txt",
+  "task_seed": 30,
+  "workers": 1,
+  "model": "MAI-UI-8B",
+  "budget": "min(20, int(10 * task.complexity))",
+  "explicit_max_steps": 0,
+  "graph": "FULL45 cold initial graph; online accumulation",
+  "full116_launched": false,
+  "boundary_test_launched": true,
+  "boundary_tasks": ["ExpenseDeleteDuplicates", "ExpenseDeleteDuplicates2", "MarkorCreateNote", "NotesIsTodo", "SimpleCalendarAddOneEvent", "SimpleSmsReply"],
+  "boundary_order": "filter selected tasks through senior e2e116n order",
+  "transport": "MAI official nonstreaming; upstream FULL45 algorithm unchanged",
+  "not_enabled": ["CPX recovery guard", "TPL_DEMOS", "EXPLORE_FIT", "SAME_TPL", "AGGR_COMMIT", "NAV_UNAMBIG"],
+  "historical_statistics": "same priors as previous MAI experiments; no historical observation trajectories"
+}

@@ -1,0 +1,6 @@
+{
+  "parse_goal": true,
+  "relaunch_restore": true,
+  "_risky_probe": true,
+  "_risky_slot": true
+}
