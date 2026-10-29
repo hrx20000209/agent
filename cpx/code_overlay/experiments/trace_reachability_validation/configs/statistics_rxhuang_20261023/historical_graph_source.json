@@ -1,0 +1,17 @@
+{
+  "purpose": "Reconstructed FULL44 warm-start artifacts for the main 643303c rerun.",
+  "source_raw_dir": "/data/rxhuang/android_world_server/worktrees/androidworld-specnext-20261022/experiments/trace_reachability_validation/raw/specnext_e2e116_pull_ddf707_base_full44_sleep10",
+  "source_commit": "ddf707b273f8b2cc34728d42df381953f8cbd9f9",
+  "source_arms": [
+    "BASE",
+    "FULL44"
+  ],
+  "source_episodes_with_steps": 230,
+  "source_tasks_with_observations": 114,
+  "a11y_screens_for_app_token_profile": 2357,
+  "packages_in_app_token_profile": 26,
+  "observation_count": 2272,
+  "historical_observations_sha256": "4edb4af61b8a374c79b237e96ea82e830213c20200faa005418cdf66f8890989",
+  "historical_app_tokens_sha256": "4d367968e98b985c0f18ab0d7a4225cd3fba5358d7f0ce9f0ced578e42d8f325",
+  "limitation": "The canonical 1262-episode historical corpus is unavailable. These artifacts are derived from previous full-suite outputs. FULL44 excludes matching task templates per Snapshot, but this partial historical corpus is not equivalent to the canonical graph and app-token profile."
+}

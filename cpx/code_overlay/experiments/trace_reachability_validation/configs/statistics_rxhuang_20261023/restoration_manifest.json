@@ -1,0 +1,17 @@
+{
+  "mode": "rxhuang_server_reconstruction_20261023",
+  "app_tokens_source": "/data/rxhuang/android_world_repo/experiments/trace_reachability_validation/graph_snapshots/main643303c_base_full44_sleep10_no_local_model_20261023/historical_app_tokens.json",
+  "original_app_tokens_sha256": "4d367968e98b985c0f18ab0d7a4225cd3fba5358d7f0ce9f0ced578e42d8f325",
+  "goal_corpus_source": "/data/rxhuang/android_world_server/worktrees/androidworld-specnext-20261022/experiments/trace_reachability_validation/raw/specnext_e2e116_pull_ddf707_base_full44_sleep10/BASE",
+  "goal_tasks": 116,
+  "unique_goals": 106,
+  "files_sha256": {
+    "experiments/runtime_graph_exploration/graph/app_tokens.json": "4d367968e98b985c0f18ab0d7a4225cd3fba5358d7f0ce9f0ced578e42d8f325",
+    "experiments/trace_reachability_validation/configs/statistics_rxhuang_20261023/goal_corpus.json": "ed49fd097572766affbc6477737e595b0905793fb244cb71e7c5cabe2a0a06a1",
+    "experiments/trace_reachability_validation/configs/statistics_rxhuang_20261023/historical_graph_source.json": "6220211fcb636115f4a4c3fa37d7878e9092fe0618b0a97be495039b9db29ca2",
+    "experiments/runtime_graph_exploration/graph/rev_prior.json": "099f353f889312ce007e0306647cd794897abe4f36e60a96704cb7765f565ed2",
+    "experiments/runtime_graph_exploration/graph/ui_idf.json": "e2cfb52a400c37443db09a1115a2d4ffde9836461e3be0b30fcc80b411dd106a",
+    "experiments/runtime_graph_exploration/graph/element_idf_base.json": "356257a0f6537fd713be8ea192ba67e3148c8c5d87706dc1028db3656d04bcea"
+  },
+  "historical_graph_loaded": false
+}

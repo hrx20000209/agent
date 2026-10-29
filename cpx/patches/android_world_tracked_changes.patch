@@ -1,0 +1,841 @@
+diff --git a/android_world/env/interface.py b/android_world/env/interface.py
+index 9c5a4ca..e08fa19 100644
+--- a/android_world/env/interface.py
++++ b/android_world/env/interface.py
+@@ -327,12 +327,15 @@ class AsyncAndroidEnv(AsyncEnv):
+         )
+ 
+     def display_message(self, message: str, header: str = '') -> None:
+-        adb_utils.send_android_intent(
+-            command='broadcast',
+-            action='com.example.ACTION_UPDATE_OVERLAY',
+-            env=self.controller,
+-            extras={'task_type_string': header, 'goal_string': message},
+-        )
++        import shlex
++
++        # adb shell joins its arguments before invoking the device shell. Quote
++        # the complete command so model answers containing quotes stay data.
++        command = shlex.join([
++            'am', 'broadcast', '-a', 'com.example.ACTION_UPDATE_OVERLAY',
++            '--es', 'task_type_string', header, '--es', 'goal_string', message,
++        ])
++        adb_utils.issue_generic_request(['shell', command], self.controller)
+ 
+     def ask_question(
+             self, question: str, timeout_seconds: float = -1.0
+diff --git a/experiments/runtime_graph_exploration/scripts/fgraph.py b/experiments/runtime_graph_exploration/scripts/fgraph.py
+index 97931d0..25df80a 100644
+--- a/experiments/runtime_graph_exploration/scripts/fgraph.py
++++ b/experiments/runtime_graph_exploration/scripts/fgraph.py
+@@ -28,6 +28,7 @@ from collections import Counter, defaultdict
+ from pathlib import Path
+ 
+ import memory as M
++from android_world import shared_state as SS
+ 
+ C, U, R = M.C, M.U, M.R
+ STOP = M.STOP | set("following named with into from the in on at to of for by app apps".split())
+@@ -244,6 +245,11 @@ def self_reported_done(ep):
+ 
+ 
+ def build_online(run_dir, out):
++  with SS.lock(out):
++    return _build_online_locked(run_dir, out)
++
++
++def _build_online_locked(run_dir, out):
+   """FULL33 online function library: functions extracted from the episodes of THIS run that the model itself
+   completed, in run order; nothing from earlier runs. Appends episodes not yet processed."""
+   out = Path(out)
+@@ -253,6 +259,8 @@ def build_online(run_dir, out):
+   new = []
+   for ep in sorted(Path(run_dir).glob("*/p0")):
+     key = ep.parent.name
++    if _os.environ.get("MAI_SHARED_STATE") == "1" and not (ep / ".shared_complete").exists():
++      continue
+     if key in done or not (ep / "result.json").exists() or not (ep / "steps.jsonl").exists():
+       continue
+     done.add(key)
+@@ -269,7 +277,7 @@ def build_online(run_dir, out):
+   with out.open("a") as fo:
+     for f in new:
+       fo.write(json.dumps(f) + "\n")
+-  done_p.write_text("\n".join(sorted(done)))
++  SS.atomic_text(done_p, "\n".join(sorted(done)))
+   return len(new)
+ 
+ 
+@@ -277,10 +285,11 @@ class Library:
+   """Leave-one-template-out view of the function cache (+ functions added during the run)."""
+ 
+   def __init__(self, task, cache=CACHE):
++    if not Path(cache).exists():
++      raise FileNotFoundError(cache)
+     tk = M.template_key(task)
+     self.funcs, seen = [], set()
+-    for l in open(cache):
+-      f = json.loads(l)
++    for f in SS.rows(cache):
+       if f["template"] == tk:
+         continue
+       sig = (f["entry_act"], tuple((s["op"], s.get("field") or s.get("fam")) for s in f["steps"]))
+diff --git a/experiments/runtime_graph_study/scripts/rgs_run.py b/experiments/runtime_graph_study/scripts/rgs_run.py
+index a2a482d..c136b75 100644
+--- a/experiments/runtime_graph_study/scripts/rgs_run.py
++++ b/experiments/runtime_graph_study/scripts/rgs_run.py
+@@ -44,7 +44,7 @@ os.environ.setdefault("ANDROID_WORLD_A11Y_METHOD", "fast_provider")
+ os.environ.setdefault("ANDROID_WORLD_FAST_A11Y_SOCKET_PORT", "8765")
+ os.environ.setdefault("ANDROID_WORLD_LLM_NO_PREFIX_CACHE", "1")
+ 
+-from android_world import registry, suite_utils  # noqa: E402
++from android_world import registry, suite_utils, shared_state as SS  # noqa: E402
+ from android_world.agents import gelab_agent, infer, seeact_utils  # noqa: E402
+ from android_world.env import adb_utils, env_launcher, json_action  # noqa: E402
+ 
+@@ -204,18 +204,21 @@ class Graph:
+     self.path = path
+     self.app_memory = app_memory
+     self.app_unrestorable: set[tuple] = set()
+-    if app_memory and app_memory.exists():
+-      for line in app_memory.read_text().splitlines():
+-        if line.strip():
+-          self.app_unrestorable.add(tuple(json.loads(line)["key"]))
+     self.nodes: dict[str, dict[str, Any]] = {}
+     self.slots: dict[tuple[str, str], list[dict[str, Any]]] = {}
+     self.layout: dict[str, set[str]] = {}
+     self.unrestorable_families: set[tuple] = set()
+-    if path and path.exists():
+-      for line in path.read_text().splitlines():
+-        if line.strip():
+-          self._index(json.loads(line))
++    self._offset = 0
++    self.refresh()
++
++  def refresh(self):
++    if self.app_memory:
++      self.app_unrestorable.update(tuple(row["key"]) for row in SS.rows(self.app_memory))
++    if self.path:
++      rows, offset = SS.read_delta(self.path, self._offset)
++      for row in rows:
++        self._index(row)
++      self._offset = offset
+ 
+   def _node(self, s: dict[str, Any], instance: str):
+     n = self.nodes.setdefault(s["struct_sig"], {
+@@ -238,16 +241,16 @@ class Graph:
+     return (pkg, sel.get("cls", ""), sel.get("rid", ""), sel.get("label", ""))
+ 
+   def add(self, obs: dict[str, Any]):
+-    self._index(obs)
+     if obs.get("origin") == "explore" and not obs.get("rollback_ok", True) and self.app_memory:
+       k = self.app_key(obs["src"]["package"], obs.get("selector") or {})
+       if (k[2] or k[3]) and k not in self.app_unrestorable:
+         self.app_unrestorable.add(k)
+-        with self.app_memory.open("a") as f:
+-          f.write(jdump({"key": list(k), "instance": obs["instance"], "src_cid": obs.get("src_cid")}) + "\n")
++        SS.append_json(self.app_memory, {"key": list(k), "instance": obs["instance"], "src_cid": obs.get("src_cid")})
+     if self.path:
+-      with self.path.open("a") as f:
+-        f.write(jdump(obs) + "\n")
++      SS.append_json(self.path, obs)
++      self.refresh()
++    else:
++      self._index(obs)
+ 
+   def match(self, ui: U.UIState) -> tuple[str, list[str]]:
+     if ui.struct_sig in self.nodes:
+diff --git a/experiments/trace_reachability_validation/scripts/explore_value.py b/experiments/trace_reachability_validation/scripts/explore_value.py
+index 4a84fdd..beb1460 100644
+--- a/experiments/trace_reachability_validation/scripts/explore_value.py
++++ b/experiments/trace_reachability_validation/scripts/explore_value.py
+@@ -27,6 +27,8 @@ import re
+ import sys
+ from collections import Counter
+ from pathlib import Path
++sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
++from android_world import shared_state as SS
+ 
+ HERE = Path(__file__).resolve().parent
+ sys.path.insert(0, str(HERE))
+@@ -212,7 +214,7 @@ def load_cap(raw, instance, cid):
+   if key not in _CAP:
+     task, var = instance.split("/")
+     try:
+-      _CAP[key] = R.load_ui(Path(raw) / task / var.split("_")[0], cid)
++      _CAP[key] = R.load_ui(SS.episode_path(raw, task, var), cid)
+     except Exception:  # pylint: disable=broad-except
+       _CAP[key] = None
+   return _CAP[key]
+diff --git a/experiments/trace_reachability_validation/scripts/full7.py b/experiments/trace_reachability_validation/scripts/full7.py
+index e52b934..75818fd 100644
+--- a/experiments/trace_reachability_validation/scripts/full7.py
++++ b/experiments/trace_reachability_validation/scripts/full7.py
+@@ -21,6 +21,8 @@ import json
+ import re
+ import sys
+ from pathlib import Path
++sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
++from android_world import shared_state as SS
+ 
+ HERE = Path(__file__).resolve().parent
+ sys.path.insert(0, str(HERE.parent.parent / "runtime_graph_exploration" / "scripts"))
+@@ -61,24 +63,28 @@ def _known_from_history(task):
+ 
+ 
+ class StuckExplorer:
+-  def __init__(self, episode, goal, gdir, hard=False):
++  def __init__(self, episode, goal, gdir, hard=False, online_only=False):
+     self.hard = hard          # FULL9: hard-coded stuck rules, no hint injection
+     self.last_noop = None     # (state key, fam, consecutive count)
+     self.ep, self.goal, self.gdir = episode, goal, Path(gdir)
+-    self.known = set(_known_from_history(episode.args.task))
++    # Online arms learn page novelty only within this run, just like their graph.
++    self.known = set() if online_only else set(_known_from_history(episode.args.task))
+     kf = self.gdir / "known_states.txt"
+-    if kf.exists():
+-      self.known |= set(kf.read_text().split())
++    self.known |= set(SS.read_text(kf).split())
+     self.visited = set()
+     self.effect = {}
+     self.mem_path = self.gdir / "effect_memory.jsonl"
+     self.mem = {}
+-    if self.mem_path.exists():
+-      for l in open(self.mem_path):
+-        r = json.loads(l)
+-        self.mem[(r["key"], r["fam"])] = r
++    self._mem_offset = 0
++    self.refresh_shared()
+     self.onboarded = set()
+ 
++  def refresh_shared(self):
++    self.known |= set(SS.read_text(self.gdir / "known_states.txt").split())
++    rows, self._mem_offset = SS.read_delta(self.mem_path, self._mem_offset)
++    for row in rows:
++      self.mem[(row["key"], row["fam"])] = row
++
+   # ------------------------------------------------------------ effects
+   def _record(self, key, fam, label, changed, ui_dst):
+     e = self.effect.setdefault((key, fam), {"label": label or fam.split("|")[-1], "changed": False, "n": 0,
+@@ -184,8 +190,7 @@ class StuckExplorer:
+       r = {"key": key, "fam": fam, "label": e["label"], "changed": e["changed"], "moves": e.get("moves", False), "title": e["title"],
+            "known": e["known"], "rollback_ok": p["rollback_ok"], "episode": self.ep.args.variant}
+       self.mem[(key, fam)] = r
+-      with self.mem_path.open("a") as f:
+-        f.write(json.dumps(r) + "\n")
++      SS.append_json(self.mem_path, r)
+       rec["probes"].append({"why": "STUCK", "slot": sl.slot_id, "family": fam, "outcome": p["outcome"],
+                             "rollback_ok": p["rollback_ok"], "t": p["t_total_s"], "dst_ui": dst})
+       if not p["rollback_ok"]:
+@@ -232,8 +237,7 @@ class StuckExplorer:
+   def finish(self):
+     new = self.visited - self.known
+     if new:
+-      with (self.gdir / "known_states.txt").open("a") as f:
+-        f.write("\n".join(sorted(new)) + "\n")
++      SS.append_text(self.gdir / "known_states.txt", "\n".join(sorted(new)) + "\n")
+ 
+ 
+ # ------------------------------------------------------------------ FULL8 helpers
+diff --git a/experiments/trace_reachability_validation/scripts/full9.py b/experiments/trace_reachability_validation/scripts/full9.py
+index b147258..e93d46a 100644
+--- a/experiments/trace_reachability_validation/scripts/full9.py
++++ b/experiments/trace_reachability_validation/scripts/full9.py
+@@ -21,6 +21,8 @@ import re
+ import sys
+ from collections import Counter
+ from pathlib import Path
++sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
++from android_world import shared_state as SS
+ 
+ HERE = Path(__file__).resolve().parent
+ sys.path.insert(0, str(HERE.parent.parent / "runtime_graph_exploration" / "scripts"))
+@@ -106,6 +108,7 @@ class FuncExec:
+       cache.parent.mkdir(parents=True, exist_ok=True)
+       FG.build_online(Path(episode.out).parents[1], cache)
+       self.lib = FG.Library(episode.args.task, cache=cache)
++      self.online_cache = cache
+       if _base_arm() in ("FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45"):
+         self.lib.funcs = self.lib.funcs + _role_adapted(self.lib.funcs, self.recs)
+     else:
+@@ -121,6 +124,16 @@ class FuncExec:
+           self.vals.setdefault(FG.norm(v), i)
+     self.own = []
+ 
++  def refresh_shared(self):
++    if not hasattr(self, "online_cache"):
++      return
++    FG.build_online(self.ep.out.parents[1], self.online_cache)
++    own = [f for f in self.lib.funcs if f.get("src") == "self"]
++    self.lib = FG.Library(self.ep.args.task, cache=self.online_cache)
++    if _base_arm() in tuple(f"FULL{i}" for i in range(35, 46)):
++      self.lib.funcs += _role_adapted(self.lib.funcs, self.recs)
++    self.lib.add(own)
++
+   def _n_recs(self):
+     return max([len(v) for v in self.recs.values()] + [1])
+ 
+@@ -317,7 +330,7 @@ class FuncExec:
+           continue
+         task, var = o["instance"].split("/")
+         try:
+-          dui = R.load_ui(raw / task / var.split("_")[0], o["dst_cid"])
++          dui = R.load_ui(SS.episode_path(raw, task, var), o["dst_cid"])
+         except Exception:  # pylint: disable=broad-except
+           continue
+         if any(f["entry_act"] == dui.activity and self._ground_first(f, dui, rec) for f in funcs):
+@@ -549,7 +562,7 @@ class FuncExec:
+           continue
+         task, var = o["instance"].split("/")
+         try:
+-          dui = R.load_ui(raw / task / var.split("_")[0], o["dst_cid"])
++          dui = R.load_ui(SS.episode_path(raw, task, var), o["dst_cid"])
+         except Exception:  # pylint: disable=broad-except
+           continue
+         if len(self._form_plan(dui, rec)) >= 2:
+@@ -652,6 +665,7 @@ def relaunch_restore(ep, target_ui, step):
+   launch. Only when that path contains no commit (re-executing a commit would repeat its side effect)."""
+   import subprocess
+   import time as _t
++  ep._relaunch_content_same = True
+   log = getattr(ep, "_exec_log", [])
+   if (not log or log[0]["action"] is None or log[0]["action"].get("action_type") != "open_app"
+       or any(e["commit"] or e["action"] is None for e in log) or len(log) > 12):
+@@ -663,10 +677,13 @@ def relaunch_restore(ep, target_ui, step):
+     ep._agent._execute_action(a, {})  # pylint: disable=protected-access
+     _t.sleep(1.0)
+   cap = ep.dev.capture(f"s{step}_relaunch", settle=True, pause=1.0)
+-  ok = cap["ui"].activity == target_ui.activity and cap["ui"].layout_sig == target_ui.layout_sig
++  from recovery_guard import exact_page_restored  # pylint: disable=import-outside-toplevel
++  page_ok = cap["ui"].activity == target_ui.activity and cap["ui"].layout_sig == target_ui.layout_sig
++  ok = exact_page_restored(cap["ui"], target_ui) if os.environ.get("FULL_ARM") == "FULL45" else page_ok
+   # the screen came back; did its data? (a probe that added/changed data leaves different content behind)
+   ep._relaunch_content_same = cap["ui"].content_sig == target_ui.content_sig
+-  ep.log("restore", {"step": step, "method": "relaunch_replay", "n_actions": len(log), "ok": ok})
++  ep.log("restore", {"step": step, "method": "relaunch_replay", "n_actions": len(log), "ok": ok,
++                     "page_ok": page_ok, "content_same": ep._relaunch_content_same})
+   return ok
+ 
+ 
+diff --git a/experiments/trace_reachability_validation/scripts/full_run.py b/experiments/trace_reachability_validation/scripts/full_run.py
+index 8449fc0..813c6d6 100644
+--- a/experiments/trace_reachability_validation/scripts/full_run.py
++++ b/experiments/trace_reachability_validation/scripts/full_run.py
+@@ -31,6 +31,8 @@ import threading
+ import time
+ from collections import Counter
+ from pathlib import Path
++sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
++from android_world import shared_state as SS
+ 
+ HERE = Path(__file__).resolve().parent
+ sys.path.insert(0, str(HERE))
+@@ -41,6 +43,7 @@ import rgs_run as R  # noqa: E402
+ import proc_replay as P  # noqa: E402
+ import full7  # noqa: E402
+ import full9  # noqa: E402
++import recovery_guard as RG  # noqa: E402
+ import explore_value as EV  # noqa: E402
+ import joint_graph as JG  # noqa: E402
+ import intent_graph as IG  # noqa: E402
+@@ -92,7 +95,7 @@ class FullEpisode(S.SeqEpisode):
+     self._last_model_commit = False
+     # FULL9: the function graph subsumes episode-local replay (its own segments become functions)
+     pr = P.ProcReplay(goal, enum_only=(ARM in ("FULL7", "FULL8"))) if ARM in ("FULL5", "FULL7", "FULL8") else None
+-    fx = full7.StuckExplorer(self, goal, gdir, hard=(ARM in ("FULL9", "FULL10", "FULL11", "FULL12", "FULL13", "FULL14", "FULL15", "FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45"))) if ARM in ("FULL7", "FULL8", "FULL9", "FULL10", "FULL11", "FULL12", "FULL13", "FULL14", "FULL15", "FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45") else None
++    fx = full7.StuckExplorer(self, goal, gdir, online_only=ARM in tuple(f"FULL{i}" for i in range(33, 46)), hard=(ARM in ("FULL9", "FULL10", "FULL11", "FULL12", "FULL13", "FULL14", "FULL15", "FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45"))) if ARM in ("FULL7", "FULL8", "FULL9", "FULL10", "FULL11", "FULL12", "FULL13", "FULL14", "FULL15", "FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45") else None
+     fn = full9.FuncExec(self, goal) if ARM in ("FULL9", "FULL10", "FULL11", "FULL12", "FULL13", "FULL14", "FULL15", "FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45") else None
+     # FULL33: the task has record fields to fill -> creation entries ("New Event", "+") may be explored
+     self._create_task = bool(fn is not None and ARM in ("FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45") and fn.recs and fn.P.get("verb") in ENTRY_VERBS)
+@@ -100,6 +103,8 @@ class FullEpisode(S.SeqEpisode):
+       # creation entries are explored in every task: the editors they open become graph pages that later tasks'
+       # form routes reach (cross-task reuse of exploration)
+       self._create_task = True
++    self._repetition_guard = RG.RepetitionGuard()
++    self._runtime_stop_reason = None
+     self._exec_log = []           # FULL11: actions executed since the last app launch (replayable path)
+     self._agent = agent
+     self._probe_states = {}       # FULL11: (layout key, slot family) first observed by exploration -> step
+@@ -126,15 +131,15 @@ class FullEpisode(S.SeqEpisode):
+     self._eff_path = gdir / "effectful.jsonl"
+     self._learned_eff = set()
+     if ARM in ("FULL15", "FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45") and self._eff_path.exists():
+-      self._learned_eff = {tuple(json.loads(l)["key"]) for l in self._eff_path.open() if l.strip()}
++      self._learned_eff = {tuple(r["key"]) for r in SS.rows(self._eff_path)}
+     self._grp_path = gdir / "unrestorable_groups.jsonl"
+     self._bad_groups = set()
+     if ARM in ("FULL15", "FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45") and self._grp_path.exists():
+-      self._bad_groups = {tuple(json.loads(l)["key"]) for l in self._grp_path.open() if l.strip()}
++      self._bad_groups = {tuple(r["key"]) for r in SS.rows(self._grp_path)}
+     self._d2_path = gdir / "d2_unsafe.jsonl"
+     self._d2_bad = set()
+     if ARM in ("FULL15", "FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45") and self._d2_path.exists():
+-      self._d2_bad = {tuple(json.loads(l)["key"]) for l in self._d2_path.open() if l.strip()}
++      self._d2_bad = {tuple(r["key"]) for r in SS.rows(self._d2_path)}
+     if fn is not None and ARM in ("FULL14", "FULL15", "FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45"):
+       fn.strict_done = True
+     if fn is not None and ARM in ("FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45"):
+@@ -165,6 +170,8 @@ class FullEpisode(S.SeqEpisode):
+     # FULL37: the step budget is the INFERENCE budget (as for BASE: 20 model calls); graph executions do not use
+     # it. A separate cap on all counted steps (2x) guards against graph loops.
+     while ((m["calls"] < self.max_steps() and k < 2 * self.max_steps()) if ARM in ("FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45") else k < self.max_steps()):
++      if full and os.environ.get("MAI_SHARED_STATE") == "1":
++        self.refresh_shared(graph, store, fx, fn, gx)
+       if reuse_next is not None:
+         # R2: model picked the probed slot; check the page without the fixed pause
+         pre = self.dev.capture(f"s{k}_pre_reuse", settle=True, pause=None, full_res=True)
+@@ -425,15 +432,21 @@ class FullEpisode(S.SeqEpisode):
+               if ARM in ("FULL41", "FULL42", "FULL43", "FULL44", "FULL45"):
+                 xrec = dict(xrec or {}, probes=list((xrec or {}).get("probes") or []) +
+                             [{"why": "PARK", "family": sp["fam"], "rollback_ok": False, "dst_ui": None}])
++      unresolved = ARM == "FULL45" and xrec and xrec.get("recovery_unresolved")
++      if unresolved:
++        spec_hit = False
++        m["recovery_unresolved"] += 1
++        if hasattr(self, "recovery_feedback"):
++          self.recovery_feedback("Exploration changed the device state and could not restore the original state or data. Exploration is now disabled. Earlier history may no longer describe the current device. Inspect the latest screenshot, reopen the intended app if needed, and verify task data before continuing.")
+       if spec_hit:
+         xrec = dict(xrec or {}, probes=[])     # nothing to verify: the screen moved on by the model's own choice
+-      if xrec and xrec["probes"]:
++      if xrec and (xrec["probes"] or unresolved):
+         v = self.dev.capture(f"s{k}_verify", settle=True)
+-        if ARM in ("FULL11", "FULL12", "FULL13", "FULL14", "FULL15", "FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45") and not R.same_state(v["ui"], ui) and full9.decision_still_valid(ui, v["ui"], d["action"]):
++        if not unresolved and ARM in ("FULL11", "FULL12", "FULL13", "FULL14", "FULL15", "FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45") and not R.same_state(v["ui"], ui) and full9.decision_still_valid(ui, v["ui"], d["action"]):
+           # the screen differs only in ways that do not affect THIS decision (same page, same target at the
+           # same place): execute it without asking the model again
+           m["verify_relaxed"] += 1
+-        elif ARM in ("FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45") and not R.same_state(v["ui"], ui) and full9.relocate_decision(ui, v["ui"], d["action"]):
++        elif not unresolved and ARM in ("FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45") and not R.same_state(v["ui"], ui) and full9.relocate_decision(ui, v["ui"], d["action"]):
+           # same activity and the control the model chose is still on screen (moved): the decision stands, it is
+           # executed at the control's current position
+           m["verify_relocated"] += 1
+@@ -457,7 +470,10 @@ class FullEpisode(S.SeqEpisode):
+             continue
+         elif ARM == "FULL35" and not R.same_state(v["ui"], ui) and self._restore_for_decision(ex, ui, d, k, m):
+           pass                               # FULL35: the screen the model decided on was restored; execute
+-        elif not R.same_state(v["ui"], ui):
++        elif unresolved or not R.same_state(v["ui"], ui):
++          if m["calls"] >= self.max_steps():
++            self._runtime_stop_reason = "budget_before_recovery_requery"
++            break
+           requery = True
+           m["requery"] += 1
+           pre = self.dev.capture(f"s{k}_pre_requery", settle=True, full_res=True)
+@@ -471,6 +487,17 @@ class FullEpisode(S.SeqEpisode):
+       full7.EXTRA["text"] = ""
+       a = d["action"]
+       tok, fam, sel = C.action_token(ui, a.__dict__)
++      if ARM == "FULL45":
++        # Repeated commits (e.g. deleting identical list rows) can make real data progress.
++        effectful = bool(fam and is_commit_token(ui, fam)) or full9.effectful(sel or {})
++        repeated = self._repetition_guard.observe(ui, a.__dict__, effectful=effectful)
++        if repeated == 3 and hasattr(self, "recovery_feedback"):
++          self.recovery_feedback("The same pointer action has been repeated three times with unchanged observed state. Inspect the current screenshot and choose a different recovery action; do not keep repeating the ineffective click or swipe.")
++        if repeated >= 6:
++          self._runtime_stop_reason = "repeated_action_without_progress"
++          m["repetition_guard_stops"] += 1
++          self.log("recovery_guard", {"step": k, "reason": self._runtime_stop_reason, "action": a.__dict__, "repetitions": repeated})
++          break
+       if gx is not None and gx.check_undo(instance, k, a.__dict__):
+         m["gx_misuse"] += 1
+       if xrec and fam:
+@@ -548,6 +575,7 @@ class FullEpisode(S.SeqEpisode):
+     self._own_seq = own
+     res = {"steps": (k if ARM in ("FULL8", "FULL9", "FULL10", "FULL11", "FULL12", "FULL13", "FULL14", "FULL15", "FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45") else len(steps)), "env_actions": len(steps), "agent_steps": len(steps),
+            "done": done, "model_calls": m["calls"],
++           "runtime_stop_reason": self._runtime_stop_reason,
+            "final_cid": final["cid"], "n_probes": ex.n_probes, "explore_disabled": ex.disabled_reason,
+            "store_eps": len(store.data) if store else 0}
+     m["jump_absent"] = getattr(self, "_jump_absent", 0)
+@@ -555,6 +583,26 @@ class FullEpisode(S.SeqEpisode):
+     res.update({f"m_{kk}": vv for kk, vv in m.items()})
+     return res
+ 
++  def refresh_shared(self, graph, store, fx, fn, gx):
++    """Refresh peer evidence at a decision boundary, without holding device locks."""
++    graph.refresh()
++    if store is not None:
++      store.refresh()
++    if fx is not None:
++      fx.refresh_shared()
++    if fn is not None:
++      fn.refresh_shared()
++    if gx is not None:
++      gx.refresh()
++    if self._intent is not None:
++      self._intent.refresh()
++    for name, path in (("_learned_eff", self._eff_path), ("_bad_groups", self._grp_path), ("_d2_bad", self._d2_path)):
++      getattr(self, name).update(tuple(row["key"]) for row in SS.rows(path))
++    self.log("shared_refresh", {"worker": os.environ.get("MAI_WORKER_ID", "0"),
++             "nodes": len(graph.nodes), "observations": sum(map(len, graph.slots.values())),
++             "functions": len(fn.lib.funcs) if fn else 0,
++             "successful_episodes": len(store.data) if store else 0})
++
+   def plan_jump(self, store, graph, own, ui, used):
+     if ARM in ("FULL3", "FULL4", "FULL5", "FULL7", "FULL8", "FULL9", "FULL10", "FULL11", "FULL12", "FULL13", "FULL14", "FULL15", "FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45"):
+       return self.plan_jump_invariant(store, graph, own, ui, used)
+@@ -862,6 +910,8 @@ class FullEpisode(S.SeqEpisode):
+           targets.append(("E2", s))
+     rec["mode"] = targets[0][0] if targets else "none"
+     for i_t, (why, s) in enumerate(targets):
++      if ARM == "FULL45" and _risky_slot(self, ui, s):
++        continue
+       if time.time() - t0 >= ex.cfg.budget_s:
+         rec["stop"] = "budget"
+         break
+@@ -885,6 +935,9 @@ class FullEpisode(S.SeqEpisode):
+           ok_j, _ = JG.restore(self, ex.graph, ui, step)
+           if not ok_j and not full9.relaunch_restore(self, ui, step):
+             rec["drift_unrestored"] = True
++            if ARM == "FULL45":
++              rec["recovery_unresolved"] = True
++              ex.disabled_reason = f"drift_unrestored@{step}"
+           break
+       if why == "D2":
+         p = self.probe_depth2(ex, pre, s, step)
+@@ -909,16 +962,14 @@ class FullEpisode(S.SeqEpisode):
+         gk = full9.container_key(ui.package, ui.activity, s.sel)
+         if gk not in self._bad_groups:
+           self._bad_groups.add(gk)
+-          with self._grp_path.open("a") as f:
+-            f.write(json.dumps({"key": list(gk), "family": C.family_of_sel(s.sel), "instance": instance, "step": step,
+-                                "reason": "edits_text"}) + "\n")
++          SS.append_json(self._grp_path, {"key": list(gk), "family": C.family_of_sel(s.sel), "instance": instance, "step": step,
++                                "reason": "edits_text"})
+         rec["learned_edit_effect"] = list(gk)
+       if ARM == "FULL45" and why != "D2" and p.get("outcome") == "in_place_content_change":
+         key_e = (ui.package, C.family_of_sel(s.sel))
+         if key_e not in self._learned_eff:
+           self._learned_eff.add(key_e)
+-          with self._eff_path.open("a") as f:
+-            f.write(json.dumps({"key": list(key_e), "instance": instance, "step": step, "reason": "in_place_change"}) + "\n")
++          SS.append_json(self._eff_path, {"key": list(key_e), "instance": instance, "step": step, "reason": "in_place_change"})
+       rec["probes"].append({"why": why, "slot": s.slot_id, "family": C.family_of_sel(s.sel), "outcome": p["outcome"],
+                             "rollback_ok": p["rollback_ok"], "t": p["t_total_s"], "dst_ui": dst_ui if why != "D2" else None})
+       if not p["rollback_ok"] and ARM in ("FULL15", "FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45") and why != "D2":
+@@ -926,15 +977,13 @@ class FullEpisode(S.SeqEpisode):
+         gk = full9.container_key(ui.package, ui.activity, s.sel)
+         if gk not in self._bad_groups:
+           self._bad_groups.add(gk)
+-          with self._grp_path.open("a") as f:
+-            f.write(json.dumps({"key": list(gk), "family": C.family_of_sel(s.sel), "instance": instance, "step": step}) + "\n")
++          SS.append_json(self._grp_path, {"key": list(gk), "family": C.family_of_sel(s.sel), "instance": instance, "step": step})
+           rec["learned_group"] = list(gk)
+       if not p["rollback_ok"] and why == "D2":
+         # the two-level detour through this edge could not be undone by Back: never go deeper through it again
+         key = (ui.package, ui.activity, C.family_of_sel(s.sel))
+         self._d2_bad.add(key)
+-        with self._d2_path.open("a") as f:
+-          f.write(json.dumps({"key": list(key), "instance": instance, "step": step}) + "\n")
++        SS.append_json(self._d2_path, {"key": list(key), "instance": instance, "step": step})
+       if not p["rollback_ok"] and ARM in ("FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45"):
+         # restoration ladder, second rung: a safe path over the joint graph back to the origin page
+         ok_j, orgs = JG.restore(self, ex.graph, ui, step)
+@@ -946,22 +995,24 @@ class FullEpisode(S.SeqEpisode):
+         rec["relaunch_restore"] = ok_r
+         if ok_r:
+           p["rollback_ok"] = True
+-          if ARM in ("FULL15", "FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45") and not getattr(self, "_relaunch_content_same", True):
+-            # the screen is back but its data is not: the probed control changes app data. Remember it in the
+-            # graph so no later task explores it again
+-            key = (ui.package, C.family_of_sel(s.sel) if why != "D2" else p.get("family", ""))
+-            self._learned_eff.add(key)
+-            with self._eff_path.open("a") as f:
+-              f.write(json.dumps({"key": list(key), "instance": instance, "step": step}) + "\n")
+-            rec["learned_effectful"] = list(key)
++        if (ok_r or ARM == "FULL45") and ARM in ("FULL15", "FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45") and not getattr(self, "_relaunch_content_same", True):
++          # the screen is back but its data is not: the probed control changes app data. Remember it in the
++          # graph so no later task explores it again
++          key = (ui.package, C.family_of_sel(s.sel) if why != "D2" else p.get("family", ""))
++          self._learned_eff.add(key)
++          SS.append_json(self._eff_path, {"key": list(key), "instance": instance, "step": step})
++          rec["learned_effectful"] = list(key)
+       if not p["rollback_ok"]:
+         rec["stop"] = "rollback_failed"
++        if ARM == "FULL45":
++          rec["recovery_unresolved"] = True
++          ex.disabled_reason = f"rollback_failed@{step}"
+         if ARM in ("FULL9", "FULL10", "FULL11", "FULL12", "FULL13", "FULL14", "FULL15", "FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45"):
+           # reversibility gating by control family, not by episode: never probe this family again; stop
+           # exploring only after a second failure
+           self._bad_fams = getattr(self, "_bad_fams", set()) | {Graph_app_key(ui, s)}
+           self._rb_fail += 1
+-          if self._rb_fail >= 2:
++          if self._rb_fail >= 2 and ARM != "FULL45":
+             ex.disabled_reason = f"rollback_failed_x2@{step}"
+         else:
+           ex.disabled_reason = f"rollback_failed@{step}"
+@@ -1003,7 +1054,7 @@ def _depth2_target(self, ex, ui, known, reversible, exclude=()):
+         continue
+       task, var = o["instance"].split("/")
+       try:
+-        dui = R.load_ui(raw / task / var.split("_")[0], o["dst_cid"])
++        dui = R.load_ui(SS.episode_path(raw, task, var), o["dst_cid"])
+       except Exception:  # pylint: disable=broad-except
+         continue
+       if full9.transient(dui):
+@@ -1013,7 +1064,8 @@ def _depth2_target(self, ex, ui, known, reversible, exclude=()):
+                and full9.p_reversible(dui, t.sel, evid) >= P_REV_MIN
+                and (dui.package, dui.activity, C.family_of_sel(t.sel)) not in known
+                and (dui.package, C.family_of_sel(t.sel)) not in self._learned_eff
+-               and full9.container_key(dui.package, dui.activity, t.sel) not in self._bad_groups]
++               and full9.container_key(dui.package, dui.activity, t.sel) not in self._bad_groups
++               and (ARM != "FULL45" or not _risky_slot(self, dui, t))]
+       if fresh and ARM in ("FULL16", "FULL17", "FULL18", "FULL19", "FULL20", "FULL21", "FULL22", "FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45"):
+         cands.append((sl, dd, dui, fresh, (o["instance"], o["dst_cid"], dd.get("layout_sig"))))
+         break
+@@ -1043,7 +1095,8 @@ def _probe_depth2(self, ex, pre, sl, step):
+   self.dev.tap(x, y)
+   mid = self.dev.capture(f"s{step}_d2_mid", settle=True, pause=0.8)
+   inner_fam = C.family_of_sel(sl.d2["inner"])
+-  target = next((t for t in U.enumerate_slots(mid["ui"]) if C.family_of_sel(t.sel) == inner_fam and t.safe), None)
++  target = next((t for t in U.enumerate_slots(mid["ui"]) if C.family_of_sel(t.sel) == inner_fam and t.safe
++                 and (ARM != "FULL45" or not _risky_slot(self, mid["ui"], t))), None)
+   if mid["ui"].activity != sl.d2["via_dst"]["activity"] or target is None or full9.transient(mid["ui"]):
+     self.dev.back()
+     chk = self.dev.capture(f"s{step}_d2_back", settle=True)
+@@ -1071,11 +1124,11 @@ def _adaptive_wait(self, prev, m):
+   ui0 = prev["pre"]["ui"]
+   sig0 = (ui0.exact_sig, ui0.content_sig)
+   key = f"{ui0.package}|{ui0.activity}|{prev.get('fam') or prev.get('slot_id')}"
+-  waits = getattr(self, "_edge_wait", None)
++  waits = None if os.environ.get("MAI_SHARED_STATE") == "1" else getattr(self, "_edge_wait", None)
+   if waits is None:
+     p = APPDIR / ARM_NAME / "edge_wait.json"
+     try:
+-      waits = json.loads(p.read_text())
++      waits = SS.read_json(p, {})
+     except Exception:  # pylint: disable=broad-except
+       waits = {}
+     self._edge_wait = waits
+@@ -1102,7 +1155,7 @@ def _adaptive_wait(self, prev, m):
+     hist.append(round(t_w, 3))
+     waits[key] = hist[-9:]
+     try:
+-      (APPDIR / ARM_NAME / "edge_wait.json").write_text(json.dumps(waits))
++      self._edge_wait = SS.append_wait(APPDIR / ARM_NAME / "edge_wait.json", key, round(t_w, 3))
+     except Exception:  # pylint: disable=broad-except
+       pass
+   m["adaptive_wait_changed" if changed else "adaptive_wait_nochange"] += 1
+@@ -1151,7 +1204,7 @@ def _risky_slot(ep, ui, sl):
+   n = ui.nodes[sl.node_idx]
+   cls = (n.cls or "").lower()
+   rid = str(sl.sel.get("rid") or "").lower()
+-  if _risky_probe(sl.sel) or n.checkable or any(w in cls for w in ("switch", "checkbox", "toggle", "radiobutton")) \
++  if RG.unsafe_navigation_probe(sl.sel) or _risky_probe(sl.sel) or n.checkable or any(w in cls for w in ("switch", "checkbox", "toggle", "radiobutton")) \
+      or any(w in rid for w in ("switch", "toggle", "checkbox")):
+     return True
+   return C.family_of_sel(sl.sel) == getattr(ep, "_last_act_fam", None)
+@@ -1510,7 +1563,8 @@ def _park(self, ex, pre, rec, step, instance):
+   for sl in U.enumerate_slots(ui):
+     fam = C.family_of_sel(sl.sel)
+     key = (ui.package, ui.activity, fam)
+-    if not sl.safe or full9.effectful(sl.sel) or sl.sel.get("in_list") or is_commit_token(ui, fam):
++    if not sl.safe or full9.effectful(sl.sel) or sl.sel.get("in_list") or is_commit_token(ui, fam) \
++        or (ARM == "FULL45" and _risky_slot(self, ui, sl)):
+       continue
+     if fam not in probed_ok and key not in reversible:
+       continue
+diff --git a/experiments/trace_reachability_validation/scripts/graph_exec.py b/experiments/trace_reachability_validation/scripts/graph_exec.py
+index 1f514fb..2b0bd49 100644
+--- a/experiments/trace_reachability_validation/scripts/graph_exec.py
++++ b/experiments/trace_reachability_validation/scripts/graph_exec.py
+@@ -19,7 +19,10 @@ from __future__ import annotations
+ import json
+ import time
+ from collections import Counter
++import sys
+ from pathlib import Path
++sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
++from android_world import shared_state as SS
+ 
+ HERE = Path(__file__).resolve().parent
+ PROFILING_OBS = HERE.parent.parent / "runtime_graph_exploration" / "graph" / "observations.jsonl"
+@@ -62,12 +65,9 @@ class GraphReuse:
+     self.valid = Counter()       # (type, key) -> graph executions that landed as expected
+     self.misuse = Counter()      # (type, key) -> executions the model undid
+     self._offset = 0
++    self._exec_offset = 0
+     if use_profiling:            # off in FULL33: evidence comes only from this run (no offline trajectories)
+       self._load_profiling()
+-    if self.path.exists():
+-      for line in self.path.open():
+-        if line.strip():
+-          self._apply(json.loads(line))
+     self.refresh()
+     self.last = None             # the latest execution in this episode (for the misuse check)
+ 
+@@ -89,19 +89,13 @@ class GraphReuse:
+ 
+   def refresh(self):
+     """Fold in the runtime graph's new agent / exploration edges (cross-task evidence of this run)."""
+-    if not self.runtime.exists():
+-      return
+-    with self.runtime.open() as f:
+-      f.seek(self._offset)
+-      for line in f:
+-        if line.strip():
+-          try:
+-            o = json.loads(line)
+-          except ValueError:
+-            continue
+-          if o.get("origin") == "agent":
+-            self._edge(o)
+-      self._offset = f.tell()
++    rows, self._offset = SS.read_delta(self.runtime, self._offset)
++    for o in rows:
++      if o.get("origin") == "agent":
++        self._edge(o)
++    rows, self._exec_offset = SS.read_delta(self.path, self._exec_offset)
++    for row in rows:
++      self._apply(row)
+ 
+   def _apply(self, r):
+     k = (r["type"], tuple(r["key"]) if isinstance(r["key"], list) else r["key"])
+@@ -129,9 +123,8 @@ class GraphReuse:
+          "step": step, "ok": bool(ok), "n_actions": n_actions, "t": time.time(),
+          "src": {"package": _pkg(src), "activity": _act(src)} if src else None,
+          "dst": {"package": _pkg(dst), "activity": _act(dst)} if dst else None}
+-    with self.path.open("a") as f:
+-      f.write(json.dumps(r) + "\n")
+-    self._apply(r)
++    SS.append_json(self.path, r)
++    self.refresh()
+     self.last = (typ, key, step)
+ 
+   def check_undo(self, instance, step, action):
+@@ -147,7 +140,6 @@ class GraphReuse:
+     if undo:
+       r = {"event": "misuse", "type": typ, "key": list(key) if isinstance(key, tuple) else key,
+            "instance": instance, "step": step, "t": time.time()}
+-      with self.path.open("a") as f:
+-        f.write(json.dumps(r) + "\n")
+-      self._apply(r)
++      SS.append_json(self.path, r)
++      self.refresh()
+     return undo
+diff --git a/experiments/trace_reachability_validation/scripts/intent_graph.py b/experiments/trace_reachability_validation/scripts/intent_graph.py
+index b2f91ee..30e1be0 100644
+--- a/experiments/trace_reachability_validation/scripts/intent_graph.py
++++ b/experiments/trace_reachability_validation/scripts/intent_graph.py
+@@ -16,6 +16,7 @@ from __future__ import annotations
+ import json
+ import math
+ from collections import Counter
++from android_world import shared_state as SS
+ 
+ import full7
+ import full9
+@@ -42,46 +43,45 @@ class EdgeIntent:
+   def __init__(self, path, task):
+     self.path, self.task = path, task
+     self.use, self.n_valid, self.n_misuse = {}, Counter(), Counter()
+-    if path.exists():
+-      for l in path.open():
+-        if not l.strip():
+-          continue
+-        e = json.loads(l)
+-        key = tuple(e["key"])
+-        if e.get("misuse"):
+-          self.n_misuse[key] += 1
+-        elif e.get("task") != task:
+-          self.use.setdefault(key, Counter()).update(e["g"])
+-          self.n_valid[key] += 1
++    self._offset = 0
++    self.refresh()
++
++  def refresh(self):
++    rows, self._offset = SS.read_delta(self.path, self._offset)
++    for e in rows:
++      key = tuple(e["key"])
++      if e.get("misuse"):
++        self.n_misuse[key] += 1
++      elif e.get("task") != self.task:
++        self.use.setdefault(key, Counter()).update(e["g"])
++        self.n_valid[key] += 1
+ 
+   def misuse(self, key):
+     if key is None:
+       return
+-    self.n_misuse[key] += 1
+-    with self.path.open("a") as f:
+-      f.write(json.dumps({"key": list(key), "misuse": 1, "task": self.task}) + "\n")
++    SS.append_json(self.path, {"key": list(key), "misuse": 1, "task": self.task})
++    self.refresh()
+ 
+   def record_episode(self, steps_path, gvec, success):
+     if not success or not steps_path.exists() or not gvec:
+       return
+     rows = [json.loads(l) for l in steps_path.open()]
+     seen = set()
+-    with self.path.open("a") as f:
+-      for i, r in enumerate(rows):
+-        tok = r.get("tok") or ""
+-        if not r.get("pre") or not tok.startswith("E|"):
+-          continue
+-        nxt = next((x for x in rows[i + 1:] if x.get("pre")), None)
+-        if nxt is None:
+-          continue
+-        s, d = r["pre"]["summary"], nxt["pre"]["summary"]
+-        if (s["activity"], s["layout_sig"]) == (d["activity"], d["layout_sig"]):
+-          continue
+-        key = (s["package"], s["activity"], tok)
+-        if key in seen:
+-          continue
+-        seen.add(key)
+-        f.write(json.dumps({"key": list(key), "task": self.task, "g": gvec}) + "\n")
++    for i, r in enumerate(rows):
++      tok = r.get("tok") or ""
++      if not r.get("pre") or not tok.startswith("E|"):
++        continue
++      nxt = next((x for x in rows[i + 1:] if x.get("pre")), None)
++      if nxt is None:
++        continue
++      s, d = r["pre"]["summary"], nxt["pre"]["summary"]
++      if (s["activity"], s["layout_sig"]) == (d["activity"], d["layout_sig"]):
++        continue
++      key = (s["package"], s["activity"], tok)
++      if key in seen:
++        continue
++      seen.add(key)
++      SS.append_json(self.path, {"key": list(key), "task": self.task, "g": gvec})
+ 
+ 
+ def _candidates(ep, ui, graph):
+diff --git a/experiments/trace_reachability_validation/scripts/seq_run.py b/experiments/trace_reachability_validation/scripts/seq_run.py
+index 171cccf..c73f097 100644
+--- a/experiments/trace_reachability_validation/scripts/seq_run.py
++++ b/experiments/trace_reachability_validation/scripts/seq_run.py
+@@ -34,6 +34,7 @@ import common as C  # noqa: E402
+ import pa_trace as PA  # noqa: E402
+ import rgs_run as R  # noqa: E402
+ from android_world.env import json_action  # noqa: E402
++from android_world import shared_state as SS
+ 
+ U = C.U
+ ARM = os.environ.get("SEQ_ARM", "BASE")
+@@ -50,7 +51,9 @@ class Store:
+ 
+   def __init__(self, path: Path, only_task: str | None = None):
+     self.path = path
+-    self.data = json.loads(path.read_text()) if path.exists() else []
++    self.only_task = only_task
++    self.data = SS.read_json(path, [])
++    self.__dict__.pop("_tidx", None)
+     if only_task is not None:
+       self.data = [d for d in self.data if d["task"] == only_task]
+     self.idx = {"struct": PA.Index(), "layout": PA.Index()}
+@@ -103,8 +106,11 @@ class Store:
+     return c.most_common(1)[0][0] if c else None
+ 
+   def append(self, seq, task):
+-    self.data.append({"task": task, "seq": seq})
+-    self.path.write_text(json.dumps(self.data))
++    SS.update_json(self.path, lambda data: data + [{"task": task, "seq": seq}], [])
++    self.refresh()
++
++  def refresh(self):
++    self.__init__(self.path, self.only_task)
+ 
+ 
+ class SeqEpisode(R.Episode):

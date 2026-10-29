@@ -1,0 +1,102 @@
+{
+ "role|set": {
+  "n": 334,
+  "ok": 233
+ },
+ "role_zone|set/mid": {
+  "n": 227,
+  "ok": 146
+ },
+ "cls|View": {
+  "n": 70,
+  "ok": 64
+ },
+ "role|single": {
+  "n": 525,
+  "ok": 412
+ },
+ "role_zone|single/bottom": {
+  "n": 79,
+  "ok": 63
+ },
+ "cls|TextView": {
+  "n": 108,
+  "ok": 67
+ },
+ "role|set_sel": {
+  "n": 95,
+  "ok": 35
+ },
+ "role_zone|set_sel/mid": {
+  "n": 25,
+  "ok": 0
+ },
+ "cls|LinearLayout": {
+  "n": 195,
+  "ok": 122
+ },
+ "cls|ImageButton": {
+  "n": 126,
+  "ok": 102
+ },
+ "role_zone|set_sel/bottom": {
+  "n": 70,
+  "ok": 35
+ },
+ "cls|FrameLayout": {
+  "n": 112,
+  "ok": 62
+ },
+ "role_zone|single/top": {
+  "n": 251,
+  "ok": 202
+ },
+ "cls|ViewGroup": {
+  "n": 100,
+  "ok": 75
+ },
+ "role_zone|set/top": {
+  "n": 87,
+  "ok": 71
+ },
+ "role_zone|single/mid": {
+  "n": 195,
+  "ok": 147
+ },
+ "cls|ImageView": {
+  "n": 85,
+  "ok": 70
+ },
+ "cls|Button": {
+  "n": 114,
+  "ok": 87
+ },
+ "cls|RelativeLayout": {
+  "n": 19,
+  "ok": 14
+ },
+ "cls|CardView": {
+  "n": 7,
+  "ok": 7
+ },
+ "cls|Spinner": {
+  "n": 8,
+  "ok": 8
+ },
+ "role_zone|set/bottom": {
+  "n": 20,
+  "ok": 16
+ },
+ "cls|RecyclerView": {
+  "n": 2,
+  "ok": 2
+ },
+ "cls|LinearLayoutCompat": {
+  "n": 4,
+  "ok": 0
+ },
+ "cls|EditText": {
+  "n": 4,
+  "ok": 0
+ }
+}

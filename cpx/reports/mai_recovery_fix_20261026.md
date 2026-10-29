@@ -1,0 +1,25 @@
+# FULL45 探索恢复修复
+
+本次修改并同步pxchen实验仓库代码，未启动新的模型实验，未改写既有结果或共享图。
+
+## 行为变更
+
+- FULL45探索过滤显式返回/退出/导航控件，以及toolbar/action_bar/appbar内没有rid/text/desc/label的匿名按钮。统一检查主探索、RV、两层探索内外层与预执行候选。日历旧失败轨迹中event_toolbar的匿名ImageButton由此被拦截。
+- full9.relaunch_restore在FULL45下要求activity、layout、struct、content全部一致。页面相同但内容不同返回False，同时保留content_same和危险控件学习记录；不再把页面重现等同数据恢复。其他arm维持既有判定。
+- 最终无法恢复或探索漂移无法恢复时，FULL45立即关闭本题后续探索，记录recovery_unresolved。等待已经发出的推理结束，丢弃其旧决策，重新截图并重新推理。即使界面结构相同也强制走该分支；没有调用预算时停止，不额外越过上限调用模型。
+- MAI在恢复失败后向当前截图补充明确运行时反馈：设备状态已偏离、旧历史可能失效、需要重新检查当前界面及任务数据。保留官方system prompt，正常BASE请求不增加该反馈；历史仍保留。反馈与恢复过程单独记日志。
+- 对界面结构和可见内容都不变的相同指针动作，第3次后反馈提醒，第6次决策时阻断重复执行并结束本题；结果写runtime_stop_reason=repeated_action_without_progress。保存、删除等已识别的提交/有副作用操作排除在该保护之外，避免误拦实际有后台进展的重复操作。FULL45 worker将这类提前停止标为recovery_guard，不冒充模型主动完成或执行异常。
+- 新episode meta.json记录recovery_policy版本20261026和阈值；新全量worker记录recovery_guard.py源码哈希，旧结果保留原始配置。
+
+## 验证
+
+本地纯逻辑测试通过；服务器实际容器内运行recovery_guard_test、mai_protocol_test、mai_runtime_test、mai_shared_state_test、mai_warm_worker_test。最终共36项测试，覆盖匿名工具栏过滤实际入口、重启重放拒绝内容变化/接受完全恢复、拒绝重放提交、当前截图携带恢复反馈、BASE不接收探索反馈、无进展计数/真实内容进展及提交排除，以及已有协议、并发共享图、历史快照隔离回归。worker语法检查通过。
+
+此外对真实失败轨迹做只读离线验证：SimpleCalendarAddOneEvent旧匿名工具栏探针被新规则拒绝；原编辑页与桌面不能通过恢复判定；旧重复点击序列在step9第6次相同决策命中保护。此为离线轨迹检查，不代表实际重跑已成功。
+
+修改前源码备份：
+/home/pxchen/workspace/android_world_mai8b_20261024/experiments/trace_reachability_validation/code_snapshots/recovery_fix_20261026_before
+
+## 实际限制
+
+当前修复预防危险试探，并在恢复失败后停止探索、同步事实和阻断无效循环；不提供任意应用数据库的事务回滚。已经提交或修改的数据未必能自动恢复。UI内容签名也不是应用完整数据库校验。修复后的成功率尚需固定任务/seed/图条件的实际对照测试，不能由单元测试推断。未自动全量重跑。

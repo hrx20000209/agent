@@ -1,0 +1,33 @@
+{
+  "model": "MAI-UI-8B",
+  "api_url": "http://127.0.0.1:8097/v1/chat/completions",
+  "history_n": 3,
+  "temperature": 0.0,
+  "top_k": -1,
+  "top_p": 1.0,
+  "max_tokens": 2048,
+  "frequency_penalty": 0.0,
+  "presence_penalty": 0.0,
+  "repetition_penalty": 1.0,
+  "request_seed": 42,
+  "max_retries": 3,
+  "request_timeout_s": 180,
+  "max_model_len": 16384,
+  "coordinate_scale": 999,
+  "official_repo": "https://github.com/Tongyi-MAI/MAI-UI",
+  "official_commit": "3deabf1d1fcf31964511929938b7c9485589b29c",
+  "system_prompt_file": "mai_ui_official_system.txt",
+  "system_prompt_sha256": "86b907c1e936b8c92bde65e943d31a5f92379209b2ce4f31d5f3ceadd1a3edf2",
+  "server": {
+    "max_images": 3,
+    "dtype": "bfloat16",
+    "tensor_parallel_size": 1,
+    "gpu_memory_utilization": 0.92,
+    "max_num_seqs": 8,
+    "max_num_batched_tokens": 1024,
+    "attention_backend": "TRITON_ATTN",
+    "enforce_eager": true,
+    "installed_vllm": "0.30.0",
+    "official_readme_vllm": "0.11.0"
+  }
+}

@@ -1,0 +1,387 @@
+[
+  {
+    "path": "DIFFERENCES.md",
+    "bytes": 2073,
+    "sha256": "cb6c104ba8af4fb4a25722d53ac14d1437c1bba82c564ee77b7ee3714be7d9e1"
+  },
+  {
+    "path": "README.md",
+    "bytes": 2222,
+    "sha256": "d8b3e19a70c3e83819128f6c8747e4e090964d4f7922e061505c0f446ba79baf"
+  },
+  {
+    "path": "analysis/compare_mai_runs.py",
+    "bytes": 2825,
+    "sha256": "b28390a42fc1e5ad1c5f1e096a7f9ed0c9b0cfffb84cc8908ea3d2295dccc2ab"
+  },
+  {
+    "path": "analysis/comparison.json",
+    "bytes": 5146,
+    "sha256": "702f90be608c05988955e07c8e7eb36fcfb0693a235b016e81cbe3ec30c16b39"
+  },
+  {
+    "path": "analysis/comparison.md",
+    "bytes": 2308,
+    "sha256": "71b59719931f75a23760fa345a1a3f04f6252c9eadca4267fe6ba49b0ea251b9"
+  },
+  {
+    "path": "code_overlay/android_world/env/interface.py",
+    "bytes": 13194,
+    "sha256": "a918f99d7f29df06698a2c7b9f9a85cfa19cf09fbeaed15d35319bbdec85bddd"
+  },
+  {
+    "path": "code_overlay/android_world/shared_state.py",
+    "bytes": 3620,
+    "sha256": "1aed2df339ed4e3450635fec385cce1603a02b80d47f8d9df019ce16ca16dbce"
+  },
+  {
+    "path": "code_overlay/experiments/runtime_graph_exploration/graph/app_tokens.json",
+    "bytes": 59441,
+    "sha256": "4d367968e98b985c0f18ab0d7a4225cd3fba5358d7f0ce9f0ced578e42d8f325"
+  },
+  {
+    "path": "code_overlay/experiments/runtime_graph_exploration/graph/element_idf_base.json",
+    "bytes": 74842,
+    "sha256": "356257a0f6537fd713be8ea192ba67e3148c8c5d87706dc1028db3656d04bcea"
+  },
+  {
+    "path": "code_overlay/experiments/runtime_graph_exploration/graph/rev_prior.json",
+    "bytes": 1220,
+    "sha256": "099f353f889312ce007e0306647cd794897abe4f36e60a96704cb7765f565ed2"
+  },
+  {
+    "path": "code_overlay/experiments/runtime_graph_exploration/graph/ui_idf.json",
+    "bytes": 26069,
+    "sha256": "e2cfb52a400c37443db09a1115a2d4ffde9836461e3be0b30fcc80b411dd106a"
+  },
+  {
+    "path": "code_overlay/experiments/runtime_graph_exploration/scripts/fgraph.py",
+    "bytes": 15119,
+    "sha256": "910def0ac3c7a4b94aabd799ddb396aa0d013f2d3e68410a4099afa2bd1ec57a"
+  },
+  {
+    "path": "code_overlay/experiments/runtime_graph_study/scripts/rgs_run.py",
+    "bytes": 41448,
+    "sha256": "629d233ddba1509a40d0aac7032c952fd2d79989a0a24018294e063bd6b8f353"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/configs/mai_ui_8b_base50_20261025.json",
+    "bytes": 2708,
+    "sha256": "5dbcce97553062122b73062d9181660edb831577d3bb67178f4721363ae01c45"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/configs/mai_ui_8b_base_full50_20261026.json",
+    "bytes": 2736,
+    "sha256": "8e44c23d3dba0a1a7eb3d1496481c4f10691ff4d68b8019398363a843f80abec"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/configs/mai_ui_8b_full50_20261025.json",
+    "bytes": 2708,
+    "sha256": "d243f0bf724d5e3854a8e2ef59d6ffca7f025f4d0ee2b4440c7f17c7577bbdef"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/configs/mai_ui_8b_full_20261025.json",
+    "bytes": 2586,
+    "sha256": "27711d751c06fc17731c3778ceff04b040f0145294e604300cab4839b0a82777"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/configs/mai_ui_8b_official.json",
+    "bytes": 984,
+    "sha256": "75c8ed279212767757ed575827ac57532819b75d8d45993cb714f26711270e18"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/configs/mai_ui_official_system.txt",
+    "bytes": 1892,
+    "sha256": "d1a5db39ee929b489299dcc25678a81f3b2955dfd4c80a8e77999f3ac528dc6b"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/configs/statistics_rxhuang_20261023/goal_corpus.json",
+    "bytes": 19664,
+    "sha256": "ed49fd097572766affbc6477737e595b0905793fb244cb71e7c5cabe2a0a06a1"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/configs/statistics_rxhuang_20261023/historical_graph_source.json",
+    "bytes": 1086,
+    "sha256": "6220211fcb636115f4a4c3fa37d7878e9092fe0618b0a97be495039b9db29ca2"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/configs/statistics_rxhuang_20261023/restoration_manifest.json",
+    "bytes": 1553,
+    "sha256": "6e37b5738b4d02fc2072cee53c61b08313883cacc25a15aa40539733232af562"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/explore_value.py",
+    "bytes": 13824,
+    "sha256": "4c4a9e9119b02b8e33a2b418a69bbf77eb34e5fba398416d7bd29f05f20b237d"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/full7.py",
+    "bytes": 13232,
+    "sha256": "743b85b5965d0fed7a3559af396dbf9fdabc4d13017f35a9f051a18f65c8cd59"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/full9.py",
+    "bytes": 46968,
+    "sha256": "a76ef91714ffc5896aea79c78fd0b30176f20ac10d1147e9dcc77b826c16bc0a"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/full_run.py",
+    "bytes": 115890,
+    "sha256": "5c25530061552e8346f0af4ccf6b4a521687427c6ce9e6fd23c7038f412ffcc2"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/graph_exec.py",
+    "bytes": 6380,
+    "sha256": "c51a7ab949a3a95cba023e77e7704e368ec40a4cc8d47957a1c2eedee3311805"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/intent_graph.py",
+    "bytes": 8019,
+    "sha256": "241cd3009b76119cd62229125e48d2749ec69a603a5b43e758cc6af3a34aaa14"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/mai_androidworld_driver.py",
+    "bytes": 9483,
+    "sha256": "6455b71294167d10e960c478b34e4044cbd446fdac3a7e142c94bff06f0e46e5"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/mai_androidworld_menu_probe.py",
+    "bytes": 1808,
+    "sha256": "de09458ff9a1d4027dd77c0e3954f3d776b96670936f6e499148bcd025ee1f13"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/mai_base_budget_worker.py",
+    "bytes": 6695,
+    "sha256": "7273df758af7007a75a4c54633ed8251e7b39cf6791f1863f080ff35ec5eef0c"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/mai_base_full50_worker.py",
+    "bytes": 6402,
+    "sha256": "1b9022ae680a3f8246e677f9fc7503bfa46cfba538d4da11cb02b2868c298500"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/mai_client.py",
+    "bytes": 1518,
+    "sha256": "9b31a4354e32e92014ac592d1ba3b1f99457baaf8cc5bad16666fd9b49fd191d"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/mai_completion_watch.py",
+    "bytes": 4479,
+    "sha256": "50a2ace4290dc81a97acd1100d4369c60ea0ee0a883834e8e04788f968dc5129"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/mai_concurrency_probe.py",
+    "bytes": 4970,
+    "sha256": "26343068a3be58307f37e168eda3a2649baf0b765743c47a75a5b363c3ae2c2c"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/mai_full45_budget_worker.py",
+    "bytes": 7943,
+    "sha256": "da0a8bd6f2f20a7223be1f8dc0d068cc52b7b47a184f6a1c8617bbe989e631a8"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/mai_full45_full50_worker.py",
+    "bytes": 6931,
+    "sha256": "2ede4fae589d7e059d769007cb04835338cf654ee3daf3653f428db7129adef2"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/mai_protocol.py",
+    "bytes": 8484,
+    "sha256": "eac0ea4dd6f65d329e2ef83b8d049637494797c4461104782b7da446b20e62bc"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/mai_protocol_test.py",
+    "bytes": 4108,
+    "sha256": "a4a52617b0a1d9df8e3c01b64d2d857e0c0cba0fb6ccf12c32620c1ab9474146"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/mai_reconcile_repair.py",
+    "bytes": 6328,
+    "sha256": "4a0ed260b02129592163b8267a161bfb4cce4fee672508960e0e2af1fa3980e3"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/mai_resume_20261025.py",
+    "bytes": 4714,
+    "sha256": "fdc6ef9ad85f35a2bb5ec8b1af2bdacc4c497b3193f35a561c5fdd996153599f"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/mai_run.py",
+    "bytes": 10501,
+    "sha256": "662d6d6ab378a966d97e649c89aac1f138a408a0ed218a8438cc1e6778fbae8a"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/mai_runtime_test.py",
+    "bytes": 8457,
+    "sha256": "88e038f708758a0475058062771042410dc4e1272552ce35be5a22725469b142"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/mai_shared_state_test.py",
+    "bytes": 6970,
+    "sha256": "ed6050623f20505eb6ecc6bd89d3b961b28ac42c2715ff6b6c05070098ffda20"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/mai_verify_official.py",
+    "bytes": 4125,
+    "sha256": "3a5656b4da41d2bcf3af1c1c3e97477b6816266cd8797c6f4a0419419e1dad79"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/mai_warm_worker.py",
+    "bytes": 7987,
+    "sha256": "601153d020abe9756afa974d8903d03b0bf30dc22873df2a1281d4727abb076c"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/mai_warm_worker_test.py",
+    "bytes": 2552,
+    "sha256": "e9791aa94ac12cc921989a88ee7156fd75a9c88d65b7456d7c6ef332db2ccda1"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/mai_worker_service.py",
+    "bytes": 2572,
+    "sha256": "43ada4e8a636253257fdabe8d22d540f59937e404587634e3930c8ac932d6783"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/recovery_guard.py",
+    "bytes": 1394,
+    "sha256": "668fe4dd4d0225b7c1436dca6bb1cb2ce2c5e80dba503a5b716962ca8dc8cf1e"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/recovery_guard_test.py",
+    "bytes": 1780,
+    "sha256": "78d6089935b454a3a6f00c9b7b48b0cbebe53437a86fc5d490deabb145d7b49c"
+  },
+  {
+    "path": "code_overlay/experiments/trace_reachability_validation/scripts/seq_run.py",
+    "bytes": 17441,
+    "sha256": "451524c2aea131788a6f14edd2af0ecb9073a07eba47107ed084b2abecebd26e"
+  },
+  {
+    "path": "data/README.md",
+    "bytes": 1170,
+    "sha256": "8ad3e42b970b48b0090e8c2fd769caffbd535cb524b4f33cc0d3270ed7d79a36"
+  },
+  {
+    "path": "data/summary/mai8b_base_full116_calls50_12w_20261026/runs.jsonl",
+    "bytes": 31103,
+    "sha256": "16765c748ab21f00f7c4fbee4aacf95f4f27e277d5c772905cde2bd9e7c1af51"
+  },
+  {
+    "path": "data/summary/mai8b_full45_full116_calls50_emptyshared_20261025/runs.jsonl",
+    "bytes": 27891,
+    "sha256": "7b18250c9f7ab5809abfd3155b83f63edbe72331e3b349f12933f1b303059a7a"
+  },
+  {
+    "path": "data/summary/mai8b_full45_full116_calls50_recoveryfix_20261026/runs.jsonl",
+    "bytes": 31664,
+    "sha256": "5a943e831e1ff6bd85c9624444e77deeacdf91b7a4de6bf3af066ebb3335c8ab"
+  },
+  {
+    "path": "launch/README.md",
+    "bytes": 2923,
+    "sha256": "134f1e9b148887a07d2b375120bf6a480795747dc1a3b55cdfaec85e41f5afb7"
+  },
+  {
+    "path": "launch/historical/mai_base12_create.py",
+    "bytes": 934,
+    "sha256": "2f3f9836727147baa24e20c65c065c52444665839ef2d615636ddcfac21ef6bb"
+  },
+  {
+    "path": "launch/historical/mai_base12_launch8.py",
+    "bytes": 2892,
+    "sha256": "be563c35d55ff49d450fae4cd5f46c5390b2311fb245b35036d0667469b1be93"
+  },
+  {
+    "path": "launch/historical/mai_base12_ready_start.py",
+    "bytes": 2172,
+    "sha256": "867f78f16a6dd83c18842ade8eacb1c2d40c027876754a3c891fda852fe19e80"
+  },
+  {
+    "path": "launch/historical/mai_base12_replace11.py",
+    "bytes": 1457,
+    "sha256": "51ca7a5e6fed67dd5211df5bda2c19930ae6423d2fb5a5966b0a306058415ff2"
+  },
+  {
+    "path": "launch/historical/mai_base12_start11.py",
+    "bytes": 2173,
+    "sha256": "cc2f209d6c48e7fa81c129f6dc10dc78df1b906f9b7061f73b435ffd7c1d9769"
+  },
+  {
+    "path": "launch/historical/mai_full50_launch.py",
+    "bytes": 2441,
+    "sha256": "8ee87c89c9688805064d94fb9a27c0b801496bf21dbf64e896b42c31e4fc3d62"
+  },
+  {
+    "path": "launch/historical/mai_recovery_full50_launch.py",
+    "bytes": 3444,
+    "sha256": "db414911eb8726971fab7faa393935b7f40026858d43af5a1c5101f729022217"
+  },
+  {
+    "path": "patches/android_world_tracked_changes.patch",
+    "bytes": 49078,
+    "sha256": "eb6133aa60d87434ebffa235b23d4509a560c09192193d90cc100c50fc8abcef"
+  },
+  {
+    "path": "reports/mai_base50_failed67_20261025.md",
+    "bytes": 3125,
+    "sha256": "075c3d80c39d060adb0bea6331c03cc402a9f31c23d557d6e3e0d2c3a656012e"
+  },
+  {
+    "path": "reports/mai_base_full116_12w_20261026.md",
+    "bytes": 2594,
+    "sha256": "12a8c415a4bf7472faaa7dddf2a6f4eca03493b772b1702a62d77f8be8159ce8"
+  },
+  {
+    "path": "reports/mai_full232_continuation_20261025.md",
+    "bytes": 8059,
+    "sha256": "65c64ca9797ca583024a912310d1ee7281e938b363ab4476c9acc75a13fb0f41"
+  },
+  {
+    "path": "reports/mai_full232_launch_20261025.md",
+    "bytes": 3545,
+    "sha256": "cf7565db25d8dfe05550eae572e2b20d885fe218a4caccd2cf7d7efbcb4bc43f"
+  },
+  {
+    "path": "reports/mai_full45_50_diagnosis_20261026.md",
+    "bytes": 5979,
+    "sha256": "c322dbe7decd42166b4f466403ca496c235639e9ca8d2e4d6477a0a3fe0da038"
+  },
+  {
+    "path": "reports/mai_full45_full116_calls50_20261025.md",
+    "bytes": 2427,
+    "sha256": "a2a70b27e7216459d86472ab63096a683b46735311ed3494f00f81fd441d3770"
+  },
+  {
+    "path": "reports/mai_full45_recoveryfix_launch_20261026.md",
+    "bytes": 1843,
+    "sha256": "9e889a904092ea88d2f9644e722617e97f40033d3f83fd50d7578670887c0e86"
+  },
+  {
+    "path": "reports/mai_full45_sms_final_graph_repair_20261025.md",
+    "bytes": 3343,
+    "sha256": "898afacbfe78492792b130a40fd7dfcb9ef9bac97b668480e2d3fdacb899212e"
+  },
+  {
+    "path": "reports/mai_recovery_fix_20261026.md",
+    "bytes": 3300,
+    "sha256": "9521189411d3646826db86778846e97de82f35b1efa262a41d6c38c031174212"
+  },
+  {
+    "path": "reports/mai_shared_graph_parallel_20261024.md",
+    "bytes": 5182,
+    "sha256": "21ce64716aae08957a6ceead642b495723fc89ffcde6d74b73ebab9025a77be0"
+  },
+  {
+    "path": "reports/mai_ui_8b_switch_20261024.md",
+    "bytes": 10358,
+    "sha256": "81328e0c16b21697845fffac1375596372a56cf49d410e64bf66a6054d328954"
+  },
+  {
+    "path": "reports/senior_latest_budget_review.md",
+    "bytes": 1774,
+    "sha256": "502c9a7e46a3c85e75babc626f41bb9079d4bd9a65c170f5b11a5226955bb718"
+  },
+  {
+    "path": "tools/verify_artifacts.py",
+    "bytes": 416,
+    "sha256": "95ee674d278299e9b2ba3170b18361dc421d74fdbbc6e0ff63d115ddc429bcaf"
+  }
+]
