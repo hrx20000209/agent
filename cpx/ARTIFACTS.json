@@ -885,6 +885,41 @@
     "sha256": "502c9a7e46a3c85e75babc626f41bb9079d4bd9a65c170f5b11a5226955bb718"
   },
   {
+    "path": "rerun_single_20261030/README.md",
+    "bytes": 2990,
+    "sha256": "d34cfd33a17745172f0ccc8de7584e4b818333647dcaf7a5d55a4e4f4cf80d7b"
+  },
+  {
+    "path": "rerun_single_20261030/deploy.py",
+    "bytes": 4545,
+    "sha256": "a4cc2acba23e86092051b5ea42fdb50b45931d5defe75fe549c234c7bc6e3a0f"
+  },
+  {
+    "path": "rerun_single_20261030/episode_entry.py",
+    "bytes": 584,
+    "sha256": "15fb696c02e9bdc4538a8a1f1e5dad82def0eaf10fb71d6de13ff8fbde6dc4c3"
+  },
+  {
+    "path": "rerun_single_20261030/host_supervisor.py",
+    "bytes": 9732,
+    "sha256": "de6cf10ef017a2b65eab72365e9ed33c84e3ce3008dab317baa4d492ebc4df5e"
+  },
+  {
+    "path": "rerun_single_20261030/host_supervisor_test.py",
+    "bytes": 2298,
+    "sha256": "fa95cb3d2e6d85d5dd099cb6bf16fec4a5b3cfdcda5c0869c92c9711b60d5ea8"
+  },
+  {
+    "path": "rerun_single_20261030/package.tar.gz",
+    "bytes": 1482505,
+    "sha256": "0d87a338c297db30936f9a96b9851bd3f90178d3298e3a4216e9cc3c9811883d"
+  },
+  {
+    "path": "rerun_single_20261030/readiness.py",
+    "bytes": 999,
+    "sha256": "e187a42e34df67dd2bcd2e78a14dbd7d82011b3dc9b9fd0eda9d2b91bc3df5a9"
+  },
+  {
     "path": "tools/verify_artifacts.py",
     "bytes": 416,
     "sha256": "95ee674d278299e9b2ba3170b18361dc421d74fdbbc6e0ff63d115ddc429bcaf"
