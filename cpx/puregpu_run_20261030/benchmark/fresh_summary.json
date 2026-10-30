@@ -1,0 +1,20 @@
+{
+  "note": "Four paired fresh-three-image requests. Request-specific goal prefix prevents full KV prefix reuse after goal; one corner pixel change per image invalidates multimodal image cache. Identical bytes per pair; two concurrent requests per server. No Android actions executed.",
+  "services": {
+    "offload2": {
+      "requests": 4,
+      "mean_latency_s": 57.216179677285254,
+      "median_latency_s": 57.21747184731066,
+      "mean_completion_tokens": 47,
+      "all_actions_valid": true
+    },
+    "puregpu": {
+      "requests": 4,
+      "mean_latency_s": 5.754924974404275,
+      "median_latency_s": 5.755077118054032,
+      "mean_completion_tokens": 47,
+      "all_actions_valid": true
+    }
+  },
+  "speedup": 9.94212434249988
+}

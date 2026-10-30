@@ -205,11 +205,6 @@
     "sha256": "6e37b5738b4d02fc2072cee53c61b08313883cacc25a15aa40539733232af562"
   },
   {
-    "path": "code_overlay/experiments/trace_reachability_validation/scripts/__pycache__/recovery_guard.cpython-312.pyc",
-    "bytes": 3563,
-    "sha256": "0a4a52f247cb5274a67958ca501fa821c5973cd9babaf843256309e4b4b0211c"
-  },
-  {
     "path": "code_overlay/experiments/trace_reachability_validation/scripts/explore_value.py",
     "bytes": 13824,
     "sha256": "4c4a9e9119b02b8e33a2b418a69bbf77eb34e5fba398416d7bd29f05f20b237d"
@@ -803,6 +798,71 @@
     "path": "patches/android_world_tracked_changes.patch",
     "bytes": 45674,
     "sha256": "9eec364654ba7e20e17ec93012bce21209a8377055c7f46471ad235e467e5da1"
+  },
+  {
+    "path": "puregpu_run_20261030/README.md",
+    "bytes": 1707,
+    "sha256": "6d271d315f777c832703beadb60b78bcb3bdb86f21340ea869abbc0f848c23a4"
+  },
+  {
+    "path": "puregpu_run_20261030/benchmark/benchmark.py",
+    "bytes": 4321,
+    "sha256": "09c0db7661f48ae01ffad6d60e1306f3a9ff63bdb342a1d052e7352f48a55d23"
+  },
+  {
+    "path": "puregpu_run_20261030/benchmark/benchmark_fresh.py",
+    "bytes": 3585,
+    "sha256": "3193cb48a0a8009083364189a7c066f7e88fccab0118a81c5561d108770c9931"
+  },
+  {
+    "path": "puregpu_run_20261030/benchmark/confirmed_summary.json",
+    "bytes": 898,
+    "sha256": "6667c40b371ccf6c5d4a84cf0e513bf4c106215daa1f7e3e6875db070ba56004"
+  },
+  {
+    "path": "puregpu_run_20261030/benchmark/fresh_summary.json",
+    "bytes": 742,
+    "sha256": "acaf9bbb01816ab08b4e7a75b6ef6b8b5e363fd54588d4e1c1b4ed78b6e5a87a"
+  },
+  {
+    "path": "puregpu_run_20261030/benchmark/start_server.py",
+    "bytes": 2046,
+    "sha256": "ad97266f024f82db0f946393448df4b1ed7240c1caac79c53fe17a16263eb556"
+  },
+  {
+    "path": "puregpu_run_20261030/deploy.py",
+    "bytes": 5142,
+    "sha256": "f479a026847f3bf390eee7373958d3046759d5b3679b7392b9fda81f2eb530bf"
+  },
+  {
+    "path": "puregpu_run_20261030/episode_entry.py",
+    "bytes": 584,
+    "sha256": "15fb696c02e9bdc4538a8a1f1e5dad82def0eaf10fb71d6de13ff8fbde6dc4c3"
+  },
+  {
+    "path": "puregpu_run_20261030/host_supervisor.py",
+    "bytes": 9812,
+    "sha256": "472133d6df2fcefb23f0b3a4eb7a4ad1a975e5b3d36bf837da3ead88ccd58e0b"
+  },
+  {
+    "path": "puregpu_run_20261030/host_supervisor_test.py",
+    "bytes": 2983,
+    "sha256": "077e0cd6d51488f84b77d861bd8235ccf78c24e55c50e339fe49ed3dc804f69b"
+  },
+  {
+    "path": "puregpu_run_20261030/package.tar.gz",
+    "bytes": 1482766,
+    "sha256": "4c661ac4f24c6e004510d684bf15fd723fec4837d560abab9738f0fb4b4c3dc0"
+  },
+  {
+    "path": "puregpu_run_20261030/readiness.py",
+    "bytes": 1000,
+    "sha256": "6d64638664e22c6d6546d70362f4f3014bed1485349e707973431af2578a3f51"
+  },
+  {
+    "path": "puregpu_run_20261030/run_config.json",
+    "bytes": 60697,
+    "sha256": "49fb0388c286b38b82091fe0908abb77052c83edd97ea0e81b248e534e69c777"
   },
   {
     "path": "reference/README.md",

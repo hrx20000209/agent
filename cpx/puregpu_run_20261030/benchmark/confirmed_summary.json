@@ -1,0 +1,26 @@
+{
+  "initial_three_image_request_s": {
+    "offload2": 30.92787793278694,
+    "puregpu": 4.132511600852013
+  },
+  "repeated_two_concurrent_requests": {
+    "requests_per_service": 4,
+    "offload2_mean_s": 3.0913602611981332,
+    "puregpu_mean_s": 1.5843981364741921,
+    "speedup": 1.951125913387798,
+    "completion_tokens_per_request": 46,
+    "all_actions_valid": true
+  },
+  "fresh_variant_benchmark": "dispatched; result retrieval blocked by SSH/network timeout",
+  "experiments": "supervisorSIGSTOP and episode processes terminated at explicit user request; not resumed",
+  "service": {
+    "gpu": 5,
+    "port": 18197,
+    "dtype": "bfloat16",
+    "max_model_len": 24576,
+    "max_images": 3,
+    "cpu_offload_gb": 0,
+    "gpu_memory_utilization": 0.97
+  },
+  "limitation": "Repeated identical requests benefit from cache; first-request speedup is one sample, not full-suite throughput."
+}
