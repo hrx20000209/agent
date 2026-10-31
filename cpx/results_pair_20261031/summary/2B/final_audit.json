@@ -1,0 +1,86 @@
+{
+  "updated_at": "2026-10-30T12:09:03.801409+00:00",
+  "host_pid": 2105962,
+  "arms": {
+    "BASE": {
+      "status": "FINISHED_WITH_ERRORS",
+      "arm": "BASE",
+      "started_at": "2026-10-30T09:37:20.514025+00:00",
+      "host_pid": 2105962,
+      "completed": 116,
+      "errors": [
+        "NotesTodoItemCount"
+      ],
+      "restarts": 2,
+      "heartbeat_at": "2026-10-30T12:09:00.025915+00:00",
+      "current_task": null,
+      "recovery_attempt": 1,
+      "last_environment_error": "RuntimeError('PREFLIGHT_RECOVERY RuntimeError(\\'fast-a11y returned an empty/unready UI tree\\')\\nTraceback (most recent call last):\\n  File \"/androidworld/readiness.py\", line 16, in <module>\\n    recover(\\'http://172.17.0.1:8100/v1/chat/completions\\',\\'MAI-UI-2B\\',c)\\n  File \"/androidworld/experiments/trace_reachability_validation/scripts/mai_resume_20261025.py\", line 41, in recover\\n    D.preflight(api, model, config)\\n  File \"/androidworld/experiments/trace_reachability_validation/scripts/mai_androidworld_driver.py\", line 53, in preflight\\n    size = struct.unpack(\">I\", read_exact(s, 4))[0]\\n                               ^^^^^^^^^^^^^^^^\\n  File \"/androidworld/experiments/trace_reachability_validation/scripts/mai_androidworld_driver.py\", line 47, in read_exact\\n    raise RuntimeError(\"fast-a11y closed the connection; install/enable the dumper before running\")\\nRuntimeError: fast-a11y closed the connection; install/enable the dumper before running\\n')",
+      "episode_elapsed_s": 137,
+      "last_activity_age_s": 2,
+      "docker_state": "running",
+      "last_result": {
+        "task": "VlcCreateTwoPlaylists",
+        "arm": "BASE",
+        "success": 0.0,
+        "model_calls": 20,
+        "allocated_budget": 20,
+        "complexity": 4.8,
+        "http_attempts": 20,
+        "observed_decisions": 20,
+        "done": false,
+        "rc": 0,
+        "error": null,
+        "teardown_error": null,
+        "e2e_s": 146.8,
+        "termination": "budget",
+        "recorded_at": "2026-10-30T12:09:00.023844+00:00"
+      },
+      "ended_at": "2026-10-30T12:09:00.025898+00:00",
+      "successes": 44
+    },
+    "FULL45": {
+      "status": "FINISHED_WITH_ERRORS",
+      "arm": "FULL45",
+      "started_at": "2026-10-30T09:37:20.515321+00:00",
+      "host_pid": 2105962,
+      "completed": 116,
+      "errors": [
+        "NotesTodoItemCount",
+        "RetroPlaylistDuration",
+        "RetroSavePlaylist"
+      ],
+      "restarts": 3,
+      "heartbeat_at": "2026-10-30T12:06:00.573928+00:00",
+      "current_task": null,
+      "recovery_attempt": 1,
+      "last_environment_error": "RuntimeError('PREFLIGHT_RECOVERY RuntimeError(\\'fast-a11y returned an empty/unready UI tree\\')\\nTraceback (most recent call last):\\n  File \"/androidworld/readiness.py\", line 16, in <module>\\n    recover(\\'http://172.17.0.1:8100/v1/chat/completions\\',\\'MAI-UI-2B\\',c)\\n  File \"/androidworld/experiments/trace_reachability_validation/scripts/mai_resume_20261025.py\", line 41, in recover\\n    D.preflight(api, model, config)\\n  File \"/androidworld/experiments/trace_reachability_validation/scripts/mai_androidworld_driver.py\", line 53, in preflight\\n    size = struct.unpack(\">I\", read_exact(s, 4))[0]\\n                               ^^^^^^^^^^^^^^^^\\n  File \"/androidworld/experiments/trace_reachability_validation/scripts/mai_androidworld_driver.py\", line 47, in read_exact\\n    raise RuntimeError(\"fast-a11y closed the connection; install/enable the dumper before running\")\\nRuntimeError: fast-a11y closed the connection; install/enable the dumper before running\\n')",
+      "episode_elapsed_s": 106,
+      "last_activity_age_s": 2,
+      "docker_state": "running",
+      "last_result": {
+        "task": "VlcCreateTwoPlaylists",
+        "arm": "FULL45",
+        "success": 0.0,
+        "model_calls": 20,
+        "allocated_budget": 20,
+        "complexity": 4.8,
+        "http_attempts": 20,
+        "observed_decisions": 20,
+        "done": false,
+        "rc": 0,
+        "error": null,
+        "teardown_error": null,
+        "e2e_s": 116.42,
+        "termination": "budget",
+        "recorded_at": "2026-10-30T12:06:00.567809+00:00"
+      },
+      "ended_at": "2026-10-30T12:06:00.573920+00:00",
+      "successes": 46
+    }
+  },
+  "vllm_queue": [
+    "vllm:num_requests_running{engine=\"0\",model_name=\"MAI-UI-2B\"} 0.0",
+    "vllm:num_requests_waiting{engine=\"0\",model_name=\"MAI-UI-2B\"} 0.0"
+  ]
+}

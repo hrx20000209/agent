@@ -1,0 +1,139 @@
+{
+  "8B": {
+    "BASE": {
+      "tasks": 116,
+      "successes": 61,
+      "success_rate_pct": 52.58620689655172,
+      "calls_observed_tasks": 116,
+      "mean_calls": 15.344827586206897,
+      "success_mean_calls": 11.0,
+      "episode_wall_s": 15399.81,
+      "error_tasks": [],
+      "partial_scores": [
+        {
+          "task": "RetroSavePlaylist",
+          "score": 0.5
+        }
+      ]
+    },
+    "FULL45": {
+      "tasks": 116,
+      "successes": 56,
+      "success_rate_pct": 48.275862068965516,
+      "calls_observed_tasks": 115,
+      "mean_calls": 14.28695652173913,
+      "success_mean_calls": 9.089285714285714,
+      "episode_wall_s": 14420.42,
+      "error_tasks": [
+        "TasksCompletedTasksForDate"
+      ],
+      "partial_scores": [
+        {
+          "task": "MarkorCreateNoteAndSms",
+          "score": 0.5
+        },
+        {
+          "task": "TurnOffWifiAndTurnOnBluetooth",
+          "score": 0.5
+        }
+      ]
+    },
+    "paired": {
+      "common_successes": 44,
+      "full_calls": 8.954545454545455,
+      "base_calls": 9.886363636363637,
+      "call_change_pct": -9.425287356321832,
+      "lost": [
+        "BrowserMaze",
+        "BrowserMultiply",
+        "MarkorCreateNote",
+        "MarkorCreateNoteFromClipboard",
+        "RecipeDeleteMultipleRecipesWithNoise",
+        "RetroCreatePlaylist",
+        "SimpleCalendarEventsInTimeRange",
+        "SimpleCalendarDeleteEventsOnRelativeDay",
+        "SimpleCalendarEventOnDateAtTime",
+        "SimpleCalendarAddOneEventRelativeDay",
+        "SimpleCalendarAddOneEventTomorrow",
+        "SimpleSmsReply",
+        "SportsTrackerLongestDistanceActivity",
+        "SystemCopyToClipboard",
+        "TasksHighPriorityTasks",
+        "TurnOffWifiAndTurnOnBluetooth",
+        "VlcCreatePlaylist"
+      ],
+      "gained": [
+        "ContactsNewContactDraft",
+        "ExpenseAddSingle",
+        "ExpenseDeleteMultiple2",
+        "ExpenseAddMultiple",
+        "FilesMoveFile",
+        "MarkorMoveNote",
+        "MarkorChangeNoteContent",
+        "RecipeAddSingleRecipe",
+        "RecipeAddMultipleRecipes",
+        "SimpleCalendarNextEvent",
+        "SimpleSmsResend",
+        "SportsTrackerTotalDurationForCategoryThisWeek"
+      ],
+      "common_wall_change_pct": -10.070742747055839
+    },
+    "all_episode_wall_change_pct": -6.359753789170119
+  },
+  "2B": {
+    "BASE": {
+      "tasks": 116,
+      "successes": 44,
+      "success_rate_pct": 37.93103448275862,
+      "calls_observed_tasks": 115,
+      "mean_calls": 12.02608695652174,
+      "success_mean_calls": 7.431818181818182,
+      "episode_wall_s": 8956.1,
+      "error_tasks": [
+        "NotesTodoItemCount"
+      ],
+      "partial_scores": []
+    },
+    "FULL45": {
+      "tasks": 116,
+      "successes": 46,
+      "success_rate_pct": 39.6551724137931,
+      "calls_observed_tasks": 113,
+      "mean_calls": 10.938053097345133,
+      "success_mean_calls": 6.021739130434782,
+      "episode_wall_s": 8717.73,
+      "error_tasks": [
+        "NotesTodoItemCount",
+        "RetroPlaylistDuration",
+        "RetroSavePlaylist"
+      ],
+      "partial_scores": []
+    },
+    "paired": {
+      "common_successes": 38,
+      "full_calls": 5.7105263157894735,
+      "base_calls": 6.973684210526316,
+      "call_change_pct": -18.113207547169818,
+      "lost": [
+        "AudioRecorderRecordAudioWithFileName",
+        "MarkorCreateNote",
+        "RecipeDeleteDuplicateRecipes",
+        "RecipeDeleteMultipleRecipesWithNoise",
+        "SimpleCalendarEventsInTimeRange",
+        "SimpleSmsReply"
+      ],
+      "gained": [
+        "ContactsNewContactDraft",
+        "ExpenseDeleteMultiple2",
+        "OpenAppTaskEval",
+        "RecipeAddSingleRecipe",
+        "SimpleCalendarEventsOnDate",
+        "SimpleSmsSendClipboardContent",
+        "SimpleSmsSendReceivedAddress",
+        "TasksHighPriorityTasks"
+      ],
+      "common_wall_change_pct": -0.5651227614647425
+    },
+    "all_episode_wall_change_pct": -2.661537946204273
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "updated_at": "2026-10-30T13:42:37.207138+00:00",
+  "host_pid": 1986632,
+  "arms": {
+    "BASE": {
+      "status": "FINISHED",
+      "arm": "BASE",
+      "started_at": "2026-10-30T09:24:17.231838+00:00",
+      "host_pid": 1986632,
+      "completed": 116,
+      "errors": [],
+      "restarts": 0,
+      "heartbeat_at": "2026-10-30T13:42:31.518381+00:00",
+      "current_task": null,
+      "recovery_attempt": 1,
+      "episode_elapsed_s": 197,
+      "last_activity_age_s": 0,
+      "docker_state": "running",
+      "last_result": {
+        "task": "VlcCreateTwoPlaylists",
+        "arm": "BASE",
+        "success": 0.0,
+        "model_calls": 30,
+        "allocated_budget": 30,
+        "complexity": 4.8,
+        "http_attempts": 30,
+        "observed_decisions": 30,
+        "done": false,
+        "rc": 0,
+        "error": null,
+        "teardown_error": null,
+        "e2e_s": 207.5,
+        "termination": "budget",
+        "recorded_at": "2026-10-30T13:42:31.515347+00:00"
+      },
+      "ended_at": "2026-10-30T13:42:31.518369+00:00",
+      "successes": 61
+    },
+    "FULL45": {
+      "status": "FINISHED_WITH_ERRORS",
+      "arm": "FULL45",
+      "started_at": "2026-10-30T09:24:17.238858+00:00",
+      "host_pid": 1986632,
+      "completed": 116,
+      "errors": [
+        "TasksCompletedTasksForDate"
+      ],
+      "restarts": 0,
+      "heartbeat_at": "2026-10-30T13:26:09.625867+00:00",
+      "current_task": null,
+      "recovery_attempt": 1,
+      "episode_elapsed_s": 289,
+      "last_activity_age_s": 0,
+      "docker_state": "running",
+      "last_result": {
+        "task": "VlcCreateTwoPlaylists",
+        "arm": "FULL45",
+        "success": 0.0,
+        "model_calls": 30,
+        "allocated_budget": 30,
+        "complexity": 4.8,
+        "http_attempts": 30,
+        "observed_decisions": 30,
+        "done": false,
+        "rc": 0,
+        "error": null,
+        "teardown_error": null,
+        "e2e_s": 293.67,
+        "termination": "budget",
+        "recorded_at": "2026-10-30T13:26:09.623310+00:00"
+      },
+      "ended_at": "2026-10-30T13:26:09.625850+00:00",
+      "successes": 56
+    }
+  },
+  "vllm_queue": [
+    "vllm:num_requests_running{engine=\"0\",model_name=\"MAI-UI-8B\"} 0.0",
+    "vllm:num_requests_waiting{engine=\"0\",model_name=\"MAI-UI-8B\"} 0.0"
+  ]
+}

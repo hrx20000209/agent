@@ -1,6 +1,12 @@
-# CPX：MAI-UI-8B AndroidWorld 实验归档
+# CPX：MAI-UI AndroidWorld 实验归档
 
 本分支用于学长审阅 CPX 的代码修改、启动方式和原始实验结果。实验实际运行在 `hrx20000209/android_world` 的派生工作目录；因目前仅有 `hrx20000209/agent` 的写权限，在此仓库独立 `cpx/` 目录归档，不改动原项目入口。
+
+## 最新完成的实验（10月31日归档）
+
+- [纯GPU 8B/2B四组全116题：结果、原始日志、启动配置](results_pair_20261031/)
+- [8B成功率下降与加速有限的逐题诊断](results_pair_20261031/diagnosis_8b.md)
+- 最新四组基于upstream81a1531；下方10月29日三轮50调用实验属于历史归档，不能混用预算和成绩。
 
 ## 从这里看
 
@@ -18,7 +24,7 @@
 - [原始数据归档说明](data/README.md)
 - [本次归档验证](VALIDATION.md)
 
-## 版本和口径
+## 历史三轮的版本和口径（非最新四组）
 
 实验代码基于 AndroidWorld 提交 `643303c9fb8c010edeb0dec3a63887055e39ca95`（2026-10-23）。这不是学长 10 月 29 日新增的 SEENR 实现。`code_overlay/` 保存 CPX 修复后代码，历史运行有 source_snapshot 时以归档中的当轮快照为准。不可用修复后代码声称精确复现修复前轨迹。
 
