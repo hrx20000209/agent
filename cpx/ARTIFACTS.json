@@ -6,8 +6,8 @@
   },
   {
     "path": "README.md",
-    "bytes": 2792,
-    "sha256": "d3b2ca7b76a520e6118199da7b0242cf6adb71d14303b80224fca0287661c3b3"
+    "bytes": 3046,
+    "sha256": "d1b56feda1ba0fd348c1a47a49ea87bab1af9386e82788ab4d189b872c217711"
   },
   {
     "path": "VALIDATION.md",
@@ -663,6 +663,111 @@
     "path": "data/summary/mai8b_warm_smoke2_20261025/runs.jsonl",
     "bytes": 872,
     "sha256": "c2af65ef70b956187d14a9a05e3785f8b483d9ae87784e0c1e3c892694666d1d"
+  },
+  {
+    "path": "guiowl_run_20261031/README.md",
+    "bytes": 4957,
+    "sha256": "43333069badb6b77558dc45da417948a2d45785fbe57856dff0034319752201d"
+  },
+  {
+    "path": "guiowl_run_20261031/adapter/owl_coordinate_resize.py",
+    "bytes": 10262,
+    "sha256": "6fd9140b5b72b8f9bfbadaacefa5f23fa14a23d542c2c25ece5d9e1d8e0516c1"
+  },
+  {
+    "path": "guiowl_run_20261031/adapter/owl_official_agent_source.py",
+    "bytes": 15172,
+    "sha256": "d74a26e8610c70d1e21b05abb9edce0267d82c16a86fc2e74e40b1bac9b347fd"
+  },
+  {
+    "path": "guiowl_run_20261031/adapter/owl_protocol.py",
+    "bytes": 5960,
+    "sha256": "9115d3262fb36fa811f5c683bc9138e48c828a0859508690a24aa0e2cab13fde"
+  },
+  {
+    "path": "guiowl_run_20261031/adapter/owl_upstream_probe.py",
+    "bytes": 12333,
+    "sha256": "35f4be739f3d01bd73f9b7fdae4265e359b991742a6b6fd31d2f2ae0bd7adaaf"
+  },
+  {
+    "path": "guiowl_run_20261031/deploy.py",
+    "bytes": 6338,
+    "sha256": "3abd5df59a7c5b35b0d93be94d8f6987cd3a0ff013397b35d3922118e8d4f582"
+  },
+  {
+    "path": "guiowl_run_20261031/episode_entry.py",
+    "bytes": 584,
+    "sha256": "ed411b1b0f90b1fca749efe7a531749ed9da91888e51ae8b6bcdfe17e836b414"
+  },
+  {
+    "path": "guiowl_run_20261031/host_supervisor.py",
+    "bytes": 9966,
+    "sha256": "c8109e248d6ccb35c5493bf0ee818997db6fd9c4d0ff33efd00abc2b22089977"
+  },
+  {
+    "path": "guiowl_run_20261031/host_supervisor_test.py",
+    "bytes": 2983,
+    "sha256": "077e0cd6d51488f84b77d861bd8235ccf78c24e55c50e339fe49ed3dc804f69b"
+  },
+  {
+    "path": "guiowl_run_20261031/model_service/launch.json",
+    "bytes": 1542,
+    "sha256": "f6f731bd582a9666427aad501b3ce16a7d67fcc29d20dbd765838510b7389631"
+  },
+  {
+    "path": "guiowl_run_20261031/model_service/official_mobile_system.txt",
+    "bytes": 3701,
+    "sha256": "8d9225e23f26f795650a9b618f318ea65952f1f0e695cc0e2a9f485111c7183c"
+  },
+  {
+    "path": "guiowl_run_20261031/model_service/previous_services_stopped.json",
+    "bytes": 4733,
+    "sha256": "e0e0307f47acbd3dc57226d44e8785ae56bfd2b670e2552a48974ba7851e3684"
+  },
+  {
+    "path": "guiowl_run_20261031/model_service/smoke.py",
+    "bytes": 2881,
+    "sha256": "14a326e87e0834c402981b85f3598afc57d92cd33d319d36dfcb8718595ed74f"
+  },
+  {
+    "path": "guiowl_run_20261031/model_service/smoke_summary.json",
+    "bytes": 2231,
+    "sha256": "866cb9c4cb871abd945fc42c47aba21610500aaef23bbe316e913603f9d7cfb5"
+  },
+  {
+    "path": "guiowl_run_20261031/model_service/start_server.py",
+    "bytes": 2717,
+    "sha256": "492dd64d963c440abc9e670efe123e94a88644881fb6f8359734f2a42dcca8b4"
+  },
+  {
+    "path": "guiowl_run_20261031/model_service/verification.json",
+    "bytes": 3504,
+    "sha256": "9c7a9ca1c0ba4dd94b46fb39235ecc9cf4f2825ba8273eaa686c4551bd7907ca"
+  },
+  {
+    "path": "guiowl_run_20261031/owl_protocol_test.py",
+    "bytes": 2841,
+    "sha256": "3a18637c9c40f3c7b26baec2a35e5fe892cb342e6d3438ffc647aed7760f4af5"
+  },
+  {
+    "path": "guiowl_run_20261031/package.tar.gz",
+    "bytes": 1477507,
+    "sha256": "41839496cb1400af7a7cbe29258c572664fba509faa2163afd58da4e92a6dadc"
+  },
+  {
+    "path": "guiowl_run_20261031/readiness.py",
+    "bytes": 1107,
+    "sha256": "a33769ffed13bb7fafb3725926383be1a9f6473d427c71072492f2ba6cb0931a"
+  },
+  {
+    "path": "guiowl_run_20261031/run_config.json",
+    "bytes": 62826,
+    "sha256": "943c69ec9881851b6557c1a0d7fff0e8249defec873eac209f41dfaf961e4863"
+  },
+  {
+    "path": "guiowl_run_20261031/runtime_import_check.log",
+    "bytes": 862,
+    "sha256": "54cd63b8b81c978cbba956e430a84f8a163a5b154f82459832f528153a7b80c8"
   },
   {
     "path": "launch/README.md",

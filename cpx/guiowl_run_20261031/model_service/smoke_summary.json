@@ -1,0 +1,71 @@
+{
+  "completed_at": "2026-10-31T03:03:40.802452+00:00",
+  "note": "Recorded screenshots and synthetic wait history, official upstream mobile prompt; service inference only, no Android actions executed.",
+  "results": [
+    {
+      "label": "smoke_single_image",
+      "images": 1,
+      "latency_s": 2.6939745880663395,
+      "usage": {
+        "prompt_tokens": 3505,
+        "total_tokens": 3532,
+        "completion_tokens": 27,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": null
+      },
+      "response": "Action: Wait for one second.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"wait\"}}\n</tool_call>",
+      "tool_call": {
+        "name": "mobile_use",
+        "arguments": {
+          "action": "wait"
+        }
+      },
+      "valid": true,
+      "finish_reason": "stop"
+    },
+    {
+      "label": "smoke_concurrent5_0",
+      "images": 5,
+      "latency_s": 9.133742332458496,
+      "usage": {
+        "prompt_tokens": 13853,
+        "total_tokens": 13886,
+        "completion_tokens": 33,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": null
+      },
+      "response": "Action: Wait for one second.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"terminate\", \"status\": \"success\"}}\n</tool_call>",
+      "tool_call": {
+        "name": "mobile_use",
+        "arguments": {
+          "action": "terminate",
+          "status": "success"
+        }
+      },
+      "valid": true,
+      "finish_reason": "stop"
+    },
+    {
+      "label": "smoke_concurrent5_1",
+      "images": 5,
+      "latency_s": 9.13650163821876,
+      "usage": {
+        "prompt_tokens": 13853,
+        "total_tokens": 13886,
+        "completion_tokens": 33,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": null
+      },
+      "response": "Action: Wait for one second.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"terminate\", \"status\": \"success\"}}\n</tool_call>",
+      "tool_call": {
+        "name": "mobile_use",
+        "arguments": {
+          "action": "terminate",
+          "status": "success"
+        }
+      },
+      "valid": true,
+      "finish_reason": "stop"
+    }
+  ]
+}

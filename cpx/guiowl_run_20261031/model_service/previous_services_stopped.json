@@ -1,0 +1,59 @@
+{
+  "requested_at": "2026-10-31T03:00:45.104716+00:00",
+  "services": [
+    {
+      "api_pid": 2940621,
+      "args": "/home/pxchen/workspace/services/minicpmo45_20260929/venv312/bin/python -m vllm.entrypoints.openai.api_server --model /home/pxchen/workspace/models/MAI-UI-8B --served-model-name MAI-UI-8B --host 0.0.0.0 --port 8097 --tensor-parallel-size 1 --dtype bfloat16 --max-model-len 24576 --gpu-memory-utilization 0.9 --max-num-seqs 8 --max-num-batched-tokens 1024 --limit-mm-per-prompt {\"image\":3,\"video\":0} --seed 0 --enforce-eager --attention-backend TRITON_ATTN --cpu-offload-gb 2 ",
+      "processes": [
+        {
+          "pid": 2940621,
+          "args": "/home/pxchen/workspace/services/minicpmo45_20260929/venv312/bin/python -m vllm.entrypoints.openai.api_server --model /home/pxchen/workspace/models/MAI-UI-8B --served-model-name MAI-UI-8B --host 0.0.0.0 --port 8097 --tensor-parallel-size 1 --dtype bfloat16 --max-model-len 24576 --gpu-memory-utilization 0.9 --max-num-seqs 8 --max-num-batched-tokens 1024 --limit-mm-per-prompt {\"image\":3,\"video\":0} --seed 0 --enforce-eager --attention-backend TRITON_ATTN --cpu-offload-gb 2 "
+        },
+        {
+          "pid": 2943186,
+          "args": "/home/pxchen/workspace/services/minicpmo45_20260929/venv312/bin/python -c from multiprocessing.resource_tracker import main;main(74) "
+        },
+        {
+          "pid": 2943187,
+          "args": "VLLM::EngineCore                                                                                                                                                                         "
+        }
+      ]
+    },
+    {
+      "api_pid": 3843073,
+      "args": "/home/pxchen/workspace/services/minicpmo45_20260929/venv312/bin/python -m vllm.entrypoints.openai.api_server --model /home/pxchen/workspace/models/MAI-UI-2B --served-model-name MAI-UI-2B --host 0.0.0.0 --port 8100 --tensor-parallel-size 1 --dtype bfloat16 --max-model-len 24576 --gpu-memory-utilization 0.38 --max-num-seqs 2 --max-num-batched-tokens 1024 --limit-mm-per-prompt {\"image\":3,\"video\":0} --seed 0 --enforce-eager --attention-backend TRITON_ATTN ",
+      "processes": [
+        {
+          "pid": 3843073,
+          "args": "/home/pxchen/workspace/services/minicpmo45_20260929/venv312/bin/python -m vllm.entrypoints.openai.api_server --model /home/pxchen/workspace/models/MAI-UI-2B --served-model-name MAI-UI-2B --host 0.0.0.0 --port 8100 --tensor-parallel-size 1 --dtype bfloat16 --max-model-len 24576 --gpu-memory-utilization 0.38 --max-num-seqs 2 --max-num-batched-tokens 1024 --limit-mm-per-prompt {\"image\":3,\"video\":0} --seed 0 --enforce-eager --attention-backend TRITON_ATTN "
+        },
+        {
+          "pid": 3846194,
+          "args": "/home/pxchen/workspace/services/minicpmo45_20260929/venv312/bin/python -c from multiprocessing.resource_tracker import main;main(74) "
+        },
+        {
+          "pid": 3846195,
+          "args": "VLLM::EngineCore                                                                                                                                                                         "
+        }
+      ]
+    },
+    {
+      "api_pid": 3888458,
+      "args": "/home/pxchen/workspace/services/minicpmo45_20260929/venv312/bin/python -m vllm.entrypoints.openai.api_server --model /home/pxchen/workspace/models/MAI-UI-8B --served-model-name MAI-UI-8B --host 0.0.0.0 --port 18197 --tensor-parallel-size 1 --dtype bfloat16 --max-model-len 24576 --gpu-memory-utilization 0.97 --max-num-seqs 8 --max-num-batched-tokens 1024 --limit-mm-per-prompt {\"image\":3,\"video\":0} --seed 0 --enforce-eager --attention-backend TRITON_ATTN --cpu-offload-gb 0 ",
+      "processes": [
+        {
+          "pid": 3888458,
+          "args": "/home/pxchen/workspace/services/minicpmo45_20260929/venv312/bin/python -m vllm.entrypoints.openai.api_server --model /home/pxchen/workspace/models/MAI-UI-8B --served-model-name MAI-UI-8B --host 0.0.0.0 --port 18197 --tensor-parallel-size 1 --dtype bfloat16 --max-model-len 24576 --gpu-memory-utilization 0.97 --max-num-seqs 8 --max-num-batched-tokens 1024 --limit-mm-per-prompt {\"image\":3,\"video\":0} --seed 0 --enforce-eager --attention-backend TRITON_ATTN --cpu-offload-gb 0 "
+        },
+        {
+          "pid": 3893971,
+          "args": "/home/pxchen/workspace/services/minicpmo45_20260929/venv312/bin/python -c from multiprocessing.resource_tracker import main;main(74) "
+        },
+        {
+          "pid": 3893972,
+          "args": "VLLM::EngineCore                                                                                                                                                                         "
+        }
+      ]
+    }
+  ]
+}
