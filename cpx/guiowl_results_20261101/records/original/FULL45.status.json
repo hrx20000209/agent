@@ -1,0 +1,40 @@
+{
+  "status": "FINISHED_WITH_ERRORS",
+  "arm": "FULL45",
+  "started_at": "2026-10-31T03:12:32.110890+00:00",
+  "host_pid": 2805116,
+  "completed": 116,
+  "errors": [
+    "ExpenseDeleteSingle",
+    "OsmAndFavorite",
+    "RecipeAddMultipleRecipesFromMarkor",
+    "SystemBluetoothTurnOn",
+    "SystemBluetoothTurnOnVerify",
+    "TasksDueNextWeek"
+  ],
+  "restarts": 0,
+  "heartbeat_at": "2026-10-31T08:12:36.696654+00:00",
+  "current_task": null,
+  "recovery_attempt": 1,
+  "episode_elapsed_s": 637,
+  "last_activity_age_s": 12,
+  "docker_state": "running",
+  "last_result": {
+    "task": "VlcCreateTwoPlaylists",
+    "arm": "FULL45",
+    "success": 0.0,
+    "model_calls": 48,
+    "allocated_budget": 48,
+    "complexity": 4.8,
+    "http_attempts": 48,
+    "observed_decisions": 48,
+    "done": false,
+    "rc": 0,
+    "error": null,
+    "teardown_error": null,
+    "e2e_s": 647.65,
+    "termination": "budget",
+    "recorded_at": "2026-10-31T08:12:36.689602+00:00"
+  },
+  "ended_at": "2026-10-31T08:12:36.696639+00:00"
+}

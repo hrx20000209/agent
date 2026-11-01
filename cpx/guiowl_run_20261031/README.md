@@ -2,6 +2,8 @@
 
 用户要求：参考官方提示词与配置、temperature=0，两个独立AndroidWorld容器分别跑BASE和FULL45。
 
+本轮已结束：原始BASE54/116、FULL45 53/116。原始逐题记录、完整日志及后续open_app修复结果统一归档在[11月1日结果目录](../guiowl_results_20261101/)。本目录仍保留原始未修复版本，不能当作修复版源码。
+
 ## 固定设置
 
 - 模型权重：`mPLUG/GUI-Owl-1.5-8B-Instruct`，revision `06d5faecff74840bab2be2425e9c42667a5d04fc`，全部16文件及四分片官方SHA256校验通过。

@@ -1,0 +1,333 @@
+{
+  "original_base": {
+    "tasks": 116,
+    "successes": 54,
+    "success_rate_pct": 46.55172413793103,
+    "mean_calls": 14.137614678899082,
+    "known_calls_tasks": 109,
+    "successful_mean_calls": 9.11111111111111,
+    "errors": [
+      {
+        "task": "MarkorCreateNote",
+        "error": "RuntimeError('GUI-Owl failed after 3 attempts; no guessed action executed: Unsupported GUI-Owl action: open_app | Unsupported GUI-Owl action: open_app | Unsupported GUI-Owl action: open_app')",
+        "rc": 0,
+        "observed_decisions": 0,
+        "termination": "execution_error"
+      },
+      {
+        "task": "MarkorChangeNoteContent",
+        "error": "RuntimeError('GUI-Owl failed after 3 attempts; no guessed action executed: Unsupported GUI-Owl action: open_app | Unsupported GUI-Owl action: open_app | Unsupported GUI-Owl action: open_app')",
+        "rc": 0,
+        "observed_decisions": 0,
+        "termination": "execution_error"
+      },
+      {
+        "task": "MarkorMergeNotes",
+        "error": "RuntimeError('GUI-Owl failed after 3 attempts; no guessed action executed: Unsupported GUI-Owl action: open_app | Unsupported GUI-Owl action: open_app | Unsupported GUI-Owl action: open_app')",
+        "rc": 0,
+        "observed_decisions": 0,
+        "termination": "execution_error"
+      },
+      {
+        "task": "NotesMeetingAttendeeCount",
+        "error": "RuntimeError('GUI-Owl failed after 3 attempts; no guessed action executed: Unsupported GUI-Owl action: open_app | Unsupported GUI-Owl action: open_app | Unsupported GUI-Owl action: open_app')",
+        "rc": 0,
+        "observed_decisions": 0,
+        "termination": "execution_error"
+      },
+      {
+        "task": "SimpleCalendarDeleteEventsOnRelativeDay",
+        "error": "RuntimeError('GUI-Owl failed after 3 attempts; no guessed action executed: Unsupported GUI-Owl action: open_app | Unsupported GUI-Owl action: open_app | Unsupported GUI-Owl action: open_app')",
+        "rc": 0,
+        "observed_decisions": 0,
+        "termination": "execution_error"
+      },
+      {
+        "task": "SportsTrackerLongestDistanceActivity",
+        "error": "RuntimeError('GUI-Owl failed after 3 attempts; no guessed action executed: Unsupported GUI-Owl action: open_app | Unsupported GUI-Owl action: open_app | Unsupported GUI-Owl action: open_app')",
+        "rc": 0,
+        "observed_decisions": 0,
+        "termination": "execution_error"
+      },
+      {
+        "task": "TasksDueNextWeek",
+        "error": "RuntimeError('GUI-Owl failed after 3 attempts; no guessed action executed: Unsupported GUI-Owl action: open_app | Unsupported GUI-Owl action: open_app | Unsupported GUI-Owl action: open_app')",
+        "rc": 0,
+        "observed_decisions": 0,
+        "termination": "execution_error"
+      }
+    ]
+  },
+  "original_full45": {
+    "tasks": 116,
+    "successes": 53,
+    "success_rate_pct": 45.689655172413794,
+    "mean_calls": 10.536363636363637,
+    "known_calls_tasks": 110,
+    "successful_mean_calls": 6.39622641509434,
+    "errors": [
+      {
+        "task": "ExpenseDeleteSingle",
+        "error": "RuntimeError('GUI-Owl failed after 3 attempts; no guessed action executed: Expected finite normalized coordinate pair | Expected finite normalized coordinate pair | Expected finite normalized coordinate pair')",
+        "rc": 0,
+        "observed_decisions": 1,
+        "termination": "execution_error"
+      },
+      {
+        "task": "OsmAndFavorite",
+        "error": "RuntimeError('GUI-Owl failed after 3 attempts; no guessed action executed: Unsupported GUI-Owl action: open_app | Unsupported GUI-Owl action: open_app | Unsupported GUI-Owl action: open_app')",
+        "rc": 0,
+        "observed_decisions": 0,
+        "termination": "execution_error"
+      },
+      {
+        "task": "RecipeAddMultipleRecipesFromMarkor",
+        "error": "RuntimeError('GUI-Owl failed after 3 attempts; no guessed action executed: Unsupported GUI-Owl action: open_app | Unsupported GUI-Owl action: open_app | Unsupported GUI-Owl action: open_app')",
+        "rc": 0,
+        "observed_decisions": 2,
+        "termination": "execution_error"
+      },
+      {
+        "task": "SystemBluetoothTurnOn",
+        "error": "RuntimeError('GUI-Owl failed after 3 attempts; no guessed action executed: Expected finite normalized coordinate pair | Expected finite normalized coordinate pair | Expected finite normalized coordinate pair')",
+        "rc": 0,
+        "observed_decisions": 1,
+        "termination": "execution_error"
+      },
+      {
+        "task": "SystemBluetoothTurnOnVerify",
+        "error": "RuntimeError('GUI-Owl failed after 3 attempts; no guessed action executed: Expected finite normalized coordinate pair | Expected finite normalized coordinate pair | Expected finite normalized coordinate pair')",
+        "rc": 0,
+        "observed_decisions": 1,
+        "termination": "execution_error"
+      },
+      {
+        "task": "TasksDueNextWeek",
+        "error": "RuntimeError('GUI-Owl failed after 3 attempts; no guessed action executed: Unsupported GUI-Owl action: open_app | Unsupported GUI-Owl action: open_app | Unsupported GUI-Owl action: open_app')",
+        "rc": 0,
+        "observed_decisions": 0,
+        "termination": "execution_error"
+      }
+    ]
+  },
+  "base7": {
+    "tasks": 7,
+    "successes": 3,
+    "success_rate_pct": 42.857142857142854,
+    "mean_calls": 18.714285714285715,
+    "known_calls_tasks": 7,
+    "successful_mean_calls": 9.666666666666666,
+    "errors": []
+  },
+  "corrected_base": {
+    "tasks": 116,
+    "successes": 57,
+    "success_rate_pct": 49.13793103448276,
+    "mean_calls": 14.413793103448276,
+    "known_calls_tasks": 116,
+    "successful_mean_calls": 9.140350877192983,
+    "errors": []
+  },
+  "corrected_full45": {
+    "tasks": 116,
+    "successes": 56,
+    "success_rate_pct": 48.275862068965516,
+    "mean_calls": 9.9375,
+    "known_calls_tasks": 112,
+    "successful_mean_calls": 7.142857142857143,
+    "errors": [
+      {
+        "task": "ExpenseDeleteSingle",
+        "error": "RuntimeError('GUI-Owl failed after 3 attempts; no guessed action executed: Expected finite normalized coordinate pair | Expected finite normalized coordinate pair | Expected finite normalized coordinate pair')",
+        "rc": 0,
+        "observed_decisions": 1,
+        "termination": "execution_error"
+      },
+      {
+        "task": "SystemBluetoothTurnOn",
+        "error": "RuntimeError('GUI-Owl failed after 3 attempts; no guessed action executed: Expected finite normalized coordinate pair | Expected finite normalized coordinate pair | Expected finite normalized coordinate pair')",
+        "rc": 0,
+        "observed_decisions": 1,
+        "termination": "execution_error"
+      },
+      {
+        "task": "SystemBluetoothTurnOnVerify",
+        "error": "RuntimeError('GUI-Owl failed after 3 attempts; no guessed action executed: Expected finite normalized coordinate pair | Expected finite normalized coordinate pair | Expected finite normalized coordinate pair')",
+        "rc": 0,
+        "observed_decisions": 1,
+        "termination": "execution_error"
+      },
+      {
+        "task": "VlcCreateTwoPlaylists",
+        "error": "container exited: {\"Status\": \"exited\", \"Running\": false, \"Paused\": false, \"Restarting\": false, \"OOMKilled\": true, \"Dead\": false, \"Pid\": 0, \"ExitCode\": 137, \"Error\": \"\", \"StartedAt\": \"2026-10-31T16:49:07.815865052Z\", \"FinishedAt\": \"2026-10-31T20:53:36.364991276Z\"}",
+        "rc": 137,
+        "observed_decisions": 41,
+        "termination": "infrastructure_error"
+      }
+    ]
+  },
+  "original_pair": {
+    "common_success_tasks": [
+      "AudioRecorderRecordAudio",
+      "ClockStopWatchPausedVerify",
+      "ExpenseAddSingle",
+      "ExpenseDeleteDuplicates",
+      "ExpenseDeleteMultiple",
+      "FilesDeleteFile",
+      "FilesMoveFile",
+      "MarkorCreateFolder",
+      "MarkorDeleteAllNotes",
+      "MarkorDeleteNewestNote",
+      "MarkorDeleteNote",
+      "NotesRecipeIngredientCount",
+      "NotesTodoItemCount",
+      "OpenAppTaskEval",
+      "RecipeDeleteDuplicateRecipes",
+      "RecipeDeleteMultipleRecipes",
+      "RecipeDeleteSingleRecipe",
+      "RecipeDeleteSingleWithRecipeWithNoise",
+      "SaveCopyOfReceiptTaskEval",
+      "SimpleCalendarAddOneEvent",
+      "SimpleCalendarAddOneEventInTwoWeeks",
+      "SimpleCalendarAddOneEventTomorrow",
+      "SimpleCalendarAddRepeatingEvent",
+      "SimpleCalendarAnyEventsOnDate",
+      "SimpleCalendarDeleteEvents",
+      "SimpleCalendarDeleteOneEvent",
+      "SimpleCalendarLocationOfEvent",
+      "SimpleCalendarNextMeetingWithPerson",
+      "SimpleSmsReplyMostRecent",
+      "SimpleSmsResend",
+      "SimpleSmsSend",
+      "SimpleSmsSendClipboardContent",
+      "SportsTrackerActivitiesCountForWeek",
+      "SystemBluetoothTurnOff",
+      "SystemBluetoothTurnOffVerify",
+      "SystemBrightnessMaxVerify",
+      "SystemBrightnessMinVerify",
+      "SystemWifiTurnOff",
+      "SystemWifiTurnOffVerify",
+      "SystemWifiTurnOn",
+      "SystemWifiTurnOnVerify",
+      "TasksHighPriorityTasks",
+      "TurnOffWifiAndTurnOnBluetooth",
+      "TurnOnWifiAndOpenApp"
+    ],
+    "n": 44,
+    "base_mean": 8.75,
+    "full_mean": 6.681818181818182,
+    "change_pct": -23.636363636363633,
+    "gained": [
+      "ContactsAddContact",
+      "ContactsNewContactDraft",
+      "ExpenseAddMultiple",
+      "NotesMeetingAttendeeCount",
+      "RecipeAddMultipleRecipes",
+      "RecipeAddSingleRecipe",
+      "SimpleCalendarDeleteEventsOnRelativeDay",
+      "SimpleCalendarNextEvent",
+      "SimpleSmsSendReceivedAddress"
+    ],
+    "lost": [
+      "CameraTakePhoto",
+      "ExpenseDeleteMultiple2",
+      "MarkorCreateNoteAndSms",
+      "MarkorCreateNoteFromClipboard",
+      "SimpleCalendarAddOneEventRelativeDay",
+      "SimpleSmsReply",
+      "SystemBluetoothTurnOn",
+      "SystemBluetoothTurnOnVerify",
+      "SystemBrightnessMin",
+      "TasksIncompleteTasksOnDate"
+    ]
+  },
+  "corrected_pair": {
+    "common_success_tasks": [
+      "AudioRecorderRecordAudio",
+      "CameraTakePhoto",
+      "ClockStopWatchPausedVerify",
+      "ExpenseAddSingle",
+      "ExpenseDeleteDuplicates",
+      "ExpenseDeleteMultiple",
+      "ExpenseDeleteMultiple2",
+      "FilesMoveFile",
+      "MarkorCreateFolder",
+      "MarkorDeleteAllNotes",
+      "MarkorDeleteNewestNote",
+      "MarkorDeleteNote",
+      "NotesMeetingAttendeeCount",
+      "NotesRecipeIngredientCount",
+      "NotesTodoItemCount",
+      "OpenAppTaskEval",
+      "RecipeDeleteDuplicateRecipes",
+      "RecipeDeleteMultipleRecipes",
+      "RecipeDeleteSingleRecipe",
+      "RecipeDeleteSingleWithRecipeWithNoise",
+      "SaveCopyOfReceiptTaskEval",
+      "SimpleCalendarAddOneEvent",
+      "SimpleCalendarAddOneEventInTwoWeeks",
+      "SimpleCalendarAddOneEventRelativeDay",
+      "SimpleCalendarAddOneEventTomorrow",
+      "SimpleCalendarAddRepeatingEvent",
+      "SimpleCalendarAnyEventsOnDate",
+      "SimpleCalendarDeleteEvents",
+      "SimpleCalendarDeleteEventsOnRelativeDay",
+      "SimpleCalendarDeleteOneEvent",
+      "SimpleCalendarLocationOfEvent",
+      "SimpleCalendarNextMeetingWithPerson",
+      "SimpleSmsReplyMostRecent",
+      "SimpleSmsResend",
+      "SimpleSmsSend",
+      "SimpleSmsSendClipboardContent",
+      "SportsTrackerActivitiesCountForWeek",
+      "SystemBluetoothTurnOff",
+      "SystemBluetoothTurnOffVerify",
+      "SystemBrightnessMaxVerify",
+      "SystemBrightnessMinVerify",
+      "SystemWifiTurnOff",
+      "SystemWifiTurnOffVerify",
+      "SystemWifiTurnOn",
+      "SystemWifiTurnOnVerify",
+      "TasksHighPriorityTasks",
+      "TurnOffWifiAndTurnOnBluetooth",
+      "TurnOnWifiAndOpenApp"
+    ],
+    "n": 48,
+    "base_mean": 9,
+    "full_mean": 7.375,
+    "change_pct": -18.055555555555557,
+    "gained": [
+      "ContactsAddContact",
+      "ContactsNewContactDraft",
+      "ExpenseAddMultiple",
+      "RecipeAddMultipleRecipes",
+      "RecipeAddSingleRecipe",
+      "SimpleCalendarEventOnDateAtTime",
+      "SimpleCalendarNextEvent",
+      "SimpleSmsSendReceivedAddress"
+    ],
+    "lost": [
+      "FilesDeleteFile",
+      "MarkorCreateNote",
+      "MarkorCreateNoteAndSms",
+      "MarkorCreateNoteFromClipboard",
+      "SimpleSmsReply",
+      "SystemBluetoothTurnOn",
+      "SystemBluetoothTurnOnVerify",
+      "SystemBrightnessMin",
+      "TasksIncompleteTasksOnDate"
+    ]
+  },
+  "replaced_tasks": [
+    "MarkorCreateNote",
+    "MarkorChangeNoteContent",
+    "MarkorMergeNotes",
+    "NotesMeetingAttendeeCount",
+    "SimpleCalendarDeleteEventsOnRelativeDay",
+    "SportsTrackerLongestDistanceActivity",
+    "TasksDueNextWeek"
+  ],
+  "base_mean_interpretation": "original109 plus repaired7; not a fresh full116 run",
+  "step_definition": "model calls, not total Android actions or exploration probes",
+  "mean_call_change_pct": -31.055622009569372
+}

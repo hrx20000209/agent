@@ -6,8 +6,8 @@
   },
   {
     "path": "README.md",
-    "bytes": 3046,
-    "sha256": "d1b56feda1ba0fd348c1a47a49ea87bab1af9386e82788ab4d189b872c217711"
+    "bytes": 3548,
+    "sha256": "72a9d023824b99920f53506c244516dfc9e5eaece1c234f2be5af3892e5006c9"
   },
   {
     "path": "VALIDATION.md",
@@ -665,9 +665,504 @@
     "sha256": "c2af65ef70b956187d14a9a05e3785f8b483d9ae87784e0c1e3c892694666d1d"
   },
   {
+    "path": "guiowl_results_20261101/README.md",
+    "bytes": 7547,
+    "sha256": "a93d99eb8e01c1b67b6dbd9e036ce438fc7a099baf0a6a620ca38694992b22b5"
+  },
+  {
+    "path": "guiowl_results_20261101/VALIDATION.md",
+    "bytes": 1478,
+    "sha256": "1e3c0e39106acff85d46a0f9b5bc6ff7c4c5305b1399663d00916e92da02723b"
+  },
+  {
+    "path": "guiowl_results_20261101/archive_remote.py",
+    "bytes": 2769,
+    "sha256": "870e77bb2e473a5cdfbb14a1dcf80f3d2e0165ac52d7fa8d7528f1d3917a923a"
+  },
+  {
+    "path": "guiowl_results_20261101/base7_files.json",
+    "bytes": 87641,
+    "sha256": "c305ddd5376bfe3af39edf0fb66ec88182bc1d4db6a4e6311b8ed60568d89af0"
+  },
+  {
+    "path": "guiowl_results_20261101/base7_logs.tar.gz",
+    "bytes": 489275,
+    "sha256": "49093f96990e7634900c0ee33686f7c669e5c2395bb391afcd97f9d16f6afce2"
+  },
+  {
+    "path": "guiowl_results_20261101/computed_summary.json",
+    "bytes": 12801,
+    "sha256": "3be3bcff1be1107503455aa07f9fc0051635c33d36200c6b5086cbf2f7674609"
+  },
+  {
+    "path": "guiowl_results_20261101/full45_fixed_files.json",
+    "bytes": 2025004,
+    "sha256": "c4e840918a422470c6f012aef1eb55ebfb45cc1b16390f6250246075c60e86d0"
+  },
+  {
+    "path": "guiowl_results_20261101/full45_fixed_logs.tar.gz",
+    "bytes": 12096320,
+    "sha256": "f7fd4213ed55d2130956015eec5db7bd2af9fa7a1d5c6d68ad214ff4e9d583e0"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/full45_fixed/FULL45/ExpenseDeleteSingle/p0/img/0001_s0_pre.jpg",
+    "bytes": 121342,
+    "sha256": "4bcb6f7e7db1239a53b8c085752be36f80ecb4648244a99bea45a54db9855250"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/full45_fixed/FULL45/ExpenseDeleteSingle/p0/img/0002_s1_pre.jpg",
+    "bytes": 177860,
+    "sha256": "5da08795d6c6095a75a4b4faff75520470717db80ac79cdbc8cd149c54038266"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/full45_fixed/FULL45/SystemBluetoothTurnOn/p0/img/0001_s0_pre.jpg",
+    "bytes": 120753,
+    "sha256": "6d784200f01a69aea11b3c7e8b48606ddb47eb11722fb4418808e919eb52a438"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/full45_fixed/FULL45/SystemBluetoothTurnOn/p0/img/0002_s1_pre.jpg",
+    "bytes": 188399,
+    "sha256": "d7be1bceafa27f83a926125434c520ed098ceb6391f4880f13d92d7763e35ee7"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/full45_fixed/FULL45/SystemBluetoothTurnOnVerify/p0/img/0001_s0_pre.jpg",
+    "bytes": 120722,
+    "sha256": "d27bc6a6f3ebc119a3bb3959a59cf81d8bfa558b8159f3e95242ca5e8f9fe854"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/full45_fixed/FULL45/SystemBluetoothTurnOnVerify/p0/img/0002_s1_pre.jpg",
+    "bytes": 188198,
+    "sha256": "c513ce2237176d10998fa7fe5a135571cda467719098a9c0e87c61f64b3d7c30"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/full45_fixed/FULL45/VlcCreateTwoPlaylists/p0/img/0047_s41_pre.jpg",
+    "bytes": 102475,
+    "sha256": "27f5553b86b1e8b572a192daede50a537b7dd2485992d503d0a8641cb9113c08"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/full45_fixed/FULL45/VlcCreateTwoPlaylists/p0/img/0048_s42_pre.jpg",
+    "bytes": 41427,
+    "sha256": "7e497e3af85e9209751ff60d8ed664ff4a379ecf4330c873dba635136699eca2"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/original/BASE/MarkorChangeNoteContent/p0/img/0001_s0_pre.jpg",
+    "bytes": 120967,
+    "sha256": "d79b03fc86ad12645093bb2d423c371656a4136bfdd62caee92414da4d4403a5"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/original/BASE/MarkorCreateNote/p0/img/0001_s0_pre.jpg",
+    "bytes": 120948,
+    "sha256": "2fd1f9bdd3704372c9e596e385ad297acabbd2f7270eb4f91e89c481c4747279"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/original/BASE/MarkorMergeNotes/p0/img/0001_s0_pre.jpg",
+    "bytes": 120682,
+    "sha256": "564326367da77efaae2972d829ce2923866a12226213e6343328d115e57f8dde"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/original/BASE/NotesMeetingAttendeeCount/p0/img/0001_s0_pre.jpg",
+    "bytes": 120682,
+    "sha256": "564326367da77efaae2972d829ce2923866a12226213e6343328d115e57f8dde"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/original/BASE/SimpleCalendarDeleteEventsOnRelativeDay/p0/img/0001_s0_pre.jpg",
+    "bytes": 120735,
+    "sha256": "ca2b2481e870352d6da2402b6742c7130089b91fa571e7dc8a3d0c14f9ae5ad5"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/original/BASE/SportsTrackerLongestDistanceActivity/p0/img/0001_s0_pre.jpg",
+    "bytes": 120682,
+    "sha256": "564326367da77efaae2972d829ce2923866a12226213e6343328d115e57f8dde"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/original/BASE/TasksDueNextWeek/p0/img/0001_s0_pre.jpg",
+    "bytes": 121354,
+    "sha256": "e0c3779c4716b6934dc7a0b7d981afaec20a5e75b5802c71aef6a51aac5c4af1"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/original/FULL45/ExpenseDeleteSingle/p0/img/0001_s0_pre.jpg",
+    "bytes": 119972,
+    "sha256": "6e5d97861a0bb22a476c73f5333f6009ea7d40c321bd4af259fcff6b4ceaa414"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/original/FULL45/ExpenseDeleteSingle/p0/img/0002_s1_pre.jpg",
+    "bytes": 178024,
+    "sha256": "1b35df8543976672a934187cd0070f57907c8c39b270a4bf2262114a73b16c17"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/original/FULL45/OsmAndFavorite/p0/img/0001_s0_pre.jpg",
+    "bytes": 119742,
+    "sha256": "93138933e7af23c58d2d0760c6d4eb1f65a48a318766102a7658e71e0ba70e4f"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/original/FULL45/RecipeAddMultipleRecipesFromMarkor/p0/img/0014_s1_verify.jpg",
+    "bytes": 103049,
+    "sha256": "2934f081ffd230efc2ea163273addb09ffbb99a86a8252c5aa8d98d0204445d9"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/original/FULL45/RecipeAddMultipleRecipesFromMarkor/p0/img/0015_s2_pre.jpg",
+    "bytes": 119790,
+    "sha256": "49af4dfad9c34422884c9501d38a8b9bc882d649012ebdd4d07bdee812b2e3f6"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/original/FULL45/SystemBluetoothTurnOn/p0/img/0001_s0_pre.jpg",
+    "bytes": 120499,
+    "sha256": "89d50f5ddfa66385e153ff3a00639cffe77afb4c7b0e16caab762d518fe8d2cd"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/original/FULL45/SystemBluetoothTurnOn/p0/img/0002_s1_pre.jpg",
+    "bytes": 185712,
+    "sha256": "53dc293eb6a0901ec8b67652352f46cf818ea5be1b19dbf4381bed209986a12e"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/original/FULL45/SystemBluetoothTurnOnVerify/p0/img/0001_s0_pre.jpg",
+    "bytes": 120722,
+    "sha256": "d27bc6a6f3ebc119a3bb3959a59cf81d8bfa558b8159f3e95242ca5e8f9fe854"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/original/FULL45/SystemBluetoothTurnOnVerify/p0/img/0002_s1_pre.jpg",
+    "bytes": 188018,
+    "sha256": "f6ee90fb4d3a44cd358e7d55ef944a5859bddefbacc861a94abce2e4c6f911d0"
+  },
+  {
+    "path": "guiowl_results_20261101/key_screenshots/original/FULL45/TasksDueNextWeek/p0/img/0001_s0_pre.jpg",
+    "bytes": 121354,
+    "sha256": "e0c3779c4716b6934dc7a0b7d981afaec20a5e75b5802c71aef6a51aac5c4af1"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/base7/README.md",
+    "bytes": 1714,
+    "sha256": "0d5e875b648aebe76434989754ffa6997059af9a00033d60ad4da9c33d5d6569"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/base7/adapter/owl_coordinate_resize.py",
+    "bytes": 10262,
+    "sha256": "6fd9140b5b72b8f9bfbadaacefa5f23fa14a23d542c2c25ece5d9e1d8e0516c1"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/base7/adapter/owl_official_agent_source.py",
+    "bytes": 15172,
+    "sha256": "d74a26e8610c70d1e21b05abb9edce0267d82c16a86fc2e74e40b1bac9b347fd"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/base7/adapter/owl_protocol.py",
+    "bytes": 6054,
+    "sha256": "28439cd7f2833ab07605f0cb95e4423de390466d4acfe0229f827ed4e1f99614"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/base7/adapter/owl_upstream_probe.py",
+    "bytes": 12333,
+    "sha256": "35f4be739f3d01bd73f9b7fdae4265e359b991742a6b6fd31d2f2ae0bd7adaaf"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/base7/adapter_fix.patch",
+    "bytes": 1702,
+    "sha256": "7b07584e50dc3a6b20c0e02cd94c3b9c05a9a34dc1bf53bd577f2a2c8ee96dda"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/base7/adapter_replay.log",
+    "bytes": 925,
+    "sha256": "23245205016eca9c21553df57dd80f09d1e14cc95a40382aca4b382dd150f560"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/base7/configs/guiowl_8b_official.json",
+    "bytes": 3116,
+    "sha256": "8f3fd5fd71df589cb8af235c7cdc6ee023d97dcd2d8d81a06f457358f6019b40"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/base7/configs/guiowl_official_mobile_system.txt",
+    "bytes": 3701,
+    "sha256": "8d9225e23f26f795650a9b618f318ea65952f1f0e695cc0e2a9f485111c7183c"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/base7/deploy.py",
+    "bytes": 5505,
+    "sha256": "a818e319dc686cfc01828a527ebd1837ec066796ec6cc9df09c43623a54109f0"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/base7/episode_entry.py",
+    "bytes": 584,
+    "sha256": "ed411b1b0f90b1fca749efe7a531749ed9da91888e51ae8b6bcdfe17e836b414"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/base7/host_supervisor.py",
+    "bytes": 9991,
+    "sha256": "31c434bc0fb7268b261f2017347dadc6ab3f68141c226a1c233a5d75fa43e635"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/base7/host_supervisor_test.py",
+    "bytes": 2983,
+    "sha256": "077e0cd6d51488f84b77d861bd8235ccf78c24e55c50e339fe49ed3dc804f69b"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/base7/merge_results.py",
+    "bytes": 2267,
+    "sha256": "f074e4489279cb5ccc95c89dd5bf5d34fa7309125acbabc1f255a4ddcd17aabf"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/base7/owl_protocol_test.py",
+    "bytes": 3415,
+    "sha256": "1df670f3598b0a529c53570380bfa99fccd5381090dde0ec6b38b193c3d57583"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/base7/package.tar.gz",
+    "bytes": 1500166,
+    "sha256": "9963d9001782a4a468dc6773a96182043d29779d7b79cd4eb8501454d717fd30"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/base7/readiness.py",
+    "bytes": 1107,
+    "sha256": "a33769ffed13bb7fafb3725926383be1a9f6473d427c71072492f2ba6cb0931a"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/base7/replay_openapp.py",
+    "bytes": 872,
+    "sha256": "02ac148d6bf844b52e144528b7771c05c43f6b7cf81290282991712fffe22d93"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/base7/upstream_modifications.json",
+    "bytes": 243,
+    "sha256": "7a01bc1333e0697d9a40f2cbfc4d289337d302d6e5a02676f3661d349788ed9f"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/base7/upstream_sha256.json",
+    "bytes": 63448,
+    "sha256": "501d0b1f485664d608678c59902f8bd12bb3ea7a630ceffabfb47b5f7dc26bfe"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/full45_fixed/README.md",
+    "bytes": 1785,
+    "sha256": "3a125b8bce2c0b7d4529f9a74c7e5254188fcb06427c6e402103e6352b2caac7"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/full45_fixed/adapter/owl_coordinate_resize.py",
+    "bytes": 10262,
+    "sha256": "6fd9140b5b72b8f9bfbadaacefa5f23fa14a23d542c2c25ece5d9e1d8e0516c1"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/full45_fixed/adapter/owl_official_agent_source.py",
+    "bytes": 15172,
+    "sha256": "d74a26e8610c70d1e21b05abb9edce0267d82c16a86fc2e74e40b1bac9b347fd"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/full45_fixed/adapter/owl_protocol.py",
+    "bytes": 6054,
+    "sha256": "28439cd7f2833ab07605f0cb95e4423de390466d4acfe0229f827ed4e1f99614"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/full45_fixed/adapter/owl_upstream_probe.py",
+    "bytes": 12333,
+    "sha256": "35f4be739f3d01bd73f9b7fdae4265e359b991742a6b6fd31d2f2ae0bd7adaaf"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/full45_fixed/configs/guiowl_8b_official.json",
+    "bytes": 3116,
+    "sha256": "8f3fd5fd71df589cb8af235c7cdc6ee023d97dcd2d8d81a06f457358f6019b40"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/full45_fixed/configs/guiowl_official_mobile_system.txt",
+    "bytes": 3701,
+    "sha256": "8d9225e23f26f795650a9b618f318ea65952f1f0e695cc0e2a9f485111c7183c"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/full45_fixed/deploy.py",
+    "bytes": 6430,
+    "sha256": "491a721f7d66e5c79e4a1d12cc18679380c06e93caee7155f729be6fd9cfd8f5"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/full45_fixed/episode_entry.py",
+    "bytes": 584,
+    "sha256": "ed411b1b0f90b1fca749efe7a531749ed9da91888e51ae8b6bcdfe17e836b414"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/full45_fixed/host_supervisor.py",
+    "bytes": 9992,
+    "sha256": "61d74093f28c3268a6bcf78794065a583781524f2cfa54215336b837ec9f1ff1"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/full45_fixed/host_supervisor_test.py",
+    "bytes": 2983,
+    "sha256": "077e0cd6d51488f84b77d861bd8235ccf78c24e55c50e339fe49ed3dc804f69b"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/full45_fixed/owl_protocol_test.py",
+    "bytes": 3415,
+    "sha256": "1df670f3598b0a529c53570380bfa99fccd5381090dde0ec6b38b193c3d57583"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/full45_fixed/package.tar.gz",
+    "bytes": 1499604,
+    "sha256": "765f0725c13e6ebde3a4555809f3c48f4ecee4f8c8fb9cdd97eba08307fb73d5"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/full45_fixed/readiness.py",
+    "bytes": 1107,
+    "sha256": "a33769ffed13bb7fafb3725926383be1a9f6473d427c71072492f2ba6cb0931a"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/full45_fixed/runtime_import_check.log",
+    "bytes": 980,
+    "sha256": "b9fb2ed84b0b76d2c1b706832b65493c69b76408388b53ec7f690b5f77fc5280"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/full45_fixed/upstream_modifications.json",
+    "bytes": 243,
+    "sha256": "7a01bc1333e0697d9a40f2cbfc4d289337d302d6e5a02676f3661d349788ed9f"
+  },
+  {
+    "path": "guiowl_results_20261101/launch/full45_fixed/upstream_sha256.json",
+    "bytes": 63448,
+    "sha256": "501d0b1f485664d608678c59902f8bd12bb3ea7a630ceffabfb47b5f7dc26bfe"
+  },
+  {
+    "path": "guiowl_results_20261101/original_files.json",
+    "bytes": 3115459,
+    "sha256": "481b19a4b7d6eb57c87d25f3afe9997a4c2947848b65cf785ca6156e3ab5b2b3"
+  },
+  {
+    "path": "guiowl_results_20261101/original_logs.tar.gz",
+    "bytes": 18042055,
+    "sha256": "7b2eac51feba0eb6504cbc3f4dd24cd4e80b2f55510196ff3414a080ae47e2f0"
+  },
+  {
+    "path": "guiowl_results_20261101/records/base7/BASE.infra.jsonl",
+    "bytes": 4354,
+    "sha256": "83c46e86aaaa3bf4e5fb6115c28fe60f456f2ffcc8ae694f91e979a233b8cb93"
+  },
+  {
+    "path": "guiowl_results_20261101/records/base7/BASE.runs.jsonl",
+    "bytes": 2329,
+    "sha256": "87f8dc610fe22b1b58e20e4720e7ec6ed4284634f991c60430825e3daa44f429"
+  },
+  {
+    "path": "guiowl_results_20261101/records/base7/BASE.status.json",
+    "bytes": 2476,
+    "sha256": "b7a429748f19fefc947f62b0faa1afae32804dfd86a8bd5c6f59df31665a4084"
+  },
+  {
+    "path": "guiowl_results_20261101/records/base7/completion_audit.json",
+    "bytes": 2939,
+    "sha256": "ad65b9b6a4e6c38f2c69bb5c91c9b1775490e0b46954f5aa9b56756b9555f7ed"
+  },
+  {
+    "path": "guiowl_results_20261101/records/base7/final_audit.json",
+    "bytes": 2939,
+    "sha256": "ad65b9b6a4e6c38f2c69bb5c91c9b1775490e0b46954f5aa9b56756b9555f7ed"
+  },
+  {
+    "path": "guiowl_results_20261101/records/base7/merged_BASE.runs.jsonl",
+    "bytes": 38513,
+    "sha256": "501a1128bcb56762338212becaa79c063d3bfee09131cd027499a3c6c7c936ba"
+  },
+  {
+    "path": "guiowl_results_20261101/records/base7/original_BASE.runs.jsonl",
+    "bytes": 39891,
+    "sha256": "70fb617e0dba0f226e9f1b22c8df7b15fbf744245eba024ba3589f5b38ec68ca"
+  },
+  {
+    "path": "guiowl_results_20261101/records/base7/original_openapp_responses.json",
+    "bytes": 17894,
+    "sha256": "bdebf3b7f356a230c8755cb4d219eed18c0010933a6d680a6326968b6ef23aa7"
+  },
+  {
+    "path": "guiowl_results_20261101/records/base7/repair_summary.json",
+    "bytes": 1823,
+    "sha256": "d64f7a63857d9a717c9e4b97f3636bc869eb1f499eed2acc771f56f10f930c01"
+  },
+  {
+    "path": "guiowl_results_20261101/records/base7/run_config.json",
+    "bytes": 59844,
+    "sha256": "ba81b205c583f87f3a0054a926068df132fa8499d6302e49d3e11e0445b3f1eb"
+  },
+  {
+    "path": "guiowl_results_20261101/records/full45_fixed/FULL45.infra.jsonl",
+    "bytes": 8120,
+    "sha256": "17de2af3479612b2eacd3a1a77ac819ad20e03b1c9680010e7d1dd38ffb3b305"
+  },
+  {
+    "path": "guiowl_results_20261101/records/full45_fixed/FULL45.runs.jsonl",
+    "bytes": 39658,
+    "sha256": "046244728212d2a85d3a5e528759b69dd26064508ec1b4e2cf32c73b95dcfc1c"
+  },
+  {
+    "path": "guiowl_results_20261101/records/full45_fixed/FULL45.status.json",
+    "bytes": 1268,
+    "sha256": "9855dd13aecf1497c6387ce50fb0092f5b726e8383e42f79d1e6be7d3db53f05"
+  },
+  {
+    "path": "guiowl_results_20261101/records/full45_fixed/completion_audit.json",
+    "bytes": 1750,
+    "sha256": "8404903b8739cea30061f1a4ade111f03b59b00cec81f246cb35c5d12214aa82"
+  },
+  {
+    "path": "guiowl_results_20261101/records/full45_fixed/final_audit.json",
+    "bytes": 1750,
+    "sha256": "8404903b8739cea30061f1a4ade111f03b59b00cec81f246cb35c5d12214aa82"
+  },
+  {
+    "path": "guiowl_results_20261101/records/full45_fixed/run_config.json",
+    "bytes": 63472,
+    "sha256": "e9565f84d81d2555d2c764646dc4b1a184b0c8da2aeb2563d245593d078099fa"
+  },
+  {
+    "path": "guiowl_results_20261101/records/original/BASE.infra.jsonl",
+    "bytes": 8120,
+    "sha256": "8a0911986b36d93e317e7a92207b28ab43e3c15cd0497502d847f64cdd0420cf"
+  },
+  {
+    "path": "guiowl_results_20261101/records/original/BASE.runs.jsonl",
+    "bytes": 39891,
+    "sha256": "70fb617e0dba0f226e9f1b22c8df7b15fbf744245eba024ba3589f5b38ec68ca"
+  },
+  {
+    "path": "guiowl_results_20261101/records/original/BASE.status.json",
+    "bytes": 1061,
+    "sha256": "e62c31bdea7a9114c8ffd4342d4d8b51924d21588eb11eca10bd813731d26f49"
+  },
+  {
+    "path": "guiowl_results_20261101/records/original/FULL45.infra.jsonl",
+    "bytes": 8120,
+    "sha256": "a55b0a9743108c4d981dfdc3ea7c51e864be810f93fa703616ad69a189792a6c"
+  },
+  {
+    "path": "guiowl_results_20261101/records/original/FULL45.runs.jsonl",
+    "bytes": 39971,
+    "sha256": "c2932e6e7be159fb8c36c3d9d7315fb06535e7c116825a4bdde9c8da0cb0949c"
+  },
+  {
+    "path": "guiowl_results_20261101/records/original/FULL45.status.json",
+    "bytes": 1019,
+    "sha256": "d554db348d8a3f7fe802f40aba25cacf730b4b0e7b519ba895ee2eed1e6495a8"
+  },
+  {
+    "path": "guiowl_results_20261101/records/original/completion_audit.json",
+    "bytes": 2767,
+    "sha256": "126db76e1f087c829640e9048ac0a50b786807ec7cd33618de8befcd1a6def48"
+  },
+  {
+    "path": "guiowl_results_20261101/records/original/final_audit.json",
+    "bytes": 2767,
+    "sha256": "126db76e1f087c829640e9048ac0a50b786807ec7cd33618de8befcd1a6def48"
+  },
+  {
+    "path": "guiowl_results_20261101/records/original/run_config.json",
+    "bytes": 62826,
+    "sha256": "943c69ec9881851b6557c1a0d7fff0e8249defec873eac209f41dfaf961e4863"
+  },
+  {
+    "path": "guiowl_results_20261101/summarize.py",
+    "bytes": 3117,
+    "sha256": "a90f2a7e4cca82c5e52e35a8e11c4dcf35443104e62cb0fb18f7e6f4c94e7155"
+  },
+  {
+    "path": "guiowl_results_20261101/verify_run_archives.py",
+    "bytes": 1848,
+    "sha256": "d67deef54fb46e7b49498992a7dded7039c7df65c19b631c346b28a9f1d7aaa6"
+  },
+  {
     "path": "guiowl_run_20261031/README.md",
-    "bytes": 4957,
-    "sha256": "43333069badb6b77558dc45da417948a2d45785fbe57856dff0034319752201d"
+    "bytes": 5216,
+    "sha256": "f93cd1bd4c8efe35afba71bcda531d05fdd09964790e4e267eefeb665e5e89ae"
   },
   {
     "path": "guiowl_run_20261031/adapter/owl_coordinate_resize.py",

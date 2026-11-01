@@ -1,0 +1,21 @@
+--- original/owl_protocol.py
++++ fixed/owl_protocol.py
+@@ -53,7 +53,8 @@
+  if len(calls)!=1:raise ValueError('Expected exactly one complete GUI-Owl tool_call')
+  call=json.loads(calls[0]);args=call.get('arguments');assert call.get('name')=='mobile_use' and isinstance(args,dict),'Expected mobile_use arguments'
+  args=copy.deepcopy(args);a=args.get('action');a='click' if a=='tap' else a;args['action']=a
+- if a not in {'key','click','long_press','swipe','type','system_button','open','wait','answer','terminate'}:raise ValueError('Unsupported GUI-Owl action: '+str(a))
++ # Official mobile_agent_utils_new maps both spellings to OPEN_APP.
++ if a not in {'key','click','long_press','swipe','type','system_button','open','open_app','wait','answer','terminate'}:raise ValueError('Unsupported GUI-Owl action: '+str(a))
+  native=copy.deepcopy(args);w,h=screen_size
+  def pt(value):
+   if not isinstance(value,list) or len(value)!=2 or any(type(v) not in [int,float] or not math.isfinite(v) or v<0 or v>1000 for v in value):raise ValueError('Expected finite normalized coordinate pair')
+@@ -63,7 +64,7 @@
+   s,e=pt(args.get('coordinate')),pt(args.get('coordinate2'));dx,dy=e[0]-s[0],e[1]-s[1]
+   if dx==dy==0:raise ValueError('Swipe endpoints identical')
+   args={'action':'swipe','start_coordinate':s,'end_coordinate':e,'direction':('right' if dx>0 else 'left') if abs(dx)>abs(dy) else ('down' if dy>0 else 'up')}
+- if a=='open':
++ if a in {'open','open_app'}:
+   if not isinstance(args.get('text'),str) or not args['text'].strip():raise ValueError('Open missing app')
+   args['action']='open_app'
+  if a in {'type','answer'} and not isinstance(args.get('text'),str):raise ValueError('Missing action text')

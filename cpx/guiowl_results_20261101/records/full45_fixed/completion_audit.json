@@ -1,0 +1,49 @@
+{
+  "updated_at": "2026-10-31T20:53:49.649032+00:00",
+  "host_pid": 1353551,
+  "arms": {
+    "FULL45": {
+      "status": "FINISHED_WITH_ERRORS",
+      "arm": "FULL45",
+      "started_at": "2026-10-31T16:49:11.717981+00:00",
+      "host_pid": 1353551,
+      "completed": 116,
+      "errors": [
+        "ExpenseDeleteSingle",
+        "SystemBluetoothTurnOn",
+        "SystemBluetoothTurnOnVerify",
+        "VlcCreateTwoPlaylists"
+      ],
+      "restarts": 0,
+      "heartbeat_at": "2026-10-31T20:53:40.466634+00:00",
+      "current_task": null,
+      "recovery_attempt": 1,
+      "episode_elapsed_s": 425,
+      "last_activity_age_s": 0,
+      "docker_state": "running",
+      "last_result": {
+        "task": "VlcCreateTwoPlaylists",
+        "arm": "FULL45",
+        "success": null,
+        "model_calls": null,
+        "allocated_budget": 48,
+        "complexity": 4.8,
+        "http_attempts": 42,
+        "observed_decisions": 41,
+        "done": null,
+        "rc": 137,
+        "error": "container exited: {\"Status\": \"exited\", \"Running\": false, \"Paused\": false, \"Restarting\": false, \"OOMKilled\": true, \"Dead\": false, \"Pid\": 0, \"ExitCode\": 137, \"Error\": \"\", \"StartedAt\": \"2026-10-31T16:49:07.815865052Z\", \"FinishedAt\": \"2026-10-31T20:53:36.364991276Z\"}",
+        "teardown_error": null,
+        "e2e_s": 440.44,
+        "termination": "infrastructure_error",
+        "recorded_at": "2026-10-31T20:53:40.464334+00:00"
+      },
+      "ended_at": "2026-10-31T20:53:40.466619+00:00",
+      "successes": 56
+    }
+  },
+  "vllm_queue": [
+    "vllm:num_requests_running{engine=\"0\",model_name=\"GUI-Owl-1.5-8B-Instruct\"} 0.0",
+    "vllm:num_requests_waiting{engine=\"0\",model_name=\"GUI-Owl-1.5-8B-Instruct\"} 0.0"
+  ]
+}

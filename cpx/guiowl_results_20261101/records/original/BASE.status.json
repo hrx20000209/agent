@@ -1,0 +1,41 @@
+{
+  "status": "FINISHED_WITH_ERRORS",
+  "arm": "BASE",
+  "started_at": "2026-10-31T03:12:32.105008+00:00",
+  "host_pid": 2805116,
+  "completed": 116,
+  "errors": [
+    "MarkorCreateNote",
+    "MarkorChangeNoteContent",
+    "MarkorMergeNotes",
+    "NotesMeetingAttendeeCount",
+    "SimpleCalendarDeleteEventsOnRelativeDay",
+    "SportsTrackerLongestDistanceActivity",
+    "TasksDueNextWeek"
+  ],
+  "restarts": 0,
+  "heartbeat_at": "2026-10-31T08:43:35.472573+00:00",
+  "current_task": null,
+  "recovery_attempt": 1,
+  "episode_elapsed_s": 562,
+  "last_activity_age_s": 2,
+  "docker_state": "running",
+  "last_result": {
+    "task": "VlcCreateTwoPlaylists",
+    "arm": "BASE",
+    "success": 0.0,
+    "model_calls": 48,
+    "allocated_budget": 48,
+    "complexity": 4.8,
+    "http_attempts": 48,
+    "observed_decisions": 48,
+    "done": false,
+    "rc": 0,
+    "error": null,
+    "teardown_error": null,
+    "e2e_s": 571.7,
+    "termination": "budget",
+    "recorded_at": "2026-10-31T08:43:35.466099+00:00"
+  },
+  "ended_at": "2026-10-31T08:43:35.472558+00:00"
+}

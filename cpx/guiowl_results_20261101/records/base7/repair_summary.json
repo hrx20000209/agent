@@ -1,0 +1,50 @@
+{
+  "created_at": "2026-10-31T17:08:17.294529+00:00",
+  "original_run": "/home/pxchen/workspace/android_world_mai8b_20261024/cpx_pair_guiowl_20261031/experiments/trace_reachability_validation/raw/mai_official/guiowl8b_pair_single_c10_official_20261031",
+  "retry_run": "/home/pxchen/workspace/android_world_mai8b_20261024/cpx_guiowl_base7_20261101/experiments/trace_reachability_validation/raw/mai_official/guiowl8b_base7_openapp_fix_20261101",
+  "interpretation": "Mixed-version repair result: original109 plus seven predeclared adapter-error reruns; not a fresh full116 evaluation",
+  "original": {
+    "tasks": 116,
+    "successes": 54,
+    "success_rate": 46.55172413793103,
+    "mean_model_calls": 14.137614678899082,
+    "model_calls_known_tasks": 109,
+    "successful_mean_model_calls": 9.11111111111111,
+    "errors": [
+      "MarkorCreateNote",
+      "MarkorChangeNoteContent",
+      "MarkorMergeNotes",
+      "NotesMeetingAttendeeCount",
+      "SimpleCalendarDeleteEventsOnRelativeDay",
+      "SportsTrackerLongestDistanceActivity",
+      "TasksDueNextWeek"
+    ]
+  },
+  "retry": {
+    "tasks": 7,
+    "successes": 3,
+    "success_rate": 42.857142857142854,
+    "mean_model_calls": 18.714285714285715,
+    "model_calls_known_tasks": 7,
+    "successful_mean_model_calls": 9.666666666666666,
+    "errors": []
+  },
+  "merged": {
+    "tasks": 116,
+    "successes": 57,
+    "success_rate": 49.13793103448276,
+    "mean_model_calls": 14.413793103448276,
+    "model_calls_known_tasks": 116,
+    "successful_mean_model_calls": 9.140350877192983,
+    "errors": []
+  },
+  "replaced_tasks": [
+    "MarkorCreateNote",
+    "MarkorChangeNoteContent",
+    "MarkorMergeNotes",
+    "NotesMeetingAttendeeCount",
+    "SimpleCalendarDeleteEventsOnRelativeDay",
+    "SportsTrackerLongestDistanceActivity",
+    "TasksDueNextWeek"
+  ]
+}

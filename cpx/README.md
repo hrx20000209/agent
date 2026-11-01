@@ -1,13 +1,16 @@
-# CPX：MAI-UI AndroidWorld 实验归档
+# CPX：AndroidWorld 实验归档
 
 本分支用于学长审阅 CPX 的代码修改、启动方式和原始实验结果。实验实际运行在 `hrx20000209/android_world` 的派生工作目录；因目前仅有 `hrx20000209/agent` 的写权限，在此仓库独立 `cpx/` 目录归档，不改动原项目入口。
 
-## 当前GUI-Owl实验（10月31日启动）
+## 最新GUI-Owl结果（11月1日归档）
 
+- [GUI-Owl原始全量、BASE七题修复、FULL45修复后全量：结果、日志、图及源码](guiowl_results_20261101/)
+- 修复后BASE采用原109题＋固定七题重跑，57/116（49.14%）；FULL45从空图重新顺序跑116题，56/116（48.28%）。共同成功48题调用数7.38 vs9.00（−18.1%）。
+- 唯一功能修复为支持官方open_app别名。FULL45仍有三题坐标异常和最后一题容器OOM；缺失调用数及均值分母在结果页明确说明。
 - [官方格式GUI-Owl 8B：两独立容器BASE/FULL45、启动脚本和实际设置](guiowl_run_20261031/)
-- temperature0，5图history，预算int(10×complexity)；结果未出齐前不与下表混合。
+- temperature0，5图history，预算int(10×complexity)，不同于下方历史MAI实验，不能混合模型与预算比较。
 
-## 最新完成的实验（10月31日归档）
+## MAI-UI纯GPU实验（10月31日归档）
 
 - [纯GPU 8B/2B四组全116题：结果、原始日志、启动配置](results_pair_20261031/)
 - [8B成功率下降与加速有限的逐题诊断](results_pair_20261031/diagnosis_8b.md)

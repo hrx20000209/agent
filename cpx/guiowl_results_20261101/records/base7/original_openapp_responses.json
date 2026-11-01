@@ -1,0 +1,506 @@
+[
+  {
+    "task": "MarkorCreateNote",
+    "attempt": 1,
+    "response": "Action: Open the Markor app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"markor\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3528,
+      "total_tokens": 3564,
+      "completion_tokens": 36,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "MarkorCreateNote",
+    "attempt": 2,
+    "response": "Action: Open the Markor app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"markor\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3528,
+      "total_tokens": 3564,
+      "completion_tokens": 36,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "MarkorCreateNote",
+    "attempt": 3,
+    "response": "Action: Open the Markor app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"markor\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3528,
+      "total_tokens": 3564,
+      "completion_tokens": 36,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "MarkorCreateNote",
+    "attempt": 1,
+    "response": "Action: Open the Markor app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"markor\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3528,
+      "total_tokens": 3564,
+      "completion_tokens": 36,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "MarkorCreateNote",
+    "attempt": 2,
+    "response": "Action: Open the Markor app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"markor\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3528,
+      "total_tokens": 3564,
+      "completion_tokens": 36,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "MarkorCreateNote",
+    "attempt": 3,
+    "response": "Action: Open the Markor app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"markor\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3528,
+      "total_tokens": 3564,
+      "completion_tokens": 36,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "MarkorChangeNoteContent",
+    "attempt": 1,
+    "response": "Action: Open the Markor app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"markor\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3539,
+      "total_tokens": 3575,
+      "completion_tokens": 36,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "MarkorChangeNoteContent",
+    "attempt": 2,
+    "response": "Action: Open the Markor app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"markor\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3539,
+      "total_tokens": 3575,
+      "completion_tokens": 36,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "MarkorChangeNoteContent",
+    "attempt": 3,
+    "response": "Action: Open the Markor app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"markor\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3539,
+      "total_tokens": 3575,
+      "completion_tokens": 36,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "MarkorChangeNoteContent",
+    "attempt": 1,
+    "response": "Action: Open the Markor app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"markor\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3539,
+      "total_tokens": 3575,
+      "completion_tokens": 36,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "MarkorChangeNoteContent",
+    "attempt": 2,
+    "response": "Action: Open the Markor app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"markor\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3539,
+      "total_tokens": 3575,
+      "completion_tokens": 36,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "MarkorChangeNoteContent",
+    "attempt": 3,
+    "response": "Action: Open the Markor app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"markor\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3539,
+      "total_tokens": 3575,
+      "completion_tokens": 36,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "MarkorMergeNotes",
+    "attempt": 1,
+    "response": "Action: Open the Markor app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"markor\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3563,
+      "total_tokens": 3599,
+      "completion_tokens": 36,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "MarkorMergeNotes",
+    "attempt": 2,
+    "response": "Action: Open the Markor app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"markor\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3563,
+      "total_tokens": 3599,
+      "completion_tokens": 36,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "MarkorMergeNotes",
+    "attempt": 3,
+    "response": "Action: Open the Markor app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"markor\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3563,
+      "total_tokens": 3599,
+      "completion_tokens": 36,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "MarkorMergeNotes",
+    "attempt": 1,
+    "response": "Action: Open the Markor app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"markor\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3563,
+      "total_tokens": 3599,
+      "completion_tokens": 36,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "MarkorMergeNotes",
+    "attempt": 2,
+    "response": "Action: Open the Markor app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"markor\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3563,
+      "total_tokens": 3599,
+      "completion_tokens": 36,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "MarkorMergeNotes",
+    "attempt": 3,
+    "response": "Action: Open the Markor app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"markor\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3563,
+      "total_tokens": 3599,
+      "completion_tokens": 36,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "NotesMeetingAttendeeCount",
+    "attempt": 1,
+    "response": "Action: Open the Joplin app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"joplin\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3525,
+      "total_tokens": 3563,
+      "completion_tokens": 38,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "NotesMeetingAttendeeCount",
+    "attempt": 2,
+    "response": "Action: Open the Joplin app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"joplin\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3525,
+      "total_tokens": 3563,
+      "completion_tokens": 38,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "NotesMeetingAttendeeCount",
+    "attempt": 3,
+    "response": "Action: Open the Joplin app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"joplin\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3525,
+      "total_tokens": 3563,
+      "completion_tokens": 38,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "NotesMeetingAttendeeCount",
+    "attempt": 1,
+    "response": "Action: Open the Joplin app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"joplin\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3525,
+      "total_tokens": 3563,
+      "completion_tokens": 38,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "NotesMeetingAttendeeCount",
+    "attempt": 2,
+    "response": "Action: Open the Joplin app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"joplin\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3525,
+      "total_tokens": 3563,
+      "completion_tokens": 38,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "NotesMeetingAttendeeCount",
+    "attempt": 3,
+    "response": "Action: Open the Joplin app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"joplin\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3525,
+      "total_tokens": 3563,
+      "completion_tokens": 38,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "SimpleCalendarDeleteEventsOnRelativeDay",
+    "attempt": 1,
+    "response": "Action: Open the Simple Calendar Pro app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"simple calendar pro\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3508,
+      "total_tokens": 3546,
+      "completion_tokens": 38,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "SimpleCalendarDeleteEventsOnRelativeDay",
+    "attempt": 2,
+    "response": "Action: Open the Simple Calendar Pro app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"simple calendar pro\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3508,
+      "total_tokens": 3546,
+      "completion_tokens": 38,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "SimpleCalendarDeleteEventsOnRelativeDay",
+    "attempt": 3,
+    "response": "Action: Open the Simple Calendar Pro app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"simple calendar pro\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3508,
+      "total_tokens": 3546,
+      "completion_tokens": 38,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "SimpleCalendarDeleteEventsOnRelativeDay",
+    "attempt": 1,
+    "response": "Action: Open the Simple Calendar Pro app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"simple calendar pro\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3508,
+      "total_tokens": 3546,
+      "completion_tokens": 38,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "SimpleCalendarDeleteEventsOnRelativeDay",
+    "attempt": 2,
+    "response": "Action: Open the Simple Calendar Pro app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"simple calendar pro\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3508,
+      "total_tokens": 3546,
+      "completion_tokens": 38,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "SimpleCalendarDeleteEventsOnRelativeDay",
+    "attempt": 3,
+    "response": "Action: Open the Simple Calendar Pro app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"simple calendar pro\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3508,
+      "total_tokens": 3546,
+      "completion_tokens": 38,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "SportsTrackerLongestDistanceActivity",
+    "attempt": 1,
+    "response": "Action: Open the OpenTracks app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"opentracks\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3536,
+      "total_tokens": 3573,
+      "completion_tokens": 37,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "SportsTrackerLongestDistanceActivity",
+    "attempt": 2,
+    "response": "Action: Open the OpenTracks app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"opentracks\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3536,
+      "total_tokens": 3573,
+      "completion_tokens": 37,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "SportsTrackerLongestDistanceActivity",
+    "attempt": 3,
+    "response": "Action: Open the OpenTracks app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"opentracks\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3536,
+      "total_tokens": 3573,
+      "completion_tokens": 37,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "SportsTrackerLongestDistanceActivity",
+    "attempt": 1,
+    "response": "Action: Open the OpenTracks app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"opentracks\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3536,
+      "total_tokens": 3573,
+      "completion_tokens": 37,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "SportsTrackerLongestDistanceActivity",
+    "attempt": 2,
+    "response": "Action: Open the OpenTracks app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"opentracks\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3536,
+      "total_tokens": 3573,
+      "completion_tokens": 37,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "SportsTrackerLongestDistanceActivity",
+    "attempt": 3,
+    "response": "Action: Open the OpenTracks app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"opentracks\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3536,
+      "total_tokens": 3573,
+      "completion_tokens": 37,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "TasksDueNextWeek",
+    "attempt": 1,
+    "response": "Action: Open the Tasks app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"tasks\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3523,
+      "total_tokens": 3557,
+      "completion_tokens": 34,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "TasksDueNextWeek",
+    "attempt": 2,
+    "response": "Action: Open the Tasks app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"tasks\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3523,
+      "total_tokens": 3557,
+      "completion_tokens": 34,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "TasksDueNextWeek",
+    "attempt": 3,
+    "response": "Action: Open the Tasks app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"tasks\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3523,
+      "total_tokens": 3557,
+      "completion_tokens": 34,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "TasksDueNextWeek",
+    "attempt": 1,
+    "response": "Action: Open the Tasks app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"tasks\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3523,
+      "total_tokens": 3557,
+      "completion_tokens": 34,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "TasksDueNextWeek",
+    "attempt": 2,
+    "response": "Action: Open the Tasks app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"tasks\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3523,
+      "total_tokens": 3557,
+      "completion_tokens": 34,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  },
+  {
+    "task": "TasksDueNextWeek",
+    "attempt": 3,
+    "response": "Action: Open the Tasks app.\n<tool_call>\n{\"name\": \"mobile_use\", \"arguments\": {\"action\": \"open_app\", \"text\": \"tasks\"}}\n</tool_call>",
+    "usage": {
+      "prompt_tokens": 3523,
+      "total_tokens": 3557,
+      "completion_tokens": 34,
+      "prompt_tokens_details": null,
+      "completion_tokens_details": null
+    }
+  }
+]
