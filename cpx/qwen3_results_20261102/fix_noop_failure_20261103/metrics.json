@@ -1,0 +1,58 @@
+{
+ "rule": "reaching 5 consecutive identical no-effect actions fails the episode (AW_NOOP_STOP=5)",
+ "source": "replay of qwen3_8b_a11y_pair_20261101_full_v2 recorded steps/a11y snapshots; not a new run",
+ "arms": {
+  "BASE": {
+   "n": 116,
+   "successes": 16,
+   "success_rate_pct": 13.793103448275861,
+   "original_successes": 16,
+   "original_success_rate_pct": 13.793103448275861,
+   "mean_calls": 11.163793103448276,
+   "original_mean_calls": 14.706896551724139,
+   "success_mean_calls": 6.5,
+   "triggered": 23,
+   "triggered_that_were_successes": [],
+   "triggered_original_failures": 23
+  },
+  "FULL45": {
+   "n": 116,
+   "successes": 20,
+   "success_rate_pct": 17.24137931034483,
+   "original_successes": 21,
+   "original_success_rate_pct": 18.103448275862068,
+   "mean_calls": 9.5,
+   "original_mean_calls": 12.887931034482758,
+   "success_mean_calls": 6.75,
+   "triggered": 28,
+   "triggered_that_were_successes": [
+    "RecipeDeleteMultipleRecipesWithConstraint"
+   ],
+   "triggered_original_failures": 27
+  }
+ },
+ "common": {
+  "n": 12,
+  "tasks": [
+   "CameraTakePhoto",
+   "ExpenseDeleteSingle",
+   "NotesIsTodo",
+   "OpenAppTaskEval",
+   "RecipeDeleteSingleWithRecipeWithNoise",
+   "SimpleCalendarNextMeetingWithPerson",
+   "SystemBluetoothTurnOffVerify",
+   "SystemBluetoothTurnOnVerify",
+   "SystemBrightnessMaxVerify",
+   "SystemWifiTurnOffVerify",
+   "SystemWifiTurnOn",
+   "SystemWifiTurnOnVerify"
+  ],
+  "base_mean": 6.916666666666667,
+  "full_mean": 6.25,
+  "base_sum": 83,
+  "full_sum": 75,
+  "change_pct": -9.63855421686748,
+  "base_median": 5.5,
+  "full_median": 6.0
+ }
+}

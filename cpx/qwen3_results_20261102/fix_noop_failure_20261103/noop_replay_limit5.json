@@ -1,0 +1,1319 @@
+{
+ "BASE": {
+  "AudioRecorderRecordAudio": {
+   "trigger": false,
+   "calls": 12,
+   "success": 0.0
+  },
+  "AudioRecorderRecordAudioWithFileName": {
+   "trigger": false,
+   "calls": 20,
+   "success": 0.0
+  },
+  "BrowserDraw": {
+   "trigger": false,
+   "calls": 20,
+   "success": 0.0
+  },
+  "BrowserMaze": {
+   "trigger": true,
+   "step": 18,
+   "calls": 16,
+   "orig_calls": 20,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "BrowserMultiply": {
+   "trigger": false,
+   "calls": 22,
+   "success": 0.0
+  },
+  "CameraTakePhoto": {
+   "trigger": false,
+   "calls": 10,
+   "success": 1.0
+  },
+  "CameraTakeVideo": {
+   "trigger": false,
+   "calls": 10,
+   "success": 0.0
+  },
+  "ClockStopWatchPausedVerify": {
+   "trigger": false,
+   "calls": 10,
+   "success": 0.0
+  },
+  "ClockStopWatchRunning": {
+   "trigger": false,
+   "calls": 4,
+   "success": 1.0
+  },
+  "ClockTimerEntry": {
+   "trigger": false,
+   "calls": 2,
+   "success": 0.0
+  },
+  "ContactsAddContact": {
+   "trigger": false,
+   "calls": 6,
+   "success": 0.0
+  },
+  "ContactsNewContactDraft": {
+   "trigger": false,
+   "calls": 9,
+   "success": 0.0
+  },
+  "ExpenseAddMultiple": {
+   "trigger": false,
+   "calls": 20,
+   "success": 0.0
+  },
+  "ExpenseAddMultipleFromGallery": {
+   "trigger": false,
+   "calls": 4,
+   "success": 0.0
+  },
+  "ExpenseAddMultipleFromMarkor": {
+   "trigger": true,
+   "step": 24,
+   "calls": 24,
+   "orig_calls": 60,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "ExpenseAddSingle": {
+   "trigger": false,
+   "calls": 8,
+   "success": 0.0
+  },
+  "ExpenseDeleteDuplicates": {
+   "trigger": false,
+   "calls": 12,
+   "success": 0.0
+  },
+  "ExpenseDeleteDuplicates2": {
+   "trigger": false,
+   "calls": 15,
+   "success": 0.0
+  },
+  "ExpenseDeleteMultiple": {
+   "trigger": false,
+   "calls": 12,
+   "success": 0.0
+  },
+  "ExpenseDeleteMultiple2": {
+   "trigger": false,
+   "calls": 28,
+   "success": 0.0
+  },
+  "ExpenseDeleteSingle": {
+   "trigger": false,
+   "calls": 5,
+   "success": 1.0
+  },
+  "FilesDeleteFile": {
+   "trigger": false,
+   "calls": 1,
+   "success": 0.0
+  },
+  "FilesMoveFile": {
+   "trigger": true,
+   "step": 6,
+   "calls": 6,
+   "orig_calls": 20,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "MarkorAddNoteHeader": {
+   "trigger": true,
+   "step": 11,
+   "calls": 11,
+   "orig_calls": 12,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "MarkorChangeNoteContent": {
+   "trigger": false,
+   "calls": 6,
+   "success": 0.0
+  },
+  "MarkorCreateFolder": {
+   "trigger": false,
+   "calls": 5,
+   "success": 0.0
+  },
+  "MarkorCreateNote": {
+   "trigger": false,
+   "calls": 16,
+   "success": 0.0
+  },
+  "MarkorCreateNoteAndSms": {
+   "trigger": false,
+   "calls": 13,
+   "success": 0.0
+  },
+  "MarkorCreateNoteFromClipboard": {
+   "trigger": false,
+   "calls": 8,
+   "success": 0.0
+  },
+  "MarkorDeleteAllNotes": {
+   "trigger": false,
+   "calls": 14,
+   "success": 0.0
+  },
+  "MarkorDeleteNewestNote": {
+   "trigger": false,
+   "calls": 8,
+   "success": 0.0
+  },
+  "MarkorDeleteNote": {
+   "trigger": false,
+   "calls": 7,
+   "success": 1.0
+  },
+  "MarkorEditNote": {
+   "trigger": false,
+   "calls": 4,
+   "success": 0.0
+  },
+  "MarkorMergeNotes": {
+   "trigger": true,
+   "step": 60,
+   "calls": 60,
+   "orig_calls": 78,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "MarkorMoveNote": {
+   "trigger": false,
+   "calls": 5,
+   "success": 0.0
+  },
+  "MarkorTranscribeReceipt": {
+   "trigger": false,
+   "calls": 18,
+   "success": 0.0
+  },
+  "MarkorTranscribeVideo": {
+   "trigger": true,
+   "step": 13,
+   "calls": 12,
+   "orig_calls": 20,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "NotesIsTodo": {
+   "trigger": false,
+   "calls": 2,
+   "success": 1.0
+  },
+  "NotesMeetingAttendeeCount": {
+   "trigger": false,
+   "calls": 1,
+   "success": 0.0
+  },
+  "NotesRecipeIngredientCount": {
+   "trigger": false,
+   "calls": 10,
+   "success": 0.0
+  },
+  "NotesTodoItemCount": {
+   "trigger": false,
+   "calls": 4,
+   "success": 0.0
+  },
+  "OpenAppTaskEval": {
+   "trigger": false,
+   "calls": 2,
+   "success": 1.0
+  },
+  "OsmAndFavorite": {
+   "trigger": false,
+   "calls": 13,
+   "success": 0.0
+  },
+  "OsmAndMarker": {
+   "trigger": false,
+   "calls": 20,
+   "success": 0.0
+  },
+  "OsmAndTrack": {
+   "trigger": true,
+   "step": 13,
+   "calls": 13,
+   "orig_calls": 120,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "RecipeAddMultipleRecipes": {
+   "trigger": true,
+   "step": 10,
+   "calls": 10,
+   "orig_calls": 53,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "RecipeAddMultipleRecipesFromImage": {
+   "trigger": true,
+   "step": 17,
+   "calls": 17,
+   "orig_calls": 60,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "RecipeAddMultipleRecipesFromMarkor": {
+   "trigger": true,
+   "step": 17,
+   "calls": 17,
+   "orig_calls": 28,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "RecipeAddMultipleRecipesFromMarkor2": {
+   "trigger": false,
+   "calls": 42,
+   "success": 0.0
+  },
+  "RecipeAddSingleRecipe": {
+   "trigger": true,
+   "step": 9,
+   "calls": 9,
+   "orig_calls": 24,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "RecipeDeleteDuplicateRecipes": {
+   "trigger": false,
+   "calls": 10,
+   "success": 0.0
+  },
+  "RecipeDeleteDuplicateRecipes2": {
+   "trigger": false,
+   "calls": 24,
+   "success": 0.0
+  },
+  "RecipeDeleteDuplicateRecipes3": {
+   "trigger": false,
+   "calls": 34,
+   "success": 0.0
+  },
+  "RecipeDeleteMultipleRecipes": {
+   "trigger": false,
+   "calls": 15,
+   "success": 0.0
+  },
+  "RecipeDeleteMultipleRecipesWithConstraint": {
+   "trigger": false,
+   "calls": 5,
+   "success": 1.0
+  },
+  "RecipeDeleteMultipleRecipesWithNoise": {
+   "trigger": false,
+   "calls": 28,
+   "success": 0.0
+  },
+  "RecipeDeleteSingleRecipe": {
+   "trigger": false,
+   "calls": 7,
+   "success": 0.0
+  },
+  "RecipeDeleteSingleWithRecipeWithNoise": {
+   "trigger": false,
+   "calls": 15,
+   "success": 1.0
+  },
+  "RetroCreatePlaylist": {
+   "trigger": false,
+   "calls": 15,
+   "success": 0.0
+  },
+  "RetroPlayingQueue": {
+   "trigger": false,
+   "calls": 12,
+   "success": 0.0
+  },
+  "RetroPlaylistDuration": {
+   "trigger": true,
+   "step": 9,
+   "calls": 9,
+   "orig_calls": 30,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "RetroSavePlaylist": {
+   "trigger": false,
+   "calls": 50,
+   "success": 0.0
+  },
+  "SaveCopyOfReceiptTaskEval": {
+   "trigger": false,
+   "calls": 11,
+   "success": 0.0
+  },
+  "SimpleCalendarAddOneEvent": {
+   "trigger": true,
+   "step": 18,
+   "calls": 18,
+   "orig_calls": 34,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "SimpleCalendarAddOneEventInTwoWeeks": {
+   "trigger": true,
+   "step": 19,
+   "calls": 19,
+   "orig_calls": 34,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "SimpleCalendarAddOneEventRelativeDay": {
+   "trigger": true,
+   "step": 13,
+   "calls": 13,
+   "orig_calls": 34,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "SimpleCalendarAddOneEventTomorrow": {
+   "trigger": false,
+   "calls": 34,
+   "success": 0.0
+  },
+  "SimpleCalendarAddRepeatingEvent": {
+   "trigger": true,
+   "step": 22,
+   "calls": 22,
+   "orig_calls": 34,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "SimpleCalendarAnyEventsOnDate": {
+   "trigger": true,
+   "step": 6,
+   "calls": 6,
+   "orig_calls": 10,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "SimpleCalendarDeleteEvents": {
+   "trigger": true,
+   "step": 12,
+   "calls": 12,
+   "orig_calls": 14,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "SimpleCalendarDeleteEventsOnRelativeDay": {
+   "trigger": false,
+   "calls": 11,
+   "success": 0.0
+  },
+  "SimpleCalendarDeleteOneEvent": {
+   "trigger": false,
+   "calls": 12,
+   "success": 0.0
+  },
+  "SimpleCalendarEventOnDateAtTime": {
+   "trigger": false,
+   "calls": 10,
+   "success": 0.0
+  },
+  "SimpleCalendarEventsInNextWeek": {
+   "trigger": false,
+   "calls": 5,
+   "success": 0.0
+  },
+  "SimpleCalendarEventsInTimeRange": {
+   "trigger": false,
+   "calls": 4,
+   "success": 0.0
+  },
+  "SimpleCalendarEventsOnDate": {
+   "trigger": true,
+   "step": 6,
+   "calls": 6,
+   "orig_calls": 10,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "SimpleCalendarFirstEventAfterStartTime": {
+   "trigger": false,
+   "calls": 10,
+   "success": 0.0
+  },
+  "SimpleCalendarLocationOfEvent": {
+   "trigger": false,
+   "calls": 4,
+   "success": 0.0
+  },
+  "SimpleCalendarNextEvent": {
+   "trigger": false,
+   "calls": 5,
+   "success": 0.0
+  },
+  "SimpleCalendarNextMeetingWithPerson": {
+   "trigger": false,
+   "calls": 4,
+   "success": 1.0
+  },
+  "SimpleDrawProCreateDrawing": {
+   "trigger": true,
+   "step": 13,
+   "calls": 13,
+   "orig_calls": 18,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "SimpleSmsReply": {
+   "trigger": false,
+   "calls": 12,
+   "success": 0.0
+  },
+  "SimpleSmsReplyMostRecent": {
+   "trigger": false,
+   "calls": 0,
+   "success": null
+  },
+  "SimpleSmsResend": {
+   "trigger": true,
+   "step": 9,
+   "calls": 9,
+   "orig_calls": 12,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "SimpleSmsSend": {
+   "trigger": false,
+   "calls": 12,
+   "success": 0.0
+  },
+  "SimpleSmsSendClipboardContent": {
+   "trigger": true,
+   "step": 6,
+   "calls": 6,
+   "orig_calls": 12,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "SimpleSmsSendReceivedAddress": {
+   "trigger": false,
+   "calls": 6,
+   "success": 0.0
+  },
+  "SportsTrackerActivitiesCountForWeek": {
+   "trigger": false,
+   "calls": 3,
+   "success": 0.0
+  },
+  "SportsTrackerActivitiesOnDate": {
+   "trigger": false,
+   "calls": 1,
+   "success": 0.0
+  },
+  "SportsTrackerActivityDuration": {
+   "trigger": false,
+   "calls": 2,
+   "success": 0.0
+  },
+  "SportsTrackerLongestDistanceActivity": {
+   "trigger": true,
+   "step": 6,
+   "calls": 6,
+   "orig_calls": 8,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "SportsTrackerTotalDistanceForCategoryOverInterval": {
+   "trigger": false,
+   "calls": 1,
+   "success": 0.0
+  },
+  "SportsTrackerTotalDurationForCategoryThisWeek": {
+   "trigger": false,
+   "calls": 10,
+   "success": 0.0
+  },
+  "SystemBluetoothTurnOff": {
+   "trigger": false,
+   "calls": 10,
+   "success": 0.0
+  },
+  "SystemBluetoothTurnOffVerify": {
+   "trigger": false,
+   "calls": 10,
+   "success": 1.0
+  },
+  "SystemBluetoothTurnOn": {
+   "trigger": false,
+   "calls": 10,
+   "success": 0.0
+  },
+  "SystemBluetoothTurnOnVerify": {
+   "trigger": false,
+   "calls": 5,
+   "success": 1.0
+  },
+  "SystemBrightnessMax": {
+   "trigger": false,
+   "calls": 10,
+   "success": 0.0
+  },
+  "SystemBrightnessMaxVerify": {
+   "trigger": false,
+   "calls": 4,
+   "success": 1.0
+  },
+  "SystemBrightnessMin": {
+   "trigger": false,
+   "calls": 10,
+   "success": 0.0
+  },
+  "SystemBrightnessMinVerify": {
+   "trigger": false,
+   "calls": 5,
+   "success": 1.0
+  },
+  "SystemCopyToClipboard": {
+   "trigger": false,
+   "calls": 10,
+   "success": 0.0
+  },
+  "SystemWifiTurnOff": {
+   "trigger": false,
+   "calls": 10,
+   "success": 0.0
+  },
+  "SystemWifiTurnOffVerify": {
+   "trigger": false,
+   "calls": 10,
+   "success": 1.0
+  },
+  "SystemWifiTurnOn": {
+   "trigger": false,
+   "calls": 6,
+   "success": 1.0
+  },
+  "SystemWifiTurnOnVerify": {
+   "trigger": false,
+   "calls": 10,
+   "success": 1.0
+  },
+  "TasksCompletedTasksForDate": {
+   "trigger": false,
+   "calls": 5,
+   "success": 0.0
+  },
+  "TasksDueNextWeek": {
+   "trigger": false,
+   "calls": 4,
+   "success": 0.0
+  },
+  "TasksDueOnDate": {
+   "trigger": false,
+   "calls": 5,
+   "success": 0.0
+  },
+  "TasksHighPriorityTasks": {
+   "trigger": false,
+   "calls": 4,
+   "success": 0.0
+  },
+  "TasksHighPriorityTasksDueOnDate": {
+   "trigger": false,
+   "calls": 1,
+   "success": 0.0
+  },
+  "TasksIncompleteTasksOnDate": {
+   "trigger": false,
+   "calls": 4,
+   "success": 0.0
+  },
+  "TurnOffWifiAndTurnOnBluetooth": {
+   "trigger": false,
+   "calls": 8,
+   "success": 0.0
+  },
+  "TurnOnWifiAndOpenApp": {
+   "trigger": false,
+   "calls": 20,
+   "success": 0.5
+  },
+  "VlcCreatePlaylist": {
+   "trigger": false,
+   "calls": 0,
+   "success": null
+  },
+  "VlcCreateTwoPlaylists": {
+   "trigger": false,
+   "calls": 0,
+   "success": null
+  }
+ },
+ "FULL45": {
+  "AudioRecorderRecordAudio": {
+   "trigger": false,
+   "calls": 12,
+   "success": 1.0
+  },
+  "AudioRecorderRecordAudioWithFileName": {
+   "trigger": false,
+   "calls": 20,
+   "success": 0.0
+  },
+  "BrowserDraw": {
+   "trigger": true,
+   "step": 12,
+   "calls": 10,
+   "orig_calls": 20,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "BrowserMaze": {
+   "trigger": false,
+   "calls": 20,
+   "success": 0.0
+  },
+  "BrowserMultiply": {
+   "trigger": false,
+   "calls": 22,
+   "success": 0.0
+  },
+  "CameraTakePhoto": {
+   "trigger": false,
+   "calls": 10,
+   "success": 1.0
+  },
+  "CameraTakeVideo": {
+   "trigger": false,
+   "calls": 7,
+   "success": 0.0
+  },
+  "ClockStopWatchPausedVerify": {
+   "trigger": false,
+   "calls": 2,
+   "success": 0.0
+  },
+  "ClockStopWatchRunning": {
+   "trigger": true,
+   "step": 7,
+   "calls": 8,
+   "orig_calls": 9,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "ClockTimerEntry": {
+   "trigger": true,
+   "step": 7,
+   "calls": 6,
+   "orig_calls": 10,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "ContactsAddContact": {
+   "trigger": true,
+   "step": 6,
+   "calls": 7,
+   "orig_calls": 12,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "ContactsNewContactDraft": {
+   "trigger": false,
+   "calls": 9,
+   "success": 1.0
+  },
+  "ExpenseAddMultiple": {
+   "trigger": false,
+   "calls": 15,
+   "success": 0.0
+  },
+  "ExpenseAddMultipleFromGallery": {
+   "trigger": true,
+   "step": 13,
+   "calls": 13,
+   "orig_calls": 28,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "ExpenseAddMultipleFromMarkor": {
+   "trigger": false,
+   "calls": 7,
+   "success": 0.0
+  },
+  "ExpenseAddSingle": {
+   "trigger": false,
+   "calls": 7,
+   "success": 0.0
+  },
+  "ExpenseDeleteDuplicates": {
+   "trigger": false,
+   "calls": 12,
+   "success": 0.0
+  },
+  "ExpenseDeleteDuplicates2": {
+   "trigger": false,
+   "calls": 7,
+   "success": 0.0
+  },
+  "ExpenseDeleteMultiple": {
+   "trigger": false,
+   "calls": 6,
+   "success": 0.0
+  },
+  "ExpenseDeleteMultiple2": {
+   "trigger": true,
+   "step": 21,
+   "calls": 19,
+   "orig_calls": 34,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "ExpenseDeleteSingle": {
+   "trigger": false,
+   "calls": 6,
+   "success": 1.0
+  },
+  "FilesDeleteFile": {
+   "trigger": false,
+   "calls": 1,
+   "success": 0.0
+  },
+  "FilesMoveFile": {
+   "trigger": true,
+   "step": 7,
+   "calls": 7,
+   "orig_calls": 20,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "MarkorAddNoteHeader": {
+   "trigger": false,
+   "calls": 12,
+   "success": 0.0
+  },
+  "MarkorChangeNoteContent": {
+   "trigger": false,
+   "calls": 5,
+   "success": 0.0
+  },
+  "MarkorCreateFolder": {
+   "trigger": false,
+   "calls": 4,
+   "success": 0.0
+  },
+  "MarkorCreateNote": {
+   "trigger": false,
+   "calls": 16,
+   "success": 0.0
+  },
+  "MarkorCreateNoteAndSms": {
+   "trigger": false,
+   "calls": 18,
+   "success": 0.0
+  },
+  "MarkorCreateNoteFromClipboard": {
+   "trigger": false,
+   "calls": 7,
+   "success": 0.0
+  },
+  "MarkorDeleteAllNotes": {
+   "trigger": false,
+   "calls": 14,
+   "success": 0.0
+  },
+  "MarkorDeleteNewestNote": {
+   "trigger": false,
+   "calls": 10,
+   "success": 0.0
+  },
+  "MarkorDeleteNote": {
+   "trigger": false,
+   "calls": 4,
+   "success": 0.0
+  },
+  "MarkorEditNote": {
+   "trigger": false,
+   "calls": 3,
+   "success": 0.0
+  },
+  "MarkorMergeNotes": {
+   "trigger": true,
+   "step": 12,
+   "calls": 12,
+   "orig_calls": 78,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "MarkorMoveNote": {
+   "trigger": false,
+   "calls": 14,
+   "success": 0.0
+  },
+  "MarkorTranscribeReceipt": {
+   "trigger": false,
+   "calls": 8,
+   "success": 0.0
+  },
+  "MarkorTranscribeVideo": {
+   "trigger": true,
+   "step": 11,
+   "calls": 13,
+   "orig_calls": 16,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "NotesIsTodo": {
+   "trigger": false,
+   "calls": 2,
+   "success": 1.0
+  },
+  "NotesMeetingAttendeeCount": {
+   "trigger": false,
+   "calls": 2,
+   "success": 0.0
+  },
+  "NotesRecipeIngredientCount": {
+   "trigger": false,
+   "calls": 1,
+   "success": 0.0
+  },
+  "NotesTodoItemCount": {
+   "trigger": false,
+   "calls": 1,
+   "success": 0.0
+  },
+  "OpenAppTaskEval": {
+   "trigger": false,
+   "calls": 3,
+   "success": 1.0
+  },
+  "OsmAndFavorite": {
+   "trigger": false,
+   "calls": 13,
+   "success": 0.0
+  },
+  "OsmAndMarker": {
+   "trigger": true,
+   "step": 11,
+   "calls": 11,
+   "orig_calls": 20,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "OsmAndTrack": {
+   "trigger": true,
+   "step": 47,
+   "calls": 47,
+   "orig_calls": 120,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "RecipeAddMultipleRecipes": {
+   "trigger": false,
+   "calls": 9,
+   "success": 1.0
+  },
+  "RecipeAddMultipleRecipesFromImage": {
+   "trigger": false,
+   "calls": 6,
+   "success": 0.0
+  },
+  "RecipeAddMultipleRecipesFromMarkor": {
+   "trigger": false,
+   "calls": 11,
+   "success": 0.0
+  },
+  "RecipeAddMultipleRecipesFromMarkor2": {
+   "trigger": false,
+   "calls": 12,
+   "success": 0.0
+  },
+  "RecipeAddSingleRecipe": {
+   "trigger": true,
+   "step": 9,
+   "calls": 8,
+   "orig_calls": 24,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "RecipeDeleteDuplicateRecipes": {
+   "trigger": false,
+   "calls": 10,
+   "success": 0.0
+  },
+  "RecipeDeleteDuplicateRecipes2": {
+   "trigger": false,
+   "calls": 24,
+   "success": 0.0
+  },
+  "RecipeDeleteDuplicateRecipes3": {
+   "trigger": true,
+   "step": 27,
+   "calls": 27,
+   "orig_calls": 34,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "RecipeDeleteMultipleRecipes": {
+   "trigger": false,
+   "calls": 12,
+   "success": 0.0
+  },
+  "RecipeDeleteMultipleRecipesWithConstraint": {
+   "trigger": true,
+   "step": 13,
+   "calls": 14,
+   "orig_calls": 40,
+   "success": 0.0,
+   "orig_success": 1.0
+  },
+  "RecipeDeleteMultipleRecipesWithNoise": {
+   "trigger": true,
+   "step": 22,
+   "calls": 21,
+   "orig_calls": 34,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "RecipeDeleteSingleRecipe": {
+   "trigger": false,
+   "calls": 5,
+   "success": 1.0
+  },
+  "RecipeDeleteSingleWithRecipeWithNoise": {
+   "trigger": false,
+   "calls": 9,
+   "success": 1.0
+  },
+  "RetroCreatePlaylist": {
+   "trigger": false,
+   "calls": 1,
+   "success": 0.0
+  },
+  "RetroPlayingQueue": {
+   "trigger": true,
+   "step": 13,
+   "calls": 13,
+   "orig_calls": 32,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "RetroPlaylistDuration": {
+   "trigger": false,
+   "calls": 30,
+   "success": 0.0
+  },
+  "RetroSavePlaylist": {
+   "trigger": false,
+   "calls": 50,
+   "success": 0.0
+  },
+  "SaveCopyOfReceiptTaskEval": {
+   "trigger": false,
+   "calls": 6,
+   "success": 0.0
+  },
+  "SimpleCalendarAddOneEvent": {
+   "trigger": true,
+   "step": 12,
+   "calls": 12,
+   "orig_calls": 34,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "SimpleCalendarAddOneEventInTwoWeeks": {
+   "trigger": false,
+   "calls": 13,
+   "success": 0.0
+  },
+  "SimpleCalendarAddOneEventRelativeDay": {
+   "trigger": false,
+   "calls": 34,
+   "success": 0.0
+  },
+  "SimpleCalendarAddOneEventTomorrow": {
+   "trigger": true,
+   "step": 11,
+   "calls": 9,
+   "orig_calls": 34,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "SimpleCalendarAddRepeatingEvent": {
+   "trigger": false,
+   "calls": 34,
+   "success": 0.0
+  },
+  "SimpleCalendarAnyEventsOnDate": {
+   "trigger": false,
+   "calls": 2,
+   "success": 0.0
+  },
+  "SimpleCalendarDeleteEvents": {
+   "trigger": true,
+   "step": 5,
+   "calls": 5,
+   "orig_calls": 14,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "SimpleCalendarDeleteEventsOnRelativeDay": {
+   "trigger": false,
+   "calls": 12,
+   "success": 0.0
+  },
+  "SimpleCalendarDeleteOneEvent": {
+   "trigger": true,
+   "step": 5,
+   "calls": 5,
+   "orig_calls": 12,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "SimpleCalendarEventOnDateAtTime": {
+   "trigger": true,
+   "step": 5,
+   "calls": 5,
+   "orig_calls": 10,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "SimpleCalendarEventsInNextWeek": {
+   "trigger": false,
+   "calls": 6,
+   "success": 0.0
+  },
+  "SimpleCalendarEventsInTimeRange": {
+   "trigger": true,
+   "step": 5,
+   "calls": 5,
+   "orig_calls": 10,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "SimpleCalendarEventsOnDate": {
+   "trigger": true,
+   "step": 5,
+   "calls": 5,
+   "orig_calls": 10,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "SimpleCalendarFirstEventAfterStartTime": {
+   "trigger": false,
+   "calls": 5,
+   "success": 0.0
+  },
+  "SimpleCalendarLocationOfEvent": {
+   "trigger": false,
+   "calls": 3,
+   "success": 1.0
+  },
+  "SimpleCalendarNextEvent": {
+   "trigger": false,
+   "calls": 1,
+   "success": 0.0
+  },
+  "SimpleCalendarNextMeetingWithPerson": {
+   "trigger": false,
+   "calls": 3,
+   "success": 1.0
+  },
+  "SimpleDrawProCreateDrawing": {
+   "trigger": true,
+   "step": 11,
+   "calls": 12,
+   "orig_calls": 18,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "SimpleSmsReply": {
+   "trigger": false,
+   "calls": 12,
+   "success": 0.0
+  },
+  "SimpleSmsReplyMostRecent": {
+   "trigger": false,
+   "calls": 0,
+   "success": null
+  },
+  "SimpleSmsResend": {
+   "trigger": true,
+   "step": 8,
+   "calls": 8,
+   "orig_calls": 12,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "SimpleSmsSend": {
+   "trigger": false,
+   "calls": 6,
+   "success": 0.0
+  },
+  "SimpleSmsSendClipboardContent": {
+   "trigger": false,
+   "calls": 7,
+   "success": 0.0
+  },
+  "SimpleSmsSendReceivedAddress": {
+   "trigger": false,
+   "calls": 5,
+   "success": 0.0
+  },
+  "SportsTrackerActivitiesCountForWeek": {
+   "trigger": false,
+   "calls": 7,
+   "success": 0.0
+  },
+  "SportsTrackerActivitiesOnDate": {
+   "trigger": false,
+   "calls": 2,
+   "success": null
+  },
+  "SportsTrackerActivityDuration": {
+   "trigger": true,
+   "step": 5,
+   "calls": 6,
+   "orig_calls": 10,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "SportsTrackerLongestDistanceActivity": {
+   "trigger": true,
+   "step": 5,
+   "calls": 6,
+   "orig_calls": 10,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "SportsTrackerTotalDistanceForCategoryOverInterval": {
+   "trigger": false,
+   "calls": 11,
+   "success": 0.0
+  },
+  "SportsTrackerTotalDurationForCategoryThisWeek": {
+   "trigger": false,
+   "calls": 5,
+   "success": null
+  },
+  "SystemBluetoothTurnOff": {
+   "trigger": false,
+   "calls": 7,
+   "success": 1.0
+  },
+  "SystemBluetoothTurnOffVerify": {
+   "trigger": false,
+   "calls": 6,
+   "success": 1.0
+  },
+  "SystemBluetoothTurnOn": {
+   "trigger": false,
+   "calls": 10,
+   "success": 1.0
+  },
+  "SystemBluetoothTurnOnVerify": {
+   "trigger": false,
+   "calls": 10,
+   "success": 1.0
+  },
+  "SystemBrightnessMax": {
+   "trigger": false,
+   "calls": 10,
+   "success": 0.0
+  },
+  "SystemBrightnessMaxVerify": {
+   "trigger": false,
+   "calls": 7,
+   "success": 1.0
+  },
+  "SystemBrightnessMin": {
+   "trigger": false,
+   "calls": 10,
+   "success": 0.0
+  },
+  "SystemBrightnessMinVerify": {
+   "trigger": false,
+   "calls": 10,
+   "success": 0.0
+  },
+  "SystemCopyToClipboard": {
+   "trigger": false,
+   "calls": 10,
+   "success": 0.0
+  },
+  "SystemWifiTurnOff": {
+   "trigger": true,
+   "step": 8,
+   "calls": 8,
+   "orig_calls": 10,
+   "success": 0.0,
+   "orig_success": 0.0
+  },
+  "SystemWifiTurnOffVerify": {
+   "trigger": false,
+   "calls": 10,
+   "success": 1.0
+  },
+  "SystemWifiTurnOn": {
+   "trigger": false,
+   "calls": 5,
+   "success": 1.0
+  },
+  "SystemWifiTurnOnVerify": {
+   "trigger": false,
+   "calls": 4,
+   "success": 1.0
+  },
+  "TasksCompletedTasksForDate": {
+   "trigger": false,
+   "calls": 3,
+   "success": null
+  },
+  "TasksDueNextWeek": {
+   "trigger": false,
+   "calls": 2,
+   "success": null
+  },
+  "TasksDueOnDate": {
+   "trigger": false,
+   "calls": 2,
+   "success": null
+  },
+  "TasksHighPriorityTasks": {
+   "trigger": false,
+   "calls": 5,
+   "success": null
+  },
+  "TasksHighPriorityTasksDueOnDate": {
+   "trigger": false,
+   "calls": 2,
+   "success": null
+  },
+  "TasksIncompleteTasksOnDate": {
+   "trigger": false,
+   "calls": 3,
+   "success": 0.0
+  },
+  "TurnOffWifiAndTurnOnBluetooth": {
+   "trigger": false,
+   "calls": 6,
+   "success": 0.5
+  },
+  "TurnOnWifiAndOpenApp": {
+   "trigger": false,
+   "calls": 5,
+   "success": 1.0
+  },
+  "VlcCreatePlaylist": {
+   "trigger": false,
+   "calls": 0,
+   "success": null
+  },
+  "VlcCreateTwoPlaylists": {
+   "trigger": false,
+   "calls": 0,
+   "success": null
+  }
+ }
+}

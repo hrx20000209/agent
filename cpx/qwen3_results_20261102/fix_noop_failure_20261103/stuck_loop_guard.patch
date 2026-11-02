@@ -1,0 +1,149 @@
+--- a/experiments/trace_reachability_validation/scripts/full_run.py
++++ b/experiments/trace_reachability_validation/scripts/full_run.py
+@@ -46,6 +46,7 @@
+ import intent_graph as IG  # noqa: E402
+ import term_graph as TG  # noqa: E402
+ import graph_exec as GX  # noqa: E402
++import noop_guard as NG  # noqa: E402
+ from android_world.env import adb_utils  # noqa: E402
+ from android_world.env import json_action  # noqa: E402
+ 
+@@ -178,6 +179,10 @@
+     done, prev, k = False, None, 0
+     booted = False
+     reuse_next = None
++    # Arm-agnostic stuck guard: a model may repeat any control (not only a
++    # navigation slot) without changing the screen; stop instead of burning the
++    # call budget. AW_NOOP_STOP overrides the limit (default 5).
++    noop_guard = NG.NoopGuard(int(os.environ.get("AW_NOOP_STOP", "5")))
+     # FULL37: the step budget is the INFERENCE budget (as for BASE: 20 model calls); graph executions do not use
+     # it. A separate cap on all counted steps (2x) guards against graph loops.
+     while ((m["calls"] < self.max_steps() and k < 2 * self.max_steps()) if ARM in ("FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45") else k < self.max_steps()):
+@@ -205,6 +210,18 @@
+         self._resolve_pending(steps)       # FULL41: the summary decoded while the action ran and the screen settled
+       if fx is not None and prev is not None:
+         fx.observe_model(prev, ui)
++      if prev is not None and prev.get("step") == k - 1:
++        a_prev = prev.get("action") or {}
++        noop_sig = (a_prev.get("action_type"), a_prev.get("x"), a_prev.get("y"),
++                    a_prev.get("index"), a_prev.get("text"))
++        if noop_guard.observe(noop_sig, R.same_state(prev["pre"]["ui"], ui)):
++          m["noop_stop"] += 1
++          row = {"step": k, "kind": "noop_stop", "pre": R.strip(pre), "action": a_prev,
++                 "noop_streak": noop_guard.n}
++          steps.append(row)
++          self.log("steps", row)
++          prev = None          # a no-op action must not become a graph edge
++          break
+       if prev is not None:
+         self.ingest_agent(graph, instance, prev, pre)
+         prev = None
+@@ -1858,6 +1875,11 @@
+ 
+ def _run(self):
+   res = S._orig_run(self)  # pylint: disable=protected-access
++  if res.get("m_noop_stop"):
++    # Rule: reaching the repeated-no-effect threshold is a failure, regardless
++    # of what the task evaluator says about the final screen.
++    res["is_successful"] = 0.0
++    res["stuck_failed"] = True
+   if ARM in ("FULL23", "FULL24", "FULL26", "FULL27", "FULL28", "FULL29", "FULL30", "FULL31", "FULL32", "FULL33", "FULL34", "FULL35", "FULL36", "FULL37", "FULL38", "FULL39", "FULL40", "FULL41", "FULL42", "FULL43", "FULL44", "FULL45") and getattr(self, "_intent", None) is not None:
+     # P0-1: a successful episode validates the edges it traversed for this kind of goal
+     self._intent.record_episode(self.out / "steps.jsonl", self._gvec, res.get("is_successful") == 1.0)
+--- a/experiments/trace_reachability_validation/scripts/noop_guard.py
++++ b/experiments/trace_reachability_validation/scripts/noop_guard.py
+@@ -0,0 +1,45 @@
++"""Stop an episode when the model repeats the same action with no effect.
++
++The FULL45 controller already brakes *navigation* controls that are tapped
++three times without a screen change (``full7.StuckExplorer.needs_back``), but
++hard mode deliberately ignores every other control. A text model can then keep
++tapping the same non-navigation element (e.g. a ``TextView``) until the call
++budget is exhausted -- observed on Qwen3-8B / RecipeDeleteMultipleRecipesWith-
++Constraint, where steps 9-40 were 32 identical clicks at (563, 1033).
++
++This guard is arm-agnostic (it does not depend on the graph or on hard mode)
++and only fires on *consecutive identical* actions that leave the screen
++unchanged, so legitimate repetition (typing, incrementing a counter, scrolling,
++where the content changes) keeps its count at zero.
++"""
++
++
++class NoopGuard:
++  """Counts consecutive identical actions that did not change the screen."""
++
++  def __init__(self, limit=5):
++    if int(limit) < 2:
++      raise ValueError("limit must be >= 2")
++    self.limit = int(limit)
++    self.sig = None
++    self.n = 0
++    self.fired = False
++
++  def observe(self, sig, unchanged):
++    """Record one executed action; True exactly once when the limit is reached.
++
++    Args:
++      sig: hashable action signature (type + target); identical means the same
++        action on the same element.
++      unchanged: whether the screen after the action equals the screen before.
++    """
++    if not unchanged:
++      self.sig, self.n, self.fired = None, 0, False
++    elif sig == self.sig:
++      self.n += 1
++    else:
++      self.sig, self.n, self.fired = sig, 1, False
++    if self.n >= self.limit and not self.fired:
++      self.fired = True
++      return True
++    return False
+--- a/experiments/trace_reachability_validation/scripts/test_noop_guard.py
++++ b/experiments/trace_reachability_validation/scripts/test_noop_guard.py
+@@ -0,0 +1,46 @@
++"""Unit tests for the arm-agnostic no-op stuck guard."""
++import unittest
++
++from noop_guard import NoopGuard
++
++
++class NoopGuardTest(unittest.TestCase):
++
++  def test_identical_no_effect_actions_stop_at_limit(self):
++    guard = NoopGuard(5)
++    hits = [i for i in range(40)
++            if guard.observe(("click", 563, 1033, None, None), True)]
++    self.assertEqual(hits, [4])          # 5th observation ends the episode
++
++  def test_screen_change_resets(self):
++    guard = NoopGuard(3)
++    self.assertFalse(guard.observe(("click", 1, 2), True))
++    self.assertFalse(guard.observe(("click", 1, 2), True))
++    self.assertFalse(guard.observe(("click", 1, 2), False))   # the page moved
++    self.assertFalse(guard.observe(("click", 1, 2), True))
++    self.assertFalse(guard.observe(("click", 1, 2), True))
++    self.assertTrue(guard.observe(("click", 1, 2), True))
++
++  def test_alternating_actions_never_fire(self):
++    guard = NoopGuard(3)
++    for _ in range(20):
++      self.assertFalse(guard.observe(("click", 1, 2), True))
++      self.assertFalse(guard.observe(("click", 9, 9), True))
++
++  def test_limit_must_be_sane(self):
++    with self.assertRaises(ValueError):
++      NoopGuard(1)
++
++  def test_replay_of_recorded_loop(self):
++    # RecipeDeleteMultipleRecipesWithConstraint / FULL45: steps 9-40 are one
++    # unchanged click; the guard must cut the episode at the 5th repetition.
++    guard = NoopGuard(5)
++    fired = []
++    for step in range(9, 41):
++      if guard.observe(("click", 563, 1033, None, None), True):
++        fired.append(step)
++    self.assertEqual(fired, [13])
++
++
++if __name__ == "__main__":
++  unittest.main()
