@@ -1,0 +1,1 @@
+{"task": "RetroPlaylistDuration", "variant": "p0_pair", "mode": "agent", "steps": 30, "env_actions": 30, "agent_steps": 30, "done": false, "model_calls": 30, "final_cid": "0031_final", "n_probes": 0, "explore_disabled": "", "store_eps": 0, "m_calls": 30, "m_jump_absent": 0, "m_jump_mismatch": 0, "is_successful": 0.0, "wall_s": 308.46, "model_calls_internal": 30}

@@ -1,0 +1,1 @@
+{"task": "RecipeDeleteMultipleRecipesWithConstraint", "variant": "p0_pair", "mode": "agent", "steps": 5, "env_actions": 5, "agent_steps": 5, "done": true, "model_calls": 5, "final_cid": "0006_final", "n_probes": 0, "explore_disabled": "", "store_eps": 0, "m_calls": 5, "m_jump_absent": 0, "m_jump_mismatch": 0, "is_successful": 1.0, "wall_s": 76.64, "model_calls_internal": 5}

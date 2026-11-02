@@ -1,0 +1,1 @@
+{"task": "MarkorCreateNote", "variant": "p0_pair", "mode": "agent", "steps": 16, "env_actions": 16, "agent_steps": 16, "done": false, "model_calls": 16, "final_cid": "0017_final", "n_probes": 0, "explore_disabled": "", "store_eps": 0, "m_calls": 16, "m_jump_absent": 0, "m_jump_mismatch": 0, "is_successful": 0.0, "wall_s": 190.26, "model_calls_internal": 16}

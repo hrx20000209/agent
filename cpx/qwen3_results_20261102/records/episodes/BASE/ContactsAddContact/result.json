@@ -1,0 +1,1 @@
+{"task": "ContactsAddContact", "variant": "p0_pair", "mode": "agent", "steps": 6, "env_actions": 6, "agent_steps": 6, "done": true, "model_calls": 6, "final_cid": "0007_final", "n_probes": 0, "explore_disabled": "", "store_eps": 0, "m_calls": 6, "m_jump_absent": 0, "m_jump_mismatch": 0, "is_successful": 0.0, "wall_s": 49.65, "model_calls_internal": 6}

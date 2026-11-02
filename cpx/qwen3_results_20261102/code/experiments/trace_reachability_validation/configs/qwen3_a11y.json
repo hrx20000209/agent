@@ -1,0 +1,16 @@
+{
+  "model": "Qwen3-8B-A11Y",
+  "base_url": "http://172.17.0.1:18198",
+  "max_model_len": 32768,
+  "max_tokens": 2048,
+  "temperature": 0,
+  "thinking": false,
+  "top_p": 1,
+  "top_k": -1,
+  "request_seed": 42,
+  "observation": "visible accessibility tree nodes with hierarchy and indexes; no images",
+  "budget": "int(10*complexity)",
+  "invalid_output": "counted no-action turn with textual feedback, no guessed gesture",
+  "history": "last24 agent action summaries, including model and graph actions; no extra LLM summaries",
+  "prompt": "official AndroidWorld T3A action selection, screenshot wording replaced by accessibility tree wording"
+}

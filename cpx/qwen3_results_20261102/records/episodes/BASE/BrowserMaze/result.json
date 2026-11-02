@@ -1,0 +1,1 @@
+{"task": "BrowserMaze", "variant": "p0_pair", "mode": "agent", "steps": 20, "env_actions": 20, "agent_steps": 20, "done": false, "model_calls": 20, "final_cid": "0021_final", "n_probes": 0, "explore_disabled": "", "store_eps": 0, "m_calls": 20, "m_execution_failures": 2, "m_jump_absent": 0, "m_jump_mismatch": 0, "is_successful": 0.0, "wall_s": 157.6, "model_calls_internal": 20}

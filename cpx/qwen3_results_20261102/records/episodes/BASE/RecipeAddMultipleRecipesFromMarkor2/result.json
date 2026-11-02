@@ -1,0 +1,1 @@
+{"task": "RecipeAddMultipleRecipesFromMarkor2", "variant": "p0_pair", "mode": "agent", "steps": 42, "env_actions": 42, "agent_steps": 42, "done": true, "model_calls": 42, "final_cid": "0043_final", "n_probes": 0, "explore_disabled": "", "store_eps": 0, "m_calls": 42, "m_jump_absent": 0, "m_jump_mismatch": 0, "is_successful": 0.0, "wall_s": 1799.64, "model_calls_internal": 42}

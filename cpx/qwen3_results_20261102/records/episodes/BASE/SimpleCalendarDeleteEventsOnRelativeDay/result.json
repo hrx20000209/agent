@@ -1,0 +1,1 @@
+{"task": "SimpleCalendarDeleteEventsOnRelativeDay", "variant": "p0_pair", "mode": "agent", "steps": 11, "env_actions": 11, "agent_steps": 11, "done": true, "model_calls": 11, "final_cid": "0012_final", "n_probes": 0, "explore_disabled": "", "store_eps": 0, "m_calls": 11, "m_jump_absent": 0, "m_jump_mismatch": 0, "is_successful": 0.0, "wall_s": 93.23, "model_calls_internal": 11}

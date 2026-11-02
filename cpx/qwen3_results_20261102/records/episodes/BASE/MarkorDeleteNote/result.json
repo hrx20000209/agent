@@ -1,0 +1,1 @@
+{"task": "MarkorDeleteNote", "variant": "p0_pair", "mode": "agent", "steps": 7, "env_actions": 7, "agent_steps": 7, "done": true, "model_calls": 7, "final_cid": "0008_final", "n_probes": 0, "explore_disabled": "", "store_eps": 0, "m_calls": 7, "m_jump_absent": 0, "m_jump_mismatch": 0, "is_successful": 1.0, "wall_s": 55.44, "model_calls_internal": 7}

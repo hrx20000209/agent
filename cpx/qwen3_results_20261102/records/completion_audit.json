@@ -1,0 +1,93 @@
+{
+  "updated_at": "2026-11-01T21:41:20.973634+00:00",
+  "host_pid": 192161,
+  "arms": {
+    "BASE": {
+      "status": "FINISHED_WITH_ERRORS",
+      "arm": "BASE",
+      "started_at": "2026-11-01T16:02:29.327098+00:00",
+      "host_pid": 192161,
+      "completed": 116,
+      "errors": [
+        "SimpleSmsReplyMostRecent",
+        "VlcCreatePlaylist",
+        "VlcCreateTwoPlaylists"
+      ],
+      "restarts": 0,
+      "heartbeat_at": "2026-11-01T21:41:20.640687+00:00",
+      "current_task": null,
+      "recovery_attempt": 1,
+      "episode_elapsed_s": 30,
+      "last_activity_age_s": 10,
+      "docker_state": "running",
+      "last_result": {
+        "task": "VlcCreateTwoPlaylists",
+        "arm": "BASE",
+        "success": null,
+        "model_calls": 0,
+        "allocated_budget": 48,
+        "complexity": 4.8,
+        "http_attempts": 0,
+        "observed_decisions": 0,
+        "done": null,
+        "rc": 0,
+        "error": "FileNotFoundError('/data/data/org.videolan.vlc/app_db does not exist.')",
+        "teardown_error": "FileNotFoundError('/data/data/org.videolan.vlc/app_db does not exist.')",
+        "e2e_s": 45.58,
+        "termination": "execution_error",
+        "recorded_at": "2026-11-01T21:41:20.633167+00:00"
+      },
+      "ended_at": "2026-11-01T21:41:20.640670+00:00",
+      "successes": 16
+    },
+    "FULL45": {
+      "status": "FINISHED_WITH_ERRORS",
+      "arm": "FULL45",
+      "started_at": "2026-11-01T16:02:29.329305+00:00",
+      "host_pid": 192161,
+      "completed": 116,
+      "errors": [
+        "SimpleSmsReplyMostRecent",
+        "SportsTrackerActivitiesOnDate",
+        "SportsTrackerTotalDurationForCategoryThisWeek",
+        "TasksCompletedTasksForDate",
+        "TasksDueNextWeek",
+        "TasksDueOnDate",
+        "TasksHighPriorityTasks",
+        "TasksHighPriorityTasksDueOnDate",
+        "VlcCreatePlaylist",
+        "VlcCreateTwoPlaylists"
+      ],
+      "restarts": 0,
+      "heartbeat_at": "2026-11-01T21:09:02.772638+00:00",
+      "current_task": null,
+      "recovery_attempt": 1,
+      "episode_elapsed_s": 30,
+      "last_activity_age_s": 10,
+      "docker_state": "running",
+      "last_result": {
+        "task": "VlcCreateTwoPlaylists",
+        "arm": "FULL45",
+        "success": null,
+        "model_calls": 0,
+        "allocated_budget": 48,
+        "complexity": 4.8,
+        "http_attempts": 0,
+        "observed_decisions": 0,
+        "done": null,
+        "rc": 0,
+        "error": "FileNotFoundError('/data/data/org.videolan.vlc/app_db does not exist.')",
+        "teardown_error": "FileNotFoundError('/data/data/org.videolan.vlc/app_db does not exist.')",
+        "e2e_s": 45.6,
+        "termination": "execution_error",
+        "recorded_at": "2026-11-01T21:09:02.770189+00:00"
+      },
+      "ended_at": "2026-11-01T21:09:02.772620+00:00",
+      "successes": 21
+    }
+  },
+  "vllm_queue": [
+    "vllm:num_requests_running{engine=\"0\",model_name=\"Qwen3-8B-A11Y\"} 0.0",
+    "vllm:num_requests_waiting{engine=\"0\",model_name=\"Qwen3-8B-A11Y\"} 0.0"
+  ]
+}

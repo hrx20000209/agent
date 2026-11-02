@@ -1,0 +1,11 @@
+{
+  "created_at": "2026-11-02T02:50:26.826231+00:00",
+  "formal_tag": "qwen3_8b_a11y_pair_20261101_full_v2",
+  "formal_file_count": 10961,
+  "formal_nonimage_files": 6632,
+  "formal_image_bytes": 522716128,
+  "key_screenshots": 14,
+  "source_file_count": 795,
+  "source_hashes_verified": 318,
+  "earlier_trials_not_merged": true
+}

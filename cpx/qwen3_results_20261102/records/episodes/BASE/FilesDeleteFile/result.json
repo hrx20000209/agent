@@ -1,0 +1,1 @@
+{"task": "FilesDeleteFile", "variant": "p0_pair", "mode": "agent", "steps": 1, "env_actions": 1, "agent_steps": 1, "done": true, "model_calls": 1, "final_cid": "0002_final", "n_probes": 0, "explore_disabled": "", "store_eps": 0, "m_calls": 1, "m_jump_absent": 0, "m_jump_mismatch": 0, "is_successful": 0.0, "wall_s": 13.15, "model_calls_internal": 1}

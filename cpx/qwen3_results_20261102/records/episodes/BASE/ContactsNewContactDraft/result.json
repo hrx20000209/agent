@@ -1,0 +1,1 @@
+{"task": "ContactsNewContactDraft", "variant": "p0_pair", "mode": "agent", "steps": 9, "env_actions": 9, "agent_steps": 9, "done": true, "model_calls": 9, "final_cid": "0010_final", "n_probes": 0, "explore_disabled": "", "store_eps": 0, "m_calls": 9, "m_jump_absent": 0, "m_jump_mismatch": 0, "is_successful": 0.0, "wall_s": 85.58, "model_calls_internal": 9}

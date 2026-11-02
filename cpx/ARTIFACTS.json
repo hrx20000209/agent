@@ -6,8 +6,8 @@
   },
   {
     "path": "README.md",
-    "bytes": 3548,
-    "sha256": "72a9d023824b99920f53506c244516dfc9e5eaece1c234f2be5af3892e5006c9"
+    "bytes": 4367,
+    "sha256": "9e7a4337f4af1486155d37e4e56401dc93a7a5928b9fdf6df04ec8d4a27ed538"
   },
   {
     "path": "VALIDATION.md",
@@ -1503,6 +1503,2586 @@
     "path": "puregpu_run_20261030/run_config.json",
     "bytes": 60697,
     "sha256": "49fb0388c286b38b82091fe0908abb77052c83edd97ea0e81b248e534e69c777"
+  },
+  {
+    "path": "qwen3_results_20261102/README.md",
+    "bytes": 7575,
+    "sha256": "ee0256853dd494913ac708ca8e575f2e439bfa5704cc991ad2c576dda1970675"
+  },
+  {
+    "path": "qwen3_results_20261102/actual_source.tar.gz",
+    "bytes": 3314302,
+    "sha256": "22b30e404f7c467b14b84f952fdb41423d15cb15176d627b0f94fafedf768d72"
+  },
+  {
+    "path": "qwen3_results_20261102/archive_remote.py",
+    "bytes": 5821,
+    "sha256": "ea5c5a7ca907ee6103fa70a4e6b855c0a5ad8181d80edcda5f5f81179e9652a8"
+  },
+  {
+    "path": "qwen3_results_20261102/archive_snapshot.json",
+    "bytes": 330,
+    "sha256": "887bec738162caf4cdac9ad7a57b567ab4464a3c18772b681371997582dbad61"
+  },
+  {
+    "path": "qwen3_results_20261102/code/a11y_transport.py",
+    "bytes": 1329,
+    "sha256": "ed18791365b31873c65fdbc269364e088288b63ac1dac3f4c19acc70d3a856ca"
+  },
+  {
+    "path": "qwen3_results_20261102/code/android_world/agents/t3a.py",
+    "bytes": 19772,
+    "sha256": "e64f736da086b4313088b4adbc1a2bdd37745c33c58d7c4bc9f750cb191e30bb"
+  },
+  {
+    "path": "qwen3_results_20261102/code/android_world/env/actuation.py",
+    "bytes": 9797,
+    "sha256": "b96532d176b0244773bb7d1c16ca7e4ec5a3776598e206415c45838c5df93b36"
+  },
+  {
+    "path": "qwen3_results_20261102/code/episode_entry.py",
+    "bytes": 591,
+    "sha256": "83ea55a29cdb157c90d8221d6b64c6e92b5eeeea51140d5615a999c1da8e3fd4"
+  },
+  {
+    "path": "qwen3_results_20261102/code/experiments/trace_reachability_validation/configs/qwen3_a11y.json",
+    "bytes": 647,
+    "sha256": "1d64c665aa25fb97987fb2c16657ffc2937d224ddc742f9f43b85748f39df981"
+  },
+  {
+    "path": "qwen3_results_20261102/code/experiments/trace_reachability_validation/scripts/a11y_protocol.py",
+    "bytes": 4599,
+    "sha256": "494b11f6ccf99a6a33edca7a9d237cbe4efc3965e7549fab9a89342cb370ec39"
+  },
+  {
+    "path": "qwen3_results_20261102/code/experiments/trace_reachability_validation/scripts/a11y_upstream_probe.py",
+    "bytes": 11793,
+    "sha256": "6ea51419ab6639df199734f32ffc90dd3a9b17d4b51080dda1ed9c142bdfc767"
+  },
+  {
+    "path": "qwen3_results_20261102/code/experiments/trace_reachability_validation/scripts/full9.py",
+    "bytes": 49663,
+    "sha256": "d9c3fc7a2f07756dfc2355dea0f13ca8a6b175fafe8351dcd0c865acc2b04cd8"
+  },
+  {
+    "path": "qwen3_results_20261102/code/experiments/trace_reachability_validation/scripts/full_run.py",
+    "bytes": 122216,
+    "sha256": "063fe41c2693b4d932fcc21060f0912d9a87ed185d01bf1652073e9c7adee241"
+  },
+  {
+    "path": "qwen3_results_20261102/code/finalize_a11y_device.py",
+    "bytes": 5304,
+    "sha256": "1e6c654c1e6b9f192ad198cb1df7fc96dc12a38c246f128d67347d2978dd104c"
+  },
+  {
+    "path": "qwen3_results_20261102/code/host_supervisor.py",
+    "bytes": 10046,
+    "sha256": "1b011ff0a99ded1cd830de8ae6f221af10b66c1a28463ffdfc3a054b48b8815e"
+  },
+  {
+    "path": "qwen3_results_20261102/code/host_supervisor_test.py",
+    "bytes": 2983,
+    "sha256": "077e0cd6d51488f84b77d861bd8235ccf78c24e55c50e339fe49ed3dc804f69b"
+  },
+  {
+    "path": "qwen3_results_20261102/code/initialize_a11y_device.py",
+    "bytes": 4766,
+    "sha256": "6b52038a9f6adeb214133168d2fe531c816f9ef8e7207c30b9cb9864aed5e5ab"
+  },
+  {
+    "path": "qwen3_results_20261102/code/readiness.py",
+    "bytes": 1024,
+    "sha256": "455ad31cfd9060c71a8be84e0d73aaa9f146c9ca54fb7168c8f8832ae1ef70ed"
+  },
+  {
+    "path": "qwen3_results_20261102/code/test_a11y_protocol.py",
+    "bytes": 2953,
+    "sha256": "e9948997178b7cb833c5ae40fdbc4acbeb4b88bad97be96856f29a60f541a281"
+  },
+  {
+    "path": "qwen3_results_20261102/code/test_a11y_runtime.py",
+    "bytes": 1490,
+    "sha256": "df2794a6c353cb67eee020577bf0aff3cae5cef666d14a315d86c0d6979231f9"
+  },
+  {
+    "path": "qwen3_results_20261102/computed_summary.json",
+    "bytes": 10912,
+    "sha256": "cea5525951a2d5c89f2709ac876a910e91d486781f06d0236124cea8cb5eb89c"
+  },
+  {
+    "path": "qwen3_results_20261102/environment_versions.json",
+    "bytes": 34775,
+    "sha256": "e1b4d49b5c6b2a1be01cfdba920bbb61df143ae0cb0b7da4f233c7b0de6293df"
+  },
+  {
+    "path": "qwen3_results_20261102/formal_files.json",
+    "bytes": 5447636,
+    "sha256": "adad5ddb10450d08c477feeea63c550d53413bfae6492b054783e5b9dcbbd217"
+  },
+  {
+    "path": "qwen3_results_20261102/formal_logs.tar.gz",
+    "bytes": 9310917,
+    "sha256": "c8ba0c9ccb83b102907ba468c045804d630c9743b05cc5590e34e972edefec7f"
+  },
+  {
+    "path": "qwen3_results_20261102/key_screenshots/FULL45/SportsTrackerActivitiesOnDate/p0/img/0013_s1_probe2_rbgraph.jpg",
+    "bytes": 69855,
+    "sha256": "84ed4ac1608b2f493693e454f3aa75570742bc9a281bf0af1f08bbe1117d680e"
+  },
+  {
+    "path": "qwen3_results_20261102/key_screenshots/FULL45/SportsTrackerActivitiesOnDate/p0/img/0014_s1_jrs.jpg",
+    "bytes": 70016,
+    "sha256": "5b6f239d63ca2dcf88b79133faa881b934f465d83d6d5d115515250288e30e57"
+  },
+  {
+    "path": "qwen3_results_20261102/key_screenshots/FULL45/SportsTrackerTotalDurationForCategoryThisWeek/p0/img/0013_s4_probe2_rbgraph.jpg",
+    "bytes": 70807,
+    "sha256": "6f412a8c6306dbb64e422959ad53110b38de0636f0d6fa0fd606556c642f86e1"
+  },
+  {
+    "path": "qwen3_results_20261102/key_screenshots/FULL45/SportsTrackerTotalDurationForCategoryThisWeek/p0/img/0014_s4_jrs.jpg",
+    "bytes": 71177,
+    "sha256": "41fe698a88d99f1c25ff7f2e39eec394c55540d87d4a2f61d1fc6769d827a7f4"
+  },
+  {
+    "path": "qwen3_results_20261102/key_screenshots/FULL45/TasksCompletedTasksForDate/p0/img/0005_s2_x1_chk.jpg",
+    "bytes": 51481,
+    "sha256": "7fc36ba1be83cdbe93c348ede50efd25838c55cc439f00dfe363e76c3cd63ecf"
+  },
+  {
+    "path": "qwen3_results_20261102/key_screenshots/FULL45/TasksCompletedTasksForDate/p0/img/0006_s2_jrs.jpg",
+    "bytes": 51481,
+    "sha256": "7fc36ba1be83cdbe93c348ede50efd25838c55cc439f00dfe363e76c3cd63ecf"
+  },
+  {
+    "path": "qwen3_results_20261102/key_screenshots/FULL45/TasksDueNextWeek/p0/img/0011_s1_x1_chk.jpg",
+    "bytes": 41835,
+    "sha256": "1e1f633c1fe1792ee9b011e35ea0452631f6647e512aa52545605834440b3c64"
+  },
+  {
+    "path": "qwen3_results_20261102/key_screenshots/FULL45/TasksDueNextWeek/p0/img/0012_s1_jrs.jpg",
+    "bytes": 41835,
+    "sha256": "1e1f633c1fe1792ee9b011e35ea0452631f6647e512aa52545605834440b3c64"
+  },
+  {
+    "path": "qwen3_results_20261102/key_screenshots/FULL45/TasksDueOnDate/p0/img/0011_s1_x1_chk.jpg",
+    "bytes": 44965,
+    "sha256": "712a33189f7b9ee0ad5f4a7de1e3df6899806baed516a58ab7662c4f4cb4f040"
+  },
+  {
+    "path": "qwen3_results_20261102/key_screenshots/FULL45/TasksDueOnDate/p0/img/0012_s1_jrs.jpg",
+    "bytes": 44965,
+    "sha256": "712a33189f7b9ee0ad5f4a7de1e3df6899806baed516a58ab7662c4f4cb4f040"
+  },
+  {
+    "path": "qwen3_results_20261102/key_screenshots/FULL45/TasksHighPriorityTasks/p0/img/0024_s3_probe7_rbgraph.jpg",
+    "bytes": 54774,
+    "sha256": "4a1aa2fed3e9fad7e0349c95a0051403b1a7c1ddc183291535bca8a5570e4923"
+  },
+  {
+    "path": "qwen3_results_20261102/key_screenshots/FULL45/TasksHighPriorityTasks/p0/img/0025_s3_jrs.jpg",
+    "bytes": 54774,
+    "sha256": "4a1aa2fed3e9fad7e0349c95a0051403b1a7c1ddc183291535bca8a5570e4923"
+  },
+  {
+    "path": "qwen3_results_20261102/key_screenshots/FULL45/TasksHighPriorityTasksDueOnDate/p0/img/0011_s1_x1_chk.jpg",
+    "bytes": 44471,
+    "sha256": "b01c259109701471deb2a39c2d84b1efdb31e38073fcc6efecdd9f898025f332"
+  },
+  {
+    "path": "qwen3_results_20261102/key_screenshots/FULL45/TasksHighPriorityTasksDueOnDate/p0/img/0012_s1_jrs.jpg",
+    "bytes": 44471,
+    "sha256": "b01c259109701471deb2a39c2d84b1efdb31e38073fcc6efecdd9f898025f332"
+  },
+  {
+    "path": "qwen3_results_20261102/records/BASE.infra.jsonl",
+    "bytes": 8120,
+    "sha256": "e48bcfe711478115fdc57054128394ed8b4a859c942768122ad891e9f94337bd"
+  },
+  {
+    "path": "qwen3_results_20261102/records/BASE.runs.jsonl",
+    "bytes": 38799,
+    "sha256": "445aca2b7dff3ae87547e3f6f07f316b3bddba886c0a6e8e31918ebdc170e7f9"
+  },
+  {
+    "path": "qwen3_results_20261102/records/BASE.status.json",
+    "bytes": 1063,
+    "sha256": "28940c4f15ecc39759b89d1fd547f95e6c4a12cb81b5891292b0821c72ee70a0"
+  },
+  {
+    "path": "qwen3_results_20261102/records/FULL45.infra.jsonl",
+    "bytes": 8120,
+    "sha256": "0d0a985149979b526be3ff5938f84c7af1deff07ad884ea1c5ae17aefc326aa9"
+  },
+  {
+    "path": "qwen3_results_20261102/records/FULL45.runs.jsonl",
+    "bytes": 39290,
+    "sha256": "9db48202b25feaa14567cf9d30abb890704b366bf28c53eeef1a33d8571d4ef8"
+  },
+  {
+    "path": "qwen3_results_20261102/records/FULL45.status.json",
+    "bytes": 1305,
+    "sha256": "025fe6a52ad86610f352d0060dd548dcf5fbbbf92800a2129e49b301e2355652"
+  },
+  {
+    "path": "qwen3_results_20261102/records/completion_audit.json",
+    "bytes": 3034,
+    "sha256": "193864a6b673d7424ca3694566f07b1bb698e55daaf17f7b3109dbbdbcedc379"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/AudioRecorderRecordAudio/meta.json",
+    "bytes": 1579,
+    "sha256": "fae5aec2bc8b093ce88c0ae8038bb277c2c717c172d424da11bdbce6d9d4215f"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/AudioRecorderRecordAudio/result.json",
+    "bytes": 366,
+    "sha256": "3b8b71e8603bcb765dcdea60de1eeb9256ce2010af4e7472ff14e259ed55995c"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/AudioRecorderRecordAudioWithFileName/meta.json",
+    "bytes": 1674,
+    "sha256": "71aa6763f22c51885d56c2df530de0aa003be5e73629a94016b7192685b6752f"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/AudioRecorderRecordAudioWithFileName/result.json",
+    "bytes": 378,
+    "sha256": "73e05bc4cd7494243f4f3d15b96ce0a35a03501394dbb8bfc33e2f6e4d80f90a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/BrowserDraw/meta.json",
+    "bytes": 1709,
+    "sha256": "e6f178252e7e4f984733e3ae19f371fad958dcc1f595e1e8f2be659a039ddb87"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/BrowserDraw/result.json",
+    "bytes": 380,
+    "sha256": "18c6bc1bb74411076d6d687a0be72325cc62d42158e66e0200afbc71748f22ef"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/BrowserMaze/meta.json",
+    "bytes": 1710,
+    "sha256": "ea55bd4508d424ef5bce7ff4beecf63b91b2975a7af63958434f3aa39a847675"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/BrowserMaze/result.json",
+    "bytes": 380,
+    "sha256": "52ca123012ac1632e452766e20318d5d506eb0b8ab3fc7e3ce35bfeac5833fb1"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/BrowserMultiply/meta.json",
+    "bytes": 1738,
+    "sha256": "7b43f0a92f6084905bf19ec083a9fea75ad35752983882548b25f5b95dada4e5"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/BrowserMultiply/result.json",
+    "bytes": 385,
+    "sha256": "c1a887377ffed029b69b749f86a4a0f1097f90875672ff1015133b77d1418193"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/CameraTakePhoto/meta.json",
+    "bytes": 1524,
+    "sha256": "e22d62b381246e3733aa1a5c08d0ab911a144d68ff2f195ff6be74aa361c897d"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/CameraTakePhoto/result.json",
+    "bytes": 357,
+    "sha256": "0828f72040612566f52dfcb2315cca03da7528755ab349cee8d36bb879b2591d"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/CameraTakeVideo/meta.json",
+    "bytes": 1525,
+    "sha256": "3f91d9539bd0e4eafa5a8063102ad34a8b2b906a87d5f37cf83225a4df31effb"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/CameraTakeVideo/result.json",
+    "bytes": 357,
+    "sha256": "7ece8f26dcd47f28a1d4cfdf3b2e489de2c48957eb64df62b6caa8c7f6d42300"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ClockStopWatchPausedVerify/meta.json",
+    "bytes": 1542,
+    "sha256": "7fae6f274753cc174e71a271b29041a22a2d2f6802e01e3b756ad4aa7d94c2b0"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ClockStopWatchPausedVerify/result.json",
+    "bytes": 394,
+    "sha256": "e3946624bc422195ba623967a361a5f159cbb00f5d35dc0e1774f9bb55786274"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ClockStopWatchRunning/meta.json",
+    "bytes": 1535,
+    "sha256": "6fc18193f5e249efea8df6bdf856eb276cf26fc14443f9bb0d3f55de1272f769"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ClockStopWatchRunning/result.json",
+    "bytes": 356,
+    "sha256": "0a58bb4533f703df5fe4724de07378663b9edbd28b1f0a41a29cf975f3855fac"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ClockTimerEntry/meta.json",
+    "bytes": 1633,
+    "sha256": "ed93fecff7a4ebab1166837c6618ebafb191c72450bfb8ade90788704bacdbf0"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ClockTimerEntry/result.json",
+    "bytes": 377,
+    "sha256": "11e739c8426a7faf0942bdcd7aba0ca2808b41b64f00941f559aae02fe4bfbad"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ContactsAddContact/meta.json",
+    "bytes": 1634,
+    "sha256": "1d967f3f9a5c5ceec9f24a9b808b30225627752a8f4aad6878106bd106f10945"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ContactsAddContact/result.json",
+    "bytes": 353,
+    "sha256": "a0e51a5ad94a37b974de7539d351ed1ffdae47a6f14e899e27daa3bc437e4d88"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ContactsNewContactDraft/meta.json",
+    "bytes": 1761,
+    "sha256": "241b708acad0976a787ec96904e034585327c5fa39c31b20fdc4e1bb868e3b9a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ContactsNewContactDraft/result.json",
+    "bytes": 358,
+    "sha256": "9dd43e102868dcbca6a19ff0b419112c5a25c0bf4fb26f3f2a65c9b9fd16cafa"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ExpenseAddMultiple/meta.json",
+    "bytes": 4097,
+    "sha256": "50f7429c02e04ad552d1fe6f2e676f7388ed18c7478b008683c7dae638cced2e"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ExpenseAddMultiple/result.json",
+    "bytes": 360,
+    "sha256": "b4aff0559465f0b815e357e606eab9e9c8440c66944eba1ee45a45b7eedc61c8"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ExpenseAddMultipleFromGallery/meta.json",
+    "bytes": 3784,
+    "sha256": "bff2919ae87d293c4c222b84f292893d6f3150da29483ea653884880f89bbf2a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ExpenseAddMultipleFromGallery/result.json",
+    "bytes": 364,
+    "sha256": "6e98d68145631b08fef5a6f076806c8c3a865829fc030364e5f217c3a8b3feb3"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ExpenseAddMultipleFromMarkor/meta.json",
+    "bytes": 18494,
+    "sha256": "7ac641ecd368b615375c4ffd81b7f27b735e6bf8b71c3136b011b9fe3b18445e"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ExpenseAddMultipleFromMarkor/result.json",
+    "bytes": 371,
+    "sha256": "bde27e5514644ff49c0e44c5d6ad4994263f9179d45754b1eee9bd1e0a1431b6"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ExpenseAddSingle/meta.json",
+    "bytes": 3580,
+    "sha256": "0de44e0d3a36d4c5721d85f8a4a8774ecf7b7319c1e3d1ee092a26ab583ef1d8"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ExpenseAddSingle/result.json",
+    "bytes": 351,
+    "sha256": "1342d841f704e90778fd029cb8b4cc435f1388fd91ee4d7dd55ee6f36446e531"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ExpenseDeleteDuplicates/meta.json",
+    "bytes": 2849,
+    "sha256": "8167ec993d537236d877f644dd812f76ebb41bccdc7bfeee61f5eb18cdbf4ff6"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ExpenseDeleteDuplicates/result.json",
+    "bytes": 366,
+    "sha256": "c33d8feebfe9b4a4ff77980c78d0d782b073743436d1f627cde5419baa711081"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ExpenseDeleteDuplicates2/meta.json",
+    "bytes": 8576,
+    "sha256": "1d27bbcf7ffa0787b1297ecb9ac1349afe4b31754d3bc2ca09088caeb514dbc1"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ExpenseDeleteDuplicates2/result.json",
+    "bytes": 366,
+    "sha256": "dcd3e9338142a612d19b4f1471559d566e8f35e392c203acf977e7c11ffa8406"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ExpenseDeleteMultiple/meta.json",
+    "bytes": 2097,
+    "sha256": "3b7c920aaf631698e60228edbfa37d5a0424dcb8ef65aea623b0d16eb9c2b610"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ExpenseDeleteMultiple/result.json",
+    "bytes": 362,
+    "sha256": "e19cbba8f2b3f95fcd06a0d0550590c24ceca8e0628283ba57d8123f382683e1"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ExpenseDeleteMultiple2/meta.json",
+    "bytes": 10434,
+    "sha256": "bdc337af220e11e48351cfe6418fd5674fb1bcf06fabb54838708935edea9577"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ExpenseDeleteMultiple2/result.json",
+    "bytes": 364,
+    "sha256": "bcf932a403248d025f9cd1c06cfea9e82d83ba9fe009fed5bd654b239c21f74c"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ExpenseDeleteSingle/meta.json",
+    "bytes": 1757,
+    "sha256": "1c722c54f9022fe3219a856b9d9ee0a824da7589296655c3a77f0e838a8dbaee"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/ExpenseDeleteSingle/result.json",
+    "bytes": 354,
+    "sha256": "3a2e2ee52964470985cca23c854b517c847de22d66804bb03c7bbae6cefbfb47"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/FilesDeleteFile/meta.json",
+    "bytes": 1915,
+    "sha256": "1ce5a621bf6c68fac6e7cea5cff63502ff235f62ec6a785df2cca2f79c6ba070"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/FilesDeleteFile/result.json",
+    "bytes": 350,
+    "sha256": "5d92ba325dc2b05a062c560f27c50cc68cb7a93c6421c90ff2566427ca803c94"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/FilesMoveFile/meta.json",
+    "bytes": 1971,
+    "sha256": "3806eb494fd0b9b669e22918125beb24bb579a3581939f8d1b3426531d6902f7"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/FilesMoveFile/result.json",
+    "bytes": 356,
+    "sha256": "215e901dc4bcaa07a180b61a74553e86cf047da51f0c48b59a582aee6b1e98ed"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorAddNoteHeader/meta.json",
+    "bytes": 1904,
+    "sha256": "614728609c46a97e81794fff3d797f332dfc0edba145939a74ee6243a64aba1e"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorAddNoteHeader/result.json",
+    "bytes": 362,
+    "sha256": "0f9e48aafe63fc895e7cd64ead80d50fa4889fa04c4f891647303ff64a810a2b"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorChangeNoteContent/meta.json",
+    "bytes": 1778,
+    "sha256": "2275e688cebea6c174d77aad129bed44e3b8516f11a75291509b2ef6a1c6c7b9"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorChangeNoteContent/result.json",
+    "bytes": 358,
+    "sha256": "029b91bd3223736f01e0f353a3ed6f6dc0442b80f774ae730fce036340feb525"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorCreateFolder/meta.json",
+    "bytes": 1613,
+    "sha256": "b6378f37dfde2751a34b573b6fb61d48fe5ee5ad090cc40453d53cfa63206400"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorCreateFolder/result.json",
+    "bytes": 353,
+    "sha256": "ff0f277f2bc9d957c6c64143ac8582ea13ed1fdd49e6ca0a45753605a9d3ba2a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorCreateNote/meta.json",
+    "bytes": 1688,
+    "sha256": "2f6bdadce0706518de46302b5a992104bb4017a78bde4d72e6c8debb62fdcf12"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorCreateNote/result.json",
+    "bytes": 359,
+    "sha256": "441722bfa5f801785d5f2f7c7b3c7b781da0e8bf84781cc9e9c0ff0ddcab6eb4"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorCreateNoteAndSms/meta.json",
+    "bytes": 1841,
+    "sha256": "cafc4904fef6f86774753ca22273b19935b5d8bef0f14ad4c571d27ff3413654"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorCreateNoteAndSms/result.json",
+    "bytes": 364,
+    "sha256": "7104b30a1842991185cb5577af314fcffe515070cbf4662754e31b791013c67a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorCreateNoteFromClipboard/meta.json",
+    "bytes": 1722,
+    "sha256": "c1b04b15f477e33026c73eb6f8533284be6cc4435b14c951770e8427d9e4f26d"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorCreateNoteFromClipboard/result.json",
+    "bytes": 364,
+    "sha256": "9fcd9918abfe59fb96d727c17ae556784db335ab82cb99b0245500178cc0f773"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorDeleteAllNotes/meta.json",
+    "bytes": 1544,
+    "sha256": "ba91791b7dc61d3e3cc97d7a97fba4fba4269adef8094503282c155ec1182666"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorDeleteAllNotes/result.json",
+    "bytes": 363,
+    "sha256": "92acfb0b323b701e1eb101d617c7a5736769189112a0499322e679213c186b58"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorDeleteNewestNote/meta.json",
+    "bytes": 1550,
+    "sha256": "a05d4e66f35b929c8dad7c9d44535ba81c8489e10c88e36e834f09f3321deb25"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorDeleteNewestNote/result.json",
+    "bytes": 357,
+    "sha256": "1e5def5f77681ef6b798f0816b1307b7f4e4d630a744fc548c305895f49056db"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorDeleteNote/meta.json",
+    "bytes": 2184,
+    "sha256": "f08fff347a87542a29adef05c9ee49abe2975ba640b1e6d582f43cfe67772c4c"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorDeleteNote/result.json",
+    "bytes": 351,
+    "sha256": "a5dece87161e3ea5e9d6f2d077cf6d1779a4d756672c035dab6c4a50694391c1"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorEditNote/meta.json",
+    "bytes": 1662,
+    "sha256": "be81ed5dfff71453776f3a135249eaf0ce4faa252a4f941459166e7de9adb009"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorEditNote/result.json",
+    "bytes": 349,
+    "sha256": "3f6bdb04a6923682516c46ebb11033414525938511991a6cdd47c31e8e511386"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorMergeNotes/meta.json",
+    "bytes": 2028,
+    "sha256": "2d035adb943308f7655facb3b97918ee723eb06d715146a036a4d4b973a8d860"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorMergeNotes/result.json",
+    "bytes": 359,
+    "sha256": "add6420618ecaba4184213400eba83c428920841b65de40ffa6af8ab210d8cf2"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorMoveNote/meta.json",
+    "bytes": 2284,
+    "sha256": "fc533af28a37d62a3c08517c3cd45077b0dc639af7374c0d9bc6ee9ba111c6b6"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorMoveNote/result.json",
+    "bytes": 349,
+    "sha256": "fb56d947803222930e0c15fdf8df5400309bdfde6289c4221806a56174187745"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorTranscribeReceipt/meta.json",
+    "bytes": 1824,
+    "sha256": "173e968b2ba345daa58f6744b45a0b5e4685e64d8e157cd01b3021d58aed1407"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorTranscribeReceipt/result.json",
+    "bytes": 366,
+    "sha256": "9d72f83cdc2da65fd562364433fe578ed01b8368a493bd5984663ae6c125e65d"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorTranscribeVideo/meta.json",
+    "bytes": 2330,
+    "sha256": "c3e65a8e1f0ff0932c8d3d80fc85a1f5d3f464495bb9629d22be0fbbcd2a7942"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/MarkorTranscribeVideo/result.json",
+    "bytes": 391,
+    "sha256": "a140d801a6c23208d72f0c408959875f66a22fd93d4d7aaf2553e5a49ccd0a6a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/NotesIsTodo/meta.json",
+    "bytes": 1754,
+    "sha256": "35f1929e7e507e83d95079c8e77d238cf9da069f7ab4e513621e43202e0c7c89"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/NotesIsTodo/result.json",
+    "bytes": 346,
+    "sha256": "51faf3788a07bbe6ced5838dac18c92355a32f6f97c24129ab9fef1f80637725"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/NotesMeetingAttendeeCount/meta.json",
+    "bytes": 1900,
+    "sha256": "ea7a9ccdfdac7ec5e3fa4c139cc026dec6c16deca4fc2519b991b370856f2392"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/NotesMeetingAttendeeCount/result.json",
+    "bytes": 360,
+    "sha256": "9c72b5e2029b9b3bb17b6aae87308f704977e2b5cbb3ac1c25de8258097557d6"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/NotesRecipeIngredientCount/meta.json",
+    "bytes": 2278,
+    "sha256": "8da183d1af7fcae652d14593e6d470ed820f67b497e90c8bf611dbee05bf126e"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/NotesRecipeIngredientCount/result.json",
+    "bytes": 368,
+    "sha256": "eff2b46483467ecf32b7ee261df7797151e52136aade915ed4a3ef608430be2e"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/NotesTodoItemCount/meta.json",
+    "bytes": 1745,
+    "sha256": "dcaa1fe8ac6fefbbf11a4426928b187818ac8d625d3a78ce330bc9cdc3deea98"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/NotesTodoItemCount/result.json",
+    "bytes": 353,
+    "sha256": "b7359c9496479134473abdebae6207dd2820a69e1f634495ef7d9d4d23e597a9"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/OpenAppTaskEval/meta.json",
+    "bytes": 1638,
+    "sha256": "9638ba6e272a68b3d64d9c399e30279ed811c0d224360a1604263c6c02338c4a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/OpenAppTaskEval/result.json",
+    "bytes": 350,
+    "sha256": "58d2489a8420592ab0fb0e5903c923f57b55efbdb45173886218ee5129049f3c"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/OsmAndFavorite/meta.json",
+    "bytes": 1628,
+    "sha256": "cf80ed1b462da2c344be804e7793f49918eb58fc0fef64b9e0d463fa93c39215"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/OsmAndFavorite/result.json",
+    "bytes": 357,
+    "sha256": "b3a6706156b03e40fee6ff2554ec4a8d359ddd9528a6299172d81040afd5b305"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/OsmAndMarker/meta.json",
+    "bytes": 1617,
+    "sha256": "2b6f3ba472dde02ba654d1c0744472fdaa39fb0b76a53073052ebc1515aaa3dd"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/OsmAndMarker/result.json",
+    "bytes": 355,
+    "sha256": "fae12cf21a754384f5e31b87286311c4a494fcf3f7df4d0d879637d6b1ffd89f"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/OsmAndTrack/meta.json",
+    "bytes": 1827,
+    "sha256": "fc47c72e1d53ae6643512816143c2610de9fa7b134c43d17f578b8344facbf98"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/OsmAndTrack/result.json",
+    "bytes": 361,
+    "sha256": "729ebc52995781a4919e50bb4974d1497459ec008df064170f015981432cee3e"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeAddMultipleRecipes/meta.json",
+    "bytes": 8506,
+    "sha256": "27f9a1d34464f29a1e5733df003332658c4f1993fb9bf58e14926c34a5065d43"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeAddMultipleRecipes/result.json",
+    "bytes": 366,
+    "sha256": "ae8f8dfd03102c6a5e6268ab85b51d6ce1ee2f45222ca6f1c04d84b291cdf3a0"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeAddMultipleRecipesFromImage/meta.json",
+    "bytes": 7521,
+    "sha256": "cf2c969ca301a1009f2dce38e6467191313905e63de58d587813f7d3c3b0ef86"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeAddMultipleRecipesFromImage/result.json",
+    "bytes": 376,
+    "sha256": "bdb6068fbccb57d56e4705b4b162fe323cc99263917e303b645eaaf0ed3977f1"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeAddMultipleRecipesFromMarkor/meta.json",
+    "bytes": 7475,
+    "sha256": "e442238102474045ee4c53535fde52275de6a3289cab627c679119a2374bf151"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeAddMultipleRecipesFromMarkor/result.json",
+    "bytes": 376,
+    "sha256": "95b3252f2c7aaf343e2c14d68a7c99ceaef92ea5b8589bcf9080f944dc8a8376"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeAddMultipleRecipesFromMarkor2/meta.json",
+    "bytes": 20909,
+    "sha256": "306c83d7f6191338c8cbafef31eb8e22dc8d1c4138175983b01e5618544d8dc6"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeAddMultipleRecipesFromMarkor2/result.json",
+    "bytes": 378,
+    "sha256": "914de1410fcc284a2b77102f6036416e2fbeed9881d6955df1327ecd03b04559"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeAddSingleRecipe/meta.json",
+    "bytes": 6873,
+    "sha256": "5096875776e957d53b2f3c384e90a7c9f9b74fb33adacfefedc1d40d337c9121"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeAddSingleRecipe/result.json",
+    "bytes": 364,
+    "sha256": "a6281761393c6fee80c0820caaff8441dc41aef30ac50ec88c027e29074359e3"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeDeleteDuplicateRecipes/meta.json",
+    "bytes": 4855,
+    "sha256": "dc4c760924e0dce4a77158f6e15842c1c5a9a4b5a3eee908b7a1cfffed350af1"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeDeleteDuplicateRecipes/result.json",
+    "bytes": 371,
+    "sha256": "2fb6d4d099582bdc8ce501e918f0b6cf10149c2a3d05d2bf2234cb8e95bf325f"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeDeleteDuplicateRecipes2/meta.json",
+    "bytes": 7075,
+    "sha256": "3a74eb37e6eb6091cce3f2549a7b1c3a0aaefe8dd821740f9f0881ebf8e1f29f"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeDeleteDuplicateRecipes2/result.json",
+    "bytes": 372,
+    "sha256": "b07472ebe9af14e70e203c372d88b945a57f7ef06c3d06d93c0a7e4365b42dc0"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeDeleteDuplicateRecipes3/meta.json",
+    "bytes": 15906,
+    "sha256": "e2bdd2e367a28c52290f6b39f64e2ff082da21d42dfd26185a0b52b2ba476891"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeDeleteDuplicateRecipes3/result.json",
+    "bytes": 372,
+    "sha256": "e351eb7d23187e57e03ba9024c7759539c5ccc0f0fb8809669b4ab960ddbb114"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeDeleteMultipleRecipes/meta.json",
+    "bytes": 2978,
+    "sha256": "b50534880dd852ff39b8cb1d7e97362c40e2c4718a3769f01915cc31b5752cb2"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeDeleteMultipleRecipes/result.json",
+    "bytes": 369,
+    "sha256": "41eaafab112e9429a49cf49bf8493781125108e4ebf220853966c5754c3acdf4"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeDeleteMultipleRecipesWithConstraint/meta.json",
+    "bytes": 14575,
+    "sha256": "22aa26af48f6fe38b26c074ab6b14244a8c28fce1328c901d4d943ce09ab793f"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeDeleteMultipleRecipesWithConstraint/result.json",
+    "bytes": 376,
+    "sha256": "1741467249c8b75ffc1db4996dc049d058ef8a8dcc6be03a431cdd70a890382a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeDeleteMultipleRecipesWithNoise/meta.json",
+    "bytes": 16165,
+    "sha256": "25d2ab8c1112bc82fad95b658d1cb51acd9779083a1e68f4f6adc29440f9908a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeDeleteMultipleRecipesWithNoise/result.json",
+    "bytes": 378,
+    "sha256": "f1eb6bdd82fb7a903458b74b9d5ee26f538982811d55c3473a9e062ee7f436f7"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeDeleteSingleRecipe/meta.json",
+    "bytes": 2035,
+    "sha256": "8b1452ddcc9e277482a0f09c88569053154607557d5cf20e233613e0ecbb03c1"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeDeleteSingleRecipe/result.json",
+    "bytes": 359,
+    "sha256": "0030a9f0cb8290709c77eb39c15cf3d7406da52fbf664c47015dee76c1abe425"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeDeleteSingleWithRecipeWithNoise/meta.json",
+    "bytes": 15048,
+    "sha256": "b85908ad7bebeafc09cd262f2a8c91b38d38dc13d328e522c247dc0374d8a788"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RecipeDeleteSingleWithRecipeWithNoise/result.json",
+    "bytes": 379,
+    "sha256": "860395711778be269dce292b751da5fd69dd2f62eecd7171dab7117ffa72d284"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RetroCreatePlaylist/meta.json",
+    "bytes": 2049,
+    "sha256": "d532b99657a4e1ddb2a93074d1ed4d67c1a4a1f2dd08e9b9cd76c4faa8827746"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RetroCreatePlaylist/result.json",
+    "bytes": 360,
+    "sha256": "9ead68ff08f7ce4bd89667c77a615b4ecea4fb7c954a4664cba41fbd1eb5b1c4"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RetroPlayingQueue/meta.json",
+    "bytes": 2076,
+    "sha256": "74f4389c9e9baf5d58c34ef527001e4a26228055ad8256e56050c35980c45028"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RetroPlayingQueue/result.json",
+    "bytes": 359,
+    "sha256": "b0b28a0ca72fda32d89a81924b8cc990d553b05749ac6bcef12d052991e47759"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RetroPlaylistDuration/meta.json",
+    "bytes": 2047,
+    "sha256": "85201a09eb728e4f9d60c1c26b146afd5655714164e0dabd8c0a9c24e4e8e093"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RetroPlaylistDuration/result.json",
+    "bytes": 364,
+    "sha256": "013438189e874c663f2e5d2bacf0b61631ad5529e794939a3905d480e6372457"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RetroSavePlaylist/meta.json",
+    "bytes": 2125,
+    "sha256": "e841fed0b43140ceac9aeacc803c8c58d8e53a48070cb70871f3f00793d50bff"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/RetroSavePlaylist/result.json",
+    "bytes": 360,
+    "sha256": "8c38208696f50cc81dbeb6ffaa0c107ae848a27e0b72fa12d1334d26002e137b"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SaveCopyOfReceiptTaskEval/meta.json",
+    "bytes": 1771,
+    "sha256": "85d3a2d67bdfac5a24b6d0975511d1e213c3f9ff7c330899b14b225ff2795604"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SaveCopyOfReceiptTaskEval/result.json",
+    "bytes": 366,
+    "sha256": "790a5e29990d060539f2f27604935697df9176698b89bc236d335667d6fb6f23"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarAddOneEvent/meta.json",
+    "bytes": 12197,
+    "sha256": "37e25217efecc1a89f5452911d11c49ef34154f9e006d56d08a891159a0a8db4"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarAddOneEvent/result.json",
+    "bytes": 368,
+    "sha256": "3fec9ae49b888841c0648a65cb94663b76c1658d14db5f9732c062848809b829"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarAddOneEventInTwoWeeks/meta.json",
+    "bytes": 9651,
+    "sha256": "3a5b86f9df9349ed6397871251bd46b277f13a00ab2a0d5d2a997bda46218d43"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarAddOneEventInTwoWeeks/result.json",
+    "bytes": 378,
+    "sha256": "eae85f37ee83b6aa7adb0cafcbc87d7852e896fd8e49f4dd1245bbd0ced7a5fa"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarAddOneEventRelativeDay/meta.json",
+    "bytes": 8573,
+    "sha256": "72d1ba792696462387169526344c95554ec96956b8b38ab07b5af6417c182998"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarAddOneEventRelativeDay/result.json",
+    "bytes": 379,
+    "sha256": "c9e25bafbf00a44c00b202a03becc946b55052aa62e574f81af5fd360eb0198c"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarAddOneEventTomorrow/meta.json",
+    "bytes": 3675,
+    "sha256": "b99dcab90d7c0518b22d636e8b7f96376c1c74d0e2038bdf0a5cb902e34e70fb"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarAddOneEventTomorrow/result.json",
+    "bytes": 376,
+    "sha256": "578e1514e5a086507ee750a18255b84e4f4525868b192bcb22c4cc096856d758"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarAddRepeatingEvent/meta.json",
+    "bytes": 11735,
+    "sha256": "2d4ddf6cb72b6e199d9780848bd1d0e5d096f4cefc0418e1f6ea26eb0df34346"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarAddRepeatingEvent/result.json",
+    "bytes": 374,
+    "sha256": "fcb7b1aff7d8dfa289443d3c9f2a83c536b331bb8374c22bc9930be112b8fead"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarAnyEventsOnDate/meta.json",
+    "bytes": 1762,
+    "sha256": "5888810e07a251859f1b253278a1cd177595d11afca74b663a250996806f9850"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarAnyEventsOnDate/result.json",
+    "bytes": 370,
+    "sha256": "e10280593171f9e3dd6739c71887176b29c5bd8a824049cf66ca590771870b51"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarDeleteEvents/meta.json",
+    "bytes": 15522,
+    "sha256": "7906e0154dae049975640c35c49fb292f4d22fd65e44b6e76c6b6a6ffeb0cc68"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarDeleteEvents/result.json",
+    "bytes": 369,
+    "sha256": "5a1782b3787e9f14908d98516c3c2af026ee6026ef1f94e4375bc918d106d195"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarDeleteEventsOnRelativeDay/meta.json",
+    "bytes": 15036,
+    "sha256": "96f7c721ff04dbd2d76784f3f5448050d5d9ec5fda8a8fee047c52a998330f50"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarDeleteEventsOnRelativeDay/result.json",
+    "bytes": 380,
+    "sha256": "7feb90ca1a5d35256d48042093796d19581321e354aac17b836809edb5684951"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarDeleteOneEvent/meta.json",
+    "bytes": 14404,
+    "sha256": "fa6d458d4ff81099c9755610366a1c0d273e82e504e71530e05f92a3e1ba3711"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarDeleteOneEvent/result.json",
+    "bytes": 371,
+    "sha256": "89df64e9a7179e74d117cf9066c939b8dd0da9a0b42c3942584512eadb67f000"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarEventOnDateAtTime/meta.json",
+    "bytes": 1802,
+    "sha256": "5d6bde3c7e1ad180d140643e3d4f4605a34026494cd89351a8ce32aa0bbd1281"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarEventOnDateAtTime/result.json",
+    "bytes": 373,
+    "sha256": "6bab39ea0958797f26f11825363bee363e695871f4e397a3b70e4e9801a87e70"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarEventsInNextWeek/meta.json",
+    "bytes": 1842,
+    "sha256": "96e4d78d6a9ccb9c600e7289e47b34e4e7e02b65c05ebe64bac723d0bcb19a62"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarEventsInNextWeek/result.json",
+    "bytes": 365,
+    "sha256": "dcf25531966b521ab676f62c6e03b3e3ef805aff8646fbf33846f26cc790ee04"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarEventsInTimeRange/meta.json",
+    "bytes": 1810,
+    "sha256": "40f8750bd808c5ed9f283266f532968576c34dd1906adf7bcf59b863dec4e6cc"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarEventsInTimeRange/result.json",
+    "bytes": 366,
+    "sha256": "ca23fc78650f19772c6c55270e4817a28ef2b28ebde9a42a0cf729144ee27b4b"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarEventsOnDate/meta.json",
+    "bytes": 1784,
+    "sha256": "191e9ead23e26840f4293ad850c51961e7d7389ce049989218d0c44644968e98"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarEventsOnDate/result.json",
+    "bytes": 367,
+    "sha256": "1aaf5e4c658de25d922820d93faf4cd34d0863b6c69835254e983d46a57a02ee"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarFirstEventAfterStartTime/meta.json",
+    "bytes": 1813,
+    "sha256": "8f1229308dea9d134fb26a8c44a9387f518d1b7fe773f56b04f762a5921e659b"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarFirstEventAfterStartTime/result.json",
+    "bytes": 381,
+    "sha256": "da3b4dc9443ca118f4756e347bea2897bcda8d729e61596731e6f1da7449697b"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarLocationOfEvent/meta.json",
+    "bytes": 1734,
+    "sha256": "cbb0e2c456918dec5e0f0899e3600a545285b895689320ae58e376cdbdc5d244"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarLocationOfEvent/result.json",
+    "bytes": 364,
+    "sha256": "ba60ac08fed294bb652effb01a75a2ea5fc9826ad31ddd46ecca41ca5a918898"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarNextEvent/meta.json",
+    "bytes": 1738,
+    "sha256": "5892953144796fd0a5200c28da21f56a4467e66efbb12311f5716dbe256ca5f0"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarNextEvent/result.json",
+    "bytes": 358,
+    "sha256": "f8e87b5e7f40d94215bad740975b549f7dc18a8d9722243f44abac2bdf550ad8"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarNextMeetingWithPerson/meta.json",
+    "bytes": 1745,
+    "sha256": "029b35dab18ac901dbf4bf0a96d6c275d950b87490b147850a3418a3c8e42b80"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleCalendarNextMeetingWithPerson/result.json",
+    "bytes": 370,
+    "sha256": "ba2f7a2ddfc91b9e8c02a326a891cd175809be05a90a396234e674d0baa26b9d"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleDrawProCreateDrawing/meta.json",
+    "bytes": 1739,
+    "sha256": "234729989654e8a057875f1f4f2b485e2bbcaa4b8ea20f3631e27d766ffcb782"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleDrawProCreateDrawing/result.json",
+    "bytes": 369,
+    "sha256": "d3026af977dc1fe396529dd17e52bdb28bbbf0bc1ec61116cd41c39925d009d0"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleSmsReply/meta.json",
+    "bytes": 1703,
+    "sha256": "04a8852099a89d1ef20a9a02c82d03fd76e426fcb5cb073159408f0566494251"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleSmsReply/result.json",
+    "bytes": 357,
+    "sha256": "159941430a212035b8a73cbbb76015638b6851d35aced79ce3487073c74fd826"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleSmsReplyMostRecent/meta.json",
+    "bytes": 1678,
+    "sha256": "501ee940bdf0e731326b602f05ee5a457af39db839b498b3d0387a802fbc9d72"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleSmsReplyMostRecent/result.json",
+    "bytes": 615,
+    "sha256": "8c3d956bad7b1a2fd4fc85c408d38238408ce6d59992ef5a95d120d60889c7ae"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleSmsResend/meta.json",
+    "bytes": 1662,
+    "sha256": "f6c317e8adeebf1d20bf2535cd12fd504838846ee5db0473c3c174faf8c79065"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleSmsResend/result.json",
+    "bytes": 358,
+    "sha256": "03405c5a67451e95a914c0047c9b9ffbe10602783622eeb928733672d4178467"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleSmsSend/meta.json",
+    "bytes": 1703,
+    "sha256": "da6b7acbfd6151a09254e106d1d5d53ef9dc50143760410581ea6c6ac478f40c"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleSmsSend/result.json",
+    "bytes": 356,
+    "sha256": "120cf759e02dd31296df96588441dbbf592d6f2164092e8a537ec12ae53d732f"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleSmsSendClipboardContent/meta.json",
+    "bytes": 1673,
+    "sha256": "34de4eef4d3eeaccadf3aafa8df81c7dbcc969219b7c4ce77928dd293da626b7"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleSmsSendClipboardContent/result.json",
+    "bytes": 372,
+    "sha256": "64332e63ad8860f2e46a52b2dedbd7b7fe3ef359534247e71de9b620b785d175"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleSmsSendReceivedAddress/meta.json",
+    "bytes": 1751,
+    "sha256": "07b465a0472dea728993ee92fe66ac232be03354c5059a9d3ef0b00187004595"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SimpleSmsSendReceivedAddress/result.json",
+    "bytes": 363,
+    "sha256": "129cf7cb6c54f0e277bf65b3bcc19a86af23af2482a1988cb0f9b2a8c56600b5"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SportsTrackerActivitiesCountForWeek/meta.json",
+    "bytes": 1923,
+    "sha256": "e49f465d7dfbf1314359c0bde90172f79ecf3093adf2353ba13249c79b38bb61"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SportsTrackerActivitiesCountForWeek/result.json",
+    "bytes": 370,
+    "sha256": "75af5d7891b3379f4b54ccb4c987fba7786cfeadefe14856b84b6a94ec004538"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SportsTrackerActivitiesOnDate/meta.json",
+    "bytes": 1941,
+    "sha256": "f189dc108d0aeef3b620d97cdefaec27e8f0c1f4fd49a4765c90d763a0e2548a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SportsTrackerActivitiesOnDate/result.json",
+    "bytes": 364,
+    "sha256": "a1d5edbd9c0fd2a74e88f2f8fe1d510570dd47554d819287dac2312cd4f6d42e"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SportsTrackerActivityDuration/meta.json",
+    "bytes": 1883,
+    "sha256": "093cfe8e137825b5885ef9dbe17cfbc0cf2d5085d454c1ae3114a9b3c72e5a74"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SportsTrackerActivityDuration/result.json",
+    "bytes": 364,
+    "sha256": "219d9ab037e317a39f6f019593cca130a0951c3712b87ffccf923b79acdf9a90"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SportsTrackerLongestDistanceActivity/meta.json",
+    "bytes": 1995,
+    "sha256": "1561c83d51cf4c6c45aaaa2a358be524df983dc01c1dd8b0a40dae4dcc8e6786"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SportsTrackerLongestDistanceActivity/result.json",
+    "bytes": 371,
+    "sha256": "f4704782c4cc76854d061181b7076bc36f415379f698f3f00e169d8417c39434"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SportsTrackerTotalDistanceForCategoryOverInterval/meta.json",
+    "bytes": 2023,
+    "sha256": "3eb77217f85e213a1721cb9fa6cec9a59589426a8e888f1173bdcc781b071982"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SportsTrackerTotalDistanceForCategoryOverInterval/result.json",
+    "bytes": 384,
+    "sha256": "7eb0f8241ab68bac8018b049c54866627815c5098c8ff56dfad8743243ce78e0"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SportsTrackerTotalDurationForCategoryThisWeek/meta.json",
+    "bytes": 1956,
+    "sha256": "2c0e1710d4b9b47da4a58c2f08ec2f81627c3918c6f81f5c74863ac872fe6863"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SportsTrackerTotalDurationForCategoryThisWeek/result.json",
+    "bytes": 387,
+    "sha256": "70cab41c3469af93eb3009eeab6e4a85211d0f11c4f5e0260043d0210f837965"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemBluetoothTurnOff/meta.json",
+    "bytes": 1557,
+    "sha256": "d3c1924c288c77361bbfafa5fe79475e607959d0ba5802fff7870c58de5f3423"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemBluetoothTurnOff/result.json",
+    "bytes": 364,
+    "sha256": "7ab91392f01101de7b4c287a65c677318cbcb7e95fdaf62363858f7797c0c373"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemBluetoothTurnOffVerify/meta.json",
+    "bytes": 1560,
+    "sha256": "c7b35a1e2efec61dfeac3795c71a4ccf7511b25498655cf0658f06d68b64660b"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemBluetoothTurnOffVerify/result.json",
+    "bytes": 370,
+    "sha256": "93fc4b7cb6727e42fb62c7408639c1a88b12343eb47dff2c723896427753bed5"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemBluetoothTurnOn/meta.json",
+    "bytes": 1554,
+    "sha256": "10e6ccd54151133c5b4089fde48e72f84eacba72fe18c97ea7869e320f80aa9a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemBluetoothTurnOn/result.json",
+    "bytes": 362,
+    "sha256": "e97f89d7de5e8bbf1079a82dc5ab51bf25e2064da1190a063a47807ed41777a7"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemBluetoothTurnOnVerify/meta.json",
+    "bytes": 1560,
+    "sha256": "d8a4b5466250dae2be41716331a8487dbbfb0a318e60fb5d4be19aab572899c8"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemBluetoothTurnOnVerify/result.json",
+    "bytes": 361,
+    "sha256": "d4de88e2ed74d0c0a7c3f5b17349081c0446cd464f41c0dd8ae0d3b0114cd5ff"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemBrightnessMax/meta.json",
+    "bytes": 1569,
+    "sha256": "8be19f082f229f2b1c83def2fff8daea530fe9f35440919b3839b14e39caa27c"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemBrightnessMax/result.json",
+    "bytes": 361,
+    "sha256": "120c9f89b30c4d53e13c6730cdc5e171f133f2e396633a6367970f63db6bb442"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemBrightnessMaxVerify/meta.json",
+    "bytes": 1573,
+    "sha256": "6c550eec0646d1a79f8a6aef9afd20702d73f2498e3e2f242cfa188d3646880e"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemBrightnessMaxVerify/result.json",
+    "bytes": 359,
+    "sha256": "06e945d05f3c8418452a213e41ebe94f6e380c2c2592a31b5b0cc6e7c7c1ac23"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemBrightnessMin/meta.json",
+    "bytes": 1568,
+    "sha256": "00fdc496b77d447783bcd92770cd0c85da6a5cf395a8ee70808b31a493c75e3c"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemBrightnessMin/result.json",
+    "bytes": 361,
+    "sha256": "7eebcd3e41305d970203c8c82ff53102cb7b186d83bdd9038ed8551feb67cf70"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemBrightnessMinVerify/meta.json",
+    "bytes": 1572,
+    "sha256": "63099e30126251bee5c6be363359f84f798f00d37418c21820d9117726a331cb"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemBrightnessMinVerify/result.json",
+    "bytes": 360,
+    "sha256": "b8d98f196fbc408c2b11dd58df2493a4f81a8e2b012c21d7ff8fe13a22708c74"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemCopyToClipboard/meta.json",
+    "bytes": 1622,
+    "sha256": "267dbf5fc68a4548a6f951a4561293f4951cff54e097c319890aa16faa9df7b1"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemCopyToClipboard/result.json",
+    "bytes": 363,
+    "sha256": "307cd25635fd90fd7588e6c1df4515369a8e51540b8ae480c74b62568711b448"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemWifiTurnOff/meta.json",
+    "bytes": 1547,
+    "sha256": "8fc38606d621941e0a0a331455178050a9f61cc827137b8b42aefd471dc4402a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemWifiTurnOff/result.json",
+    "bytes": 358,
+    "sha256": "edc5962a3210294f7b834f4302208b1ec423ab056b799d8a250c57e0ed4f1ca8"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemWifiTurnOffVerify/meta.json",
+    "bytes": 1553,
+    "sha256": "2f1dc9e4b08db38085520997d70f6ae09a504607bb7bb762daa505cbdcc5c112"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemWifiTurnOffVerify/result.json",
+    "bytes": 365,
+    "sha256": "8836762e06e942c353bc5dc35c85e63f6ecbcebeee4d4069d28d486d364f4295"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemWifiTurnOn/meta.json",
+    "bytes": 1544,
+    "sha256": "b83f894481a71af9a32bf27d79a7333cbf1fda2f26e34d83e21d22634bb0b166"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemWifiTurnOn/result.json",
+    "bytes": 351,
+    "sha256": "5f7b64ec53eba61cdd67e540571c7b70a69eb3ee829b43b573dcfe7ebf0428ba"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemWifiTurnOnVerify/meta.json",
+    "bytes": 1550,
+    "sha256": "84cc0f4afb4db1a067faeae5435e70f8de1c0ec466a2b51a2581d9c435adb1b5"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/SystemWifiTurnOnVerify/result.json",
+    "bytes": 364,
+    "sha256": "676d38d128bc6ca02acaef1eb26bd912401b2a2bacbfa454d548c4eaa639c305"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/TasksCompletedTasksForDate/meta.json",
+    "bytes": 1830,
+    "sha256": "05a7a137e0422bb59a9690b2f3854eb10a682652745cd3aecbcd10b84ce278a2"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/TasksCompletedTasksForDate/result.json",
+    "bytes": 361,
+    "sha256": "7b531aae43539b58bfb62c2cb73040a1cfb6b7b7054ffb5d2dac99034efb37d6"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/TasksDueNextWeek/meta.json",
+    "bytes": 1754,
+    "sha256": "dd1caa3877f522d33e3d91a38a3a7a20b3422e92154a88127f10383eae02e756"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/TasksDueNextWeek/result.json",
+    "bytes": 351,
+    "sha256": "d0f35848028d6391b72e2621f16f7f0f9d56b1381b08e8acaeeebb9169d8c4e7"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/TasksDueOnDate/meta.json",
+    "bytes": 1786,
+    "sha256": "11a0b15d0090ec93888e287d90325c9e3dc37b072c9952f4685bef19f23c51b1"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/TasksDueOnDate/result.json",
+    "bytes": 349,
+    "sha256": "28c32727e1593299a1109f7e33f85fd14fcf24d48973ecec59619bd4ae0174e2"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/TasksHighPriorityTasks/meta.json",
+    "bytes": 1834,
+    "sha256": "ebad486dcee646e53f271e91f5f0dc6bf78bdbb2ea08dea2a6de29849fe0ee0b"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/TasksHighPriorityTasks/result.json",
+    "bytes": 357,
+    "sha256": "cb1322c73cd3254e53f6e327ae4078843322d83a54854d6194af3722df8bf3fb"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/TasksHighPriorityTasksDueOnDate/meta.json",
+    "bytes": 1787,
+    "sha256": "f5fd97d94dda18488213e9d89e1cc7226dc4f9beaf57d5612664b8d462f264c5"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/TasksHighPriorityTasksDueOnDate/result.json",
+    "bytes": 366,
+    "sha256": "56a37101c05f9d7a2285327f61335049afba4e1a9520d968cce3f11c4edf1faf"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/TasksIncompleteTasksOnDate/meta.json",
+    "bytes": 1852,
+    "sha256": "3b553f8b3cf655ae5e0d03c843a0ea7dfb4751a1efa10a5570fd54d4ceb87647"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/TasksIncompleteTasksOnDate/result.json",
+    "bytes": 361,
+    "sha256": "c6618dc823b27974590ccd27798f406cca4dfb3a4c8bf5a05480debea41233ab"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/TurnOffWifiAndTurnOnBluetooth/meta.json",
+    "bytes": 1559,
+    "sha256": "6c5dd072067ad91ecfcbbe3df68ae3b12bb76871c21a007a0240951dec80a0fb"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/TurnOffWifiAndTurnOnBluetooth/result.json",
+    "bytes": 364,
+    "sha256": "f9d7dad4ddf9565601da97af8f21a935ff7c88374c867b7dc686253d7c6c7096"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/TurnOnWifiAndOpenApp/meta.json",
+    "bytes": 1579,
+    "sha256": "b4b72d1a57db764103a887f5d7ff3741983e1978109b652badd95b796aa4e326"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/TurnOnWifiAndOpenApp/result.json",
+    "bytes": 363,
+    "sha256": "88c726b3de28a219410440ee1d657dcc19dc16fa5886f589782f88c2fc8c1157"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/VlcCreatePlaylist/meta.json",
+    "bytes": 1882,
+    "sha256": "1192c508dd11f83d6e0337c6bc2bc07e5ad5b3830a7265498d74285c7d3fd9fc"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/VlcCreatePlaylist/result.json",
+    "bytes": 1366,
+    "sha256": "39a574171d096728ef2f8135e77fc5ab8941e43aa274320c2a6c8feb9cf8eb9b"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/VlcCreateTwoPlaylists/meta.json",
+    "bytes": 2550,
+    "sha256": "b158e8b4fe738feb619a3808d4b4058da4c0cf5643f1b44d2ec5fa0b68fab4a9"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/BASE/VlcCreateTwoPlaylists/result.json",
+    "bytes": 1502,
+    "sha256": "97009b5e1d3f9986a8ed8313aeb4e071b1cd8b41d2248c2215836dc3ca4b94be"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/AudioRecorderRecordAudio/meta.json",
+    "bytes": 1580,
+    "sha256": "4bb34e1663c6839f477552896b5992cac0b2bd69824d60dc3a9ed8736ed73d4d"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/AudioRecorderRecordAudio/result.json",
+    "bytes": 852,
+    "sha256": "b2d6971249d7de3181c46a31d6f366eafd53d50899506a2bebe893e912a6f888"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/AudioRecorderRecordAudioWithFileName/meta.json",
+    "bytes": 1674,
+    "sha256": "b22041185c65e1214ae6ae16f8a1f53aae06189d0414495a26db9f12a4020b5c"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/AudioRecorderRecordAudioWithFileName/result.json",
+    "bytes": 871,
+    "sha256": "40bd9928e4dd25cbf8edb272ae40357e39f5a36a65a4a10729515aba3669c53e"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/BrowserDraw/meta.json",
+    "bytes": 1709,
+    "sha256": "9a451fec60db22908410fd84f23bee33269428559c4d02cad1f5df9825f68568"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/BrowserDraw/result.json",
+    "bytes": 789,
+    "sha256": "4faab974d76f9178cb80b9ec75fafd12cec9a52eb1c9977b1c70c632bd959533"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/BrowserMaze/meta.json",
+    "bytes": 1710,
+    "sha256": "26e201130c366c46f2bbcc8986c778cc28adf57c57eb51a9b30d7f285c89eae5"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/BrowserMaze/result.json",
+    "bytes": 827,
+    "sha256": "074a60d9763880c462a7f6dc2a774c46fc0be920fb8eb04d6d8f6ae4876daca4"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/BrowserMultiply/meta.json",
+    "bytes": 1738,
+    "sha256": "632eb70ace81bba0cc71db8b887bfea4e6fb624d443daeffb4879daa3e16f650"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/BrowserMultiply/result.json",
+    "bytes": 832,
+    "sha256": "c8428d233ac2360cd76f468d34fb7195550f88d4a461c5521add9a90965e5538"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/CameraTakePhoto/meta.json",
+    "bytes": 1526,
+    "sha256": "9e94803f6220d486ff58dbf929f7b94f518da46d5a8fe8ad90bc59906a841419"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/CameraTakePhoto/result.json",
+    "bytes": 807,
+    "sha256": "3aea7aeb5fac22ac030e61526b81dd267cc7ad907ba0124b4b5f0bc38502aae0"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/CameraTakeVideo/meta.json",
+    "bytes": 1526,
+    "sha256": "d9f12527935860c2697897e35ffdf318b05d8fc6bc35886e0421b2103050a264"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/CameraTakeVideo/result.json",
+    "bytes": 755,
+    "sha256": "4347f9a88b3387c272652f4f63d96dc83f2805a63063953778b328d4f8296d90"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ClockStopWatchPausedVerify/meta.json",
+    "bytes": 1542,
+    "sha256": "6110fb1ccc503e64b5ff7f791edb1316a280c5f6457b9417a23f6940cdcfb274"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ClockStopWatchPausedVerify/result.json",
+    "bytes": 736,
+    "sha256": "47eef23fabb076152bf5935202328d0415d19e0746b7b3c5e637f54e6df4e73a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ClockStopWatchRunning/meta.json",
+    "bytes": 1535,
+    "sha256": "b0626836b80170b0677a95b2e23639dbd5d08a98423f0a72a765b8d5ae93f4a1"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ClockStopWatchRunning/result.json",
+    "bytes": 784,
+    "sha256": "181f2409a3db52fc33396ed4dec9d17ade6b5dc35c740717202d3a14e9f325eb"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ClockTimerEntry/meta.json",
+    "bytes": 1633,
+    "sha256": "789910da2f9ad9866cae7ef5569f4bb315463e87ae66d5bf2218ecf593509b35"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ClockTimerEntry/result.json",
+    "bytes": 765,
+    "sha256": "9811658e216fadb0e550f047eea35ebf655fef7a60b9ca4292f92f57c5e2bb57"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ContactsAddContact/meta.json",
+    "bytes": 1634,
+    "sha256": "8491087135022aa5dcbdbc16c2b73b9da510f820ead5e647ed42c97ba421fd7a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ContactsAddContact/result.json",
+    "bytes": 792,
+    "sha256": "cf3e9219605c79faed112196ac50dd14942bfe0c56a8f02ae4f1a0075936dd50"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ContactsNewContactDraft/meta.json",
+    "bytes": 1761,
+    "sha256": "f6649e3cdb51f7fe56aca23c36d4e3e089ab03504e489d2280f6eaded0c31b64"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ContactsNewContactDraft/result.json",
+    "bytes": 910,
+    "sha256": "aba2a646a915fa07bcd990a657e9f9453dc61f4ce6f55b00d0b9dab909399b72"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ExpenseAddMultiple/meta.json",
+    "bytes": 4097,
+    "sha256": "49c7599f532b6b869200b680e81ec2cd03a75038220c3478435751d9f5eefdbc"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ExpenseAddMultiple/result.json",
+    "bytes": 1103,
+    "sha256": "c3a0dd5a5b9594900909dbb6ee79794df281b47096c21622795bd8f5ab9ac95a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ExpenseAddMultipleFromGallery/meta.json",
+    "bytes": 3784,
+    "sha256": "122349b7d8035c57a7438737ed18a682313917f5c9b1ee452c0fa85fdcceb3ae"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ExpenseAddMultipleFromGallery/result.json",
+    "bytes": 813,
+    "sha256": "c83fc6a88c6c8049244c34f7ae14bca35a7c602e85b4dc0d9b304e86b9573a44"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ExpenseAddMultipleFromMarkor/meta.json",
+    "bytes": 18495,
+    "sha256": "c63d28dc3ad564e9785ddde763e5cb117a6d79ba099b18f64850dddcadf53a54"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ExpenseAddMultipleFromMarkor/result.json",
+    "bytes": 814,
+    "sha256": "2f562023f06987630884ac9aa3285b85120e9844cf4acd6851be2061ba40caad"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ExpenseAddSingle/meta.json",
+    "bytes": 3580,
+    "sha256": "f08a35d6b9b84b59fc4a34f7e94bbe111f0b0919d0507c39194c6a9aecd3e20d"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ExpenseAddSingle/result.json",
+    "bytes": 1029,
+    "sha256": "1d823ba02ab120b3e16f57198ee93de4480f5f193beeb4ef930880646b6335ef"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ExpenseDeleteDuplicates/meta.json",
+    "bytes": 2847,
+    "sha256": "1d80ea1fa05322f635e77d8ec0e50d58a4803f61abd4624881d9850cdc3caaf3"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ExpenseDeleteDuplicates/result.json",
+    "bytes": 836,
+    "sha256": "aaedc6fe3c1c05f04870d0b5e8a65d2f78b8b23873394a9d2a50e2e4f5a1638a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ExpenseDeleteDuplicates2/meta.json",
+    "bytes": 8576,
+    "sha256": "e36fc6436c22b34d9b49234a3694d4ee774c7fc397a716f22f88d1b37ffb8efc"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ExpenseDeleteDuplicates2/result.json",
+    "bytes": 798,
+    "sha256": "53a612d81bd678463bd0d9ba63dad652da187b128e3b1e8e82f4d4e02db7c98d"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ExpenseDeleteMultiple/meta.json",
+    "bytes": 2097,
+    "sha256": "25d8518a018031ae5a11728a08db7e8d07246cc86744ca90bdb2f77dfcc9ccc9"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ExpenseDeleteMultiple/result.json",
+    "bytes": 821,
+    "sha256": "4b4a6df3e954021e640c37229fe89e70289c6cf15895f1040ab72d17efe50abb"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ExpenseDeleteMultiple2/meta.json",
+    "bytes": 10435,
+    "sha256": "8a73ce6356c7ca078c007baf60c45c9f2473dfa1978a4b120be2b5ffe806465a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ExpenseDeleteMultiple2/result.json",
+    "bytes": 1034,
+    "sha256": "ae4c466493b126347477a14c4526249b6c701a45e640a09349e63b56abde8026"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ExpenseDeleteSingle/meta.json",
+    "bytes": 1758,
+    "sha256": "425e96f9a8aade662969ca2a5040a22e52ebedb05eaec6fbc8d21f8fb3f277e8"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/ExpenseDeleteSingle/result.json",
+    "bytes": 819,
+    "sha256": "8777d26b556b3bf1e16ac68ee3420f557824092dbf8a61e6be937d3d5cd9d051"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/FilesDeleteFile/meta.json",
+    "bytes": 1916,
+    "sha256": "2cf0f52aa5d491f9908492392af2cf7ac3477e902ced70b18d92038f033236ea"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/FilesDeleteFile/result.json",
+    "bytes": 698,
+    "sha256": "79b1f97c533895a47da5c41f24b39a73ad3563e8d90140a5334bfb4bd25ba041"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/FilesMoveFile/meta.json",
+    "bytes": 1971,
+    "sha256": "829f80666e91ab1465c8f96bb0e2d0fc375d6cc27342466e74821759c1b722a9"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/FilesMoveFile/result.json",
+    "bytes": 764,
+    "sha256": "02ace51e3195a373882456a08657a0d16e72aec0b683782a41b3ac57e0d5ad67"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorAddNoteHeader/meta.json",
+    "bytes": 1905,
+    "sha256": "bbea495e0f5e841ee0435a07a4232ff23d3120c69edafb3636a7fc71bb79d2c3"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorAddNoteHeader/result.json",
+    "bytes": 862,
+    "sha256": "fb1c6b70575dc2122583d94ee777f883bb2b2e98596c3308e920a880249d92e1"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorChangeNoteContent/meta.json",
+    "bytes": 1778,
+    "sha256": "9b70780a8f67ff2f3882d14c4a7a272822ebadf7fd28294643ffdb69604c2a8d"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorChangeNoteContent/result.json",
+    "bytes": 841,
+    "sha256": "ac12b4d2b77899d6a6838dc60e10aa928ba835dac4824860a1e7f9bb56963724"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorCreateFolder/meta.json",
+    "bytes": 1614,
+    "sha256": "748d5cae05e9c072f2fe1e125ff2e98223de95326a651269d15f9d46f4662f47"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorCreateFolder/result.json",
+    "bytes": 802,
+    "sha256": "03b339ba8b8ed541bcd3bb8c34645af9fc5cfb9d7e19687f3375dea98b24fabb"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorCreateNote/meta.json",
+    "bytes": 1688,
+    "sha256": "a82a2bff319195a2ee32e985ce815b71302bcad3dc862b846f03e0bba80b2f1c"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorCreateNote/result.json",
+    "bytes": 908,
+    "sha256": "fffd3b910debb2ca7293e3ffecccc48b4dcb7612bb48f757f12498a36a1bd43e"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorCreateNoteAndSms/meta.json",
+    "bytes": 1841,
+    "sha256": "e9280070b39df9a5208c336a1f503a09dafd122478e974e0d6ffc190e52a62cf"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorCreateNoteAndSms/result.json",
+    "bytes": 963,
+    "sha256": "53b119ba36520aa7178063f53f903e5eb9c3ada21ec95bd715273fda8c9d9fba"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorCreateNoteFromClipboard/meta.json",
+    "bytes": 1722,
+    "sha256": "66d295f1b201fa7f23cfe44612214b74c807c11ab51b2458e1a08a2db3d73adc"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorCreateNoteFromClipboard/result.json",
+    "bytes": 887,
+    "sha256": "5318cfcbc5ba146c2f8ad19bacf073638e51f2509e3076a307aa1b700d3f5cb8"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorDeleteAllNotes/meta.json",
+    "bytes": 1543,
+    "sha256": "6604700b5a63da9b0fa4f2345608ef1f6b9719f9d934f8d5017489e871b08852"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorDeleteAllNotes/result.json",
+    "bytes": 867,
+    "sha256": "ad5213d43a5604c40e93c905472427d41c57a0b91390bcb1496362a3438632a1"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorDeleteNewestNote/meta.json",
+    "bytes": 1550,
+    "sha256": "588db5c01568e91c0931a1bd291966f950f49b58288130ef30891b43d302fd6f"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorDeleteNewestNote/result.json",
+    "bytes": 823,
+    "sha256": "81f7ad344eae13a1f7723f271e6e2f61749c0383446abe65e3b2f4f26548c0d7"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorDeleteNote/meta.json",
+    "bytes": 2184,
+    "sha256": "85dddf1ead41545add3b35121b5192ade2eccfaf0f64db3f31ee42bf2571543a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorDeleteNote/result.json",
+    "bytes": 774,
+    "sha256": "0d079798e528f3f7123232e77e2957e8a107944ffe3271dd4ea22d0fc95cb60b"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorEditNote/meta.json",
+    "bytes": 1661,
+    "sha256": "18d946c6fdecb2e95f627ffce5269459f097b0fa3c6f02975c5d608e9d84b39a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorEditNote/result.json",
+    "bytes": 805,
+    "sha256": "9fe954ba16bf56af542a496dca2bac303b5c3835a43ca63d001b64629db38947"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorMergeNotes/meta.json",
+    "bytes": 2028,
+    "sha256": "83d582eaf2ed657adaca0103c3564f5a9d73d3d06781c3977dc7b65240638f06"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorMergeNotes/result.json",
+    "bytes": 818,
+    "sha256": "dcbe3e5b1f66c552aab48497903d6bf1d7f8ac7178a47a1ff986e6386c69aea0"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorMoveNote/meta.json",
+    "bytes": 2283,
+    "sha256": "99849cb5278290fee2fb70b69edd05d9d186bbfcb4369b872cb0237a90bf69b8"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorMoveNote/result.json",
+    "bytes": 898,
+    "sha256": "3e96b380fef35f8c9d88fdde04f397fb5e13f6397c2307a7a90ed1a0e2a1bc53"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorTranscribeReceipt/meta.json",
+    "bytes": 1824,
+    "sha256": "bdc512b886f0ee4ff699051a1de23b781c0f4649e8fc9171ad6daa1d379f2d6e"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorTranscribeReceipt/result.json",
+    "bytes": 916,
+    "sha256": "5d7b0c985a667611b4b9e44e042aaa889889d60b55552626062c37042919d45b"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorTranscribeVideo/meta.json",
+    "bytes": 2330,
+    "sha256": "9c181a8458b45aa65708a9742ebb40520256aa64c677f4eea07b65c5db9f5998"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/MarkorTranscribeVideo/result.json",
+    "bytes": 862,
+    "sha256": "af5ee44abd17abd85b7c4956ca597a1c791704e4779e248b8303f71cb1536798"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/NotesIsTodo/meta.json",
+    "bytes": 1754,
+    "sha256": "d8099c6c87f79d0f8066c88e102f0c8faa859e549ab35fcc4a2a2e92802e8ace"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/NotesIsTodo/result.json",
+    "bytes": 784,
+    "sha256": "4b90a3a377934ed2ee71dc185dca2a8d2a2e5a1622253b7eead12284d565f8ce"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/NotesMeetingAttendeeCount/meta.json",
+    "bytes": 1903,
+    "sha256": "05aab3af11c865025be34e1dc7b8bc822dc3d91fa7c8201bf890404c649a8bd0"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/NotesMeetingAttendeeCount/result.json",
+    "bytes": 801,
+    "sha256": "055f2a2faf117be10c9671ba148471cdbf0646f8c4ab9cdc5469c74b99568996"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/NotesRecipeIngredientCount/meta.json",
+    "bytes": 2278,
+    "sha256": "a191d5ae4c2a533a6f053a79dc315483e911079ea8bbaa92af6856b60c3082b0"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/NotesRecipeIngredientCount/result.json",
+    "bytes": 754,
+    "sha256": "f7f521e8580644a578adee3de3bb02567b8a3783bfa536de80487e26f5c7ec83"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/NotesTodoItemCount/meta.json",
+    "bytes": 1744,
+    "sha256": "e5377177e7cfa727470d4b0b8c49860518e5cd0ebc95a14987286c0420df7101"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/NotesTodoItemCount/result.json",
+    "bytes": 745,
+    "sha256": "e8e35e4d2f13182e2c3d7938e63c754092c9ceb16bff5871ced53d2a9549029a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/OpenAppTaskEval/meta.json",
+    "bytes": 1638,
+    "sha256": "ecc8cd7226fa51a15201e19a6a92923287fde0e236dba23fc9fcef944298f742"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/OpenAppTaskEval/result.json",
+    "bytes": 781,
+    "sha256": "a2ad9ff95f0386074109273755b872c4aad816ab2000cc3c0796dab062070013"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/OsmAndFavorite/meta.json",
+    "bytes": 1629,
+    "sha256": "9191a171249cd5ffe91c5ea89a24cf7fa1ee01d5ba1822acc582ff8311d0f81c"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/OsmAndFavorite/result.json",
+    "bytes": 764,
+    "sha256": "81b914556c136e7bc7124aedcaf0be65543a9ae6291b148bb9dab0e5c50f6646"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/OsmAndMarker/meta.json",
+    "bytes": 1618,
+    "sha256": "88a777037bf2f096ed45540190a47c9761a2e96c03372444163ee831333b2a49"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/OsmAndMarker/result.json",
+    "bytes": 779,
+    "sha256": "cfe2e187a28822aec6794136755fafd47755bc429e140fd1d1fd5535c06f9405"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/OsmAndTrack/meta.json",
+    "bytes": 1827,
+    "sha256": "5bdc13b77ef2a398c7cd467ba6eb9763b079b4dd381741f3f2f748cad958898f"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/OsmAndTrack/result.json",
+    "bytes": 816,
+    "sha256": "71200749d849d694a61de11cfdf1928c3ef72c259ae3d654fcc69bcc74677891"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeAddMultipleRecipes/meta.json",
+    "bytes": 8505,
+    "sha256": "03ce1ed52ace7c3c5e24c40a1a428e25761d35d0c3d3df7d1fa58a3541e3c7af"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeAddMultipleRecipes/result.json",
+    "bytes": 1059,
+    "sha256": "ecd1f1e004dfb5cb74fc27210dce213daca2d78972805958eca3bfa029205b78"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeAddMultipleRecipesFromImage/meta.json",
+    "bytes": 7521,
+    "sha256": "2d059d234edee2a96c799abf7ae417dc94ee19b75a6dbf764a42fd33b26a9ffb"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeAddMultipleRecipesFromImage/result.json",
+    "bytes": 893,
+    "sha256": "e80429d22dcca24661d25cd9669ab9992891588ee435b84c0b04e0d518fce24f"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeAddMultipleRecipesFromMarkor/meta.json",
+    "bytes": 7474,
+    "sha256": "a30bf533d592f150febbd9b475f077d34549d20749ea406cc20f876d5918db78"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeAddMultipleRecipesFromMarkor/result.json",
+    "bytes": 861,
+    "sha256": "10afee508356caffb0927668a26dcde496675bb8299d3d27c3ab572b624ae336"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeAddMultipleRecipesFromMarkor2/meta.json",
+    "bytes": 20909,
+    "sha256": "25eaf31b2612c5750651f84a2ce495e9166edb53de0967cf0b65cb84c1e25095"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeAddMultipleRecipesFromMarkor2/result.json",
+    "bytes": 830,
+    "sha256": "77cd22920ac23782c86d70d0129c9fb63ea11bc249503e2307d5665e69977744"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeAddSingleRecipe/meta.json",
+    "bytes": 6873,
+    "sha256": "856a95090b47f44aac5723a867f9d9c30960d602e6c741195ac5cd1188b32bd5"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeAddSingleRecipe/result.json",
+    "bytes": 1005,
+    "sha256": "4ed4b15efdf9e1ba659e383f5a20183e4a380f12a54b9fbc381a1699054dcfc2"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeDeleteDuplicateRecipes/meta.json",
+    "bytes": 4855,
+    "sha256": "abdf8d8ad4069012d3afa9272800484aa9083bd57e0495adb2229fb58dad1fb9"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeDeleteDuplicateRecipes/result.json",
+    "bytes": 794,
+    "sha256": "3616f1c4684a40c2ccc101f18952b77fa3bb129fdf98aafb4029791456db4961"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeDeleteDuplicateRecipes2/meta.json",
+    "bytes": 7075,
+    "sha256": "f9d0d7d24b19080ff7204ab73c75723e8db44205954377a65dba00ad0dee9237"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeDeleteDuplicateRecipes2/result.json",
+    "bytes": 798,
+    "sha256": "961032777178937e49295ead0a78120aa387ca3b1864cabc3c94e28dbe6434c9"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeDeleteDuplicateRecipes3/meta.json",
+    "bytes": 15907,
+    "sha256": "c4051cf93df0fbdf04be263259a5e7247e0f07864bf6e4afab350079ceb5e2d0"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeDeleteDuplicateRecipes3/result.json",
+    "bytes": 798,
+    "sha256": "0fd2cff1909c0067bec1677743ab3a1cfaf1b2b9f6a0704924a52fc2e3bc9338"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeDeleteMultipleRecipes/meta.json",
+    "bytes": 2979,
+    "sha256": "1729e88648b8740b765331560283a16b9eb5c43f02bb4e19580fac26da2d5923"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeDeleteMultipleRecipes/result.json",
+    "bytes": 1048,
+    "sha256": "489761ea3ba918afa1db99a5192d2adfa542aa2657b258c1d01c03a9bffbee56"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeDeleteMultipleRecipesWithConstraint/meta.json",
+    "bytes": 14575,
+    "sha256": "f1e6ea629ec1be9beff40f3280db995930f3a70e753c334f723d9a644347fe77"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeDeleteMultipleRecipesWithConstraint/result.json",
+    "bytes": 826,
+    "sha256": "7cbe2fcb2827b0787ac60140c61a096eda741ce4d1487dd3face0b93a323b0c7"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeDeleteMultipleRecipesWithNoise/meta.json",
+    "bytes": 16165,
+    "sha256": "bec50992562d6ca6920f4b6c9fe38b2a10bb6484aa3c3020a4950ff9806ff592"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeDeleteMultipleRecipesWithNoise/result.json",
+    "bytes": 1096,
+    "sha256": "a7f6261d93c8672f412cf5ed766f2ea8f78020b909a9a641a3a6e641cb714fe6"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeDeleteSingleRecipe/meta.json",
+    "bytes": 2035,
+    "sha256": "573b85ea08dba8282f21327a31f655b106ad26c9d99caf124fed2c043f44efd5"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeDeleteSingleRecipe/result.json",
+    "bytes": 885,
+    "sha256": "4f295e82773e84b3b6bcd815791018d303425af77199d55a667ad2a21093d446"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeDeleteSingleWithRecipeWithNoise/meta.json",
+    "bytes": 15048,
+    "sha256": "2e01a04a7171bde3606fbaf92a8540f8584d4e20e42fed51431c73631b14e274"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RecipeDeleteSingleWithRecipeWithNoise/result.json",
+    "bytes": 935,
+    "sha256": "5dfeff2431ccd9cdb17803239dbad960ee558dfa687675c321c6e7e6a1f5875c"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RetroCreatePlaylist/meta.json",
+    "bytes": 2049,
+    "sha256": "8ce09160911e0f7cfe3f44ac08b521131dfa324e883a6205e8ae6e872d0aafb3"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RetroCreatePlaylist/result.json",
+    "bytes": 729,
+    "sha256": "fcc8bbb7b5f95df00478c795d72f5ccbbf23b6319d7a099b8436bcca522ca7c5"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RetroPlayingQueue/meta.json",
+    "bytes": 2076,
+    "sha256": "b1b6d7cd787d5ba01e74334df206212444637ea09e5285a1da6a8377627a386e"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RetroPlayingQueue/result.json",
+    "bytes": 804,
+    "sha256": "7afae15108ac173b88b167f7defb42131ee386ff5d4142b355203d4c350d7189"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RetroPlaylistDuration/meta.json",
+    "bytes": 2047,
+    "sha256": "af75d63295e775593ada07cad99e0066e6a1aabcb5e791bbabcf9a2ba9b51f3f"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RetroPlaylistDuration/result.json",
+    "bytes": 897,
+    "sha256": "28e9e1d79f0239a1563d07db17a06663229c14ce93b2bfbc4ebd5dcc1d85f0cf"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RetroSavePlaylist/meta.json",
+    "bytes": 2125,
+    "sha256": "2f3e3bd89b008a2d842f4a87a32aef4e2149fe34b0d75735d04648c0feb67770"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/RetroSavePlaylist/result.json",
+    "bytes": 1059,
+    "sha256": "98c556347702320c034873be1ba79f457c535e93292a76077ac383918014e347"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SaveCopyOfReceiptTaskEval/meta.json",
+    "bytes": 1771,
+    "sha256": "c7210efcf9fd5f7a941ee3f1d0878f5e8e6ec2419bc0e4b949a53e37b218cd18"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SaveCopyOfReceiptTaskEval/result.json",
+    "bytes": 841,
+    "sha256": "ec981c620f64f66ef4053ea596bc80b86455c725b12eb31da703f69088f95702"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarAddOneEvent/meta.json",
+    "bytes": 12197,
+    "sha256": "89cbae58a7c6f170e23f5ccba6ecb8d6ebdd27775f1b6806daf39ec34a94a0e1"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarAddOneEvent/result.json",
+    "bytes": 919,
+    "sha256": "07351d85c46d123d0fbfc3dee9193565569824d10790c637440aa4ef7052ebcd"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarAddOneEventInTwoWeeks/meta.json",
+    "bytes": 9651,
+    "sha256": "d8e45da41329ea956e58f68da6538bb49c960f10a9f9ad89531ceb8c4192bfde"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarAddOneEventInTwoWeeks/result.json",
+    "bytes": 904,
+    "sha256": "a338861fd03cf78d64eb9df0aa7cdf0388597b56123578dca8ea8768dd271acf"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarAddOneEventRelativeDay/meta.json",
+    "bytes": 8574,
+    "sha256": "5d80a6afd8c0171257e04f25cd85754a5b464aada3e08bedab0bbfb1d0848564"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarAddOneEventRelativeDay/result.json",
+    "bytes": 1021,
+    "sha256": "5ec9f19995f910f4a436ecadbcce5ff848d850c23a13d5441e29a8befd9a3ac0"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarAddOneEventTomorrow/meta.json",
+    "bytes": 3675,
+    "sha256": "785c1d2114bd6b1a657e0a3babaf17fafc16447da5ce9b1b717ecd4a219900fe"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarAddOneEventTomorrow/result.json",
+    "bytes": 1057,
+    "sha256": "a3a9f1395c3d0d5ac6fe26a80992a1bae3487119f398281f0d2241c65ab439a6"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarAddRepeatingEvent/meta.json",
+    "bytes": 11735,
+    "sha256": "4134e033fec9278d9e95dfa992ed3e8e0a5d56d627b4ea617f8d3a846bfd8f19"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarAddRepeatingEvent/result.json",
+    "bytes": 801,
+    "sha256": "3eea7e9aef2a76ca002b1ea7358ec44dd6fb826343419201c0896e1efb2a2ea0"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarAnyEventsOnDate/meta.json",
+    "bytes": 1761,
+    "sha256": "450c8f1b33d291bd8a8261e80a2f0a62d88d006bf65292434d10c784bef9363a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarAnyEventsOnDate/result.json",
+    "bytes": 787,
+    "sha256": "0c837a146ff04752120b878cf048830aaa127f8d47ba88b80672c5c17f87f66c"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarDeleteEvents/meta.json",
+    "bytes": 15522,
+    "sha256": "36ac77194ee5c7b02d91249aef52a4e471eb110598f55c86a3bd28ee8bc08c8e"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarDeleteEvents/result.json",
+    "bytes": 796,
+    "sha256": "9a28709be108d14786d9ed0f3b5ec8b048e9c57c853f220b8646da538c68696f"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarDeleteEventsOnRelativeDay/meta.json",
+    "bytes": 15036,
+    "sha256": "4ba2eb35caca3e5d20d1fe8b68d1056d769857086aeeb2965b566822d606e1c4"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarDeleteEventsOnRelativeDay/result.json",
+    "bytes": 809,
+    "sha256": "2d0f56ada9b821ddbbfca9aa22507809bcaca2c1ae4bec9d631e39e689d64d78"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarDeleteOneEvent/meta.json",
+    "bytes": 14404,
+    "sha256": "a858f8fa0dd7639a4c862e7f1785df7f0642a5bb00e187a288d1608585af4049"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarDeleteOneEvent/result.json",
+    "bytes": 798,
+    "sha256": "76ef5836c298e9b35982cdc98aa469b3f2e1f9994ef2f580133cbc0962305e03"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarEventOnDateAtTime/meta.json",
+    "bytes": 1803,
+    "sha256": "5d10a4d8948e2f33f8acd78111857baa5bb0dda502841c71ebd707f16d2ec6ab"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarEventOnDateAtTime/result.json",
+    "bytes": 799,
+    "sha256": "b4e0cf4b7ded7306d670828982104fc9c68555d24a9c8f9d8a1f7680e4f3fe80"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarEventsInNextWeek/meta.json",
+    "bytes": 1840,
+    "sha256": "ae9353bfba81f77c4ce05ee6df938b440ef29f69a8991fda38e9c576d68ae3d0"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarEventsInNextWeek/result.json",
+    "bytes": 787,
+    "sha256": "a323940a786b473d3c51c6ce0763c1584da2581f4fe74fd3e7f1c9a01c42eddd"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarEventsInTimeRange/meta.json",
+    "bytes": 1809,
+    "sha256": "5de2903bab3c4181a2525323e5f389a9e8ad1fc8d63701dbe23abff8e7a612ed"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarEventsInTimeRange/result.json",
+    "bytes": 799,
+    "sha256": "5973c13f702d77c869f141aeed8c056ab1566a71154e16a2ef982bd48038f5d5"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarEventsOnDate/meta.json",
+    "bytes": 1785,
+    "sha256": "5a3f67d9d859b42cc47accd6f520f456e97399605be9e67a60213c417aa72c17"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarEventsOnDate/result.json",
+    "bytes": 795,
+    "sha256": "f410bfe58515dccb1330e5814e003ed4d0c446570538511266e54729cad743fd"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarFirstEventAfterStartTime/meta.json",
+    "bytes": 1813,
+    "sha256": "85da76e75c3005742b4e9557c3ebdfd443c0a39b7c60d14d801ec41f5e5b185f"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarFirstEventAfterStartTime/result.json",
+    "bytes": 796,
+    "sha256": "b3922b6ce0ae3a117a4732e961689a511378a4ba8ee1d10bd25e9a388fa09fef"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarLocationOfEvent/meta.json",
+    "bytes": 1734,
+    "sha256": "a55378428cc45f4533e433c4e5525d37f1a7f2f5bbc81051db53f3c91cabc886"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarLocationOfEvent/result.json",
+    "bytes": 787,
+    "sha256": "18e383bfd83edc2cf03af9a3b0d43b530a089d35c6026b0350c62c012b77c585"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarNextEvent/meta.json",
+    "bytes": 1739,
+    "sha256": "e0b2b6b40f5dde019835ab498af48546f3e0f32082decb6d34926a985f9c613a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarNextEvent/result.json",
+    "bytes": 751,
+    "sha256": "9ad757792b59db2cdfbc4e9b0b172ddaf437ead2c088a45cc8e02530a2ac0201"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarNextMeetingWithPerson/meta.json",
+    "bytes": 1745,
+    "sha256": "5969c5c6855c3355b8b4ea1b6dc6c18bf3876aff7df882b99473ae047c03dcdb"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleCalendarNextMeetingWithPerson/result.json",
+    "bytes": 793,
+    "sha256": "75626ad3707a90929d5b7fa8cd4a5075308a4f4f7f92e01b3d16a596b9150a2c"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleDrawProCreateDrawing/meta.json",
+    "bytes": 1739,
+    "sha256": "91d1e07ea02faab5cb26c9625b12a72ad95b39ce101d3521af7f97e80ccf9910"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleDrawProCreateDrawing/result.json",
+    "bytes": 828,
+    "sha256": "d3d5c22c8de2bebcb074a7d4a02296dcece90f2bb0ab26ff9a5075aa3b3717be"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleSmsReply/meta.json",
+    "bytes": 1702,
+    "sha256": "05e62b2f03d43889be04bf1c6da0dc4c73decc7b4e887fa2c675c5836c57f671"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleSmsReply/result.json",
+    "bytes": 996,
+    "sha256": "d8db2fe285920db30ec257df1f3c02fee5ccbf590adcf44bf319caa186336a46"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleSmsReplyMostRecent/meta.json",
+    "bytes": 1678,
+    "sha256": "3f9ff7ee6af6e013cd584321129e906776fb154143af119cafbef0dfcb356944"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleSmsReplyMostRecent/result.json",
+    "bytes": 615,
+    "sha256": "e8fe03634cf6c5565f2fa3c0a7c2e53bbca55af598010a0a2ef1304f4cb0f66f"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleSmsResend/meta.json",
+    "bytes": 1662,
+    "sha256": "45389eb60bab24bd7782905cdbf9fff806cff11606ef3313c68915b670e01a79"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleSmsResend/result.json",
+    "bytes": 859,
+    "sha256": "f637983d949fbf43cf88ad99b8988ee2b745141668804afad222132d3b9e2967"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleSmsSend/meta.json",
+    "bytes": 1702,
+    "sha256": "ee81486220eb8c66e66e21505e728e00618e6011945a4d454cfa03e6ec5e20de"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleSmsSend/result.json",
+    "bytes": 897,
+    "sha256": "530278db18c19b06bbd310a4be0e545c9efc101d7fc80239be290d03768a417a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleSmsSendClipboardContent/meta.json",
+    "bytes": 1673,
+    "sha256": "7a1ec6a8ed92009c684a5e545175d90c786a3d082127df16e8654813b3eb000e"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleSmsSendClipboardContent/result.json",
+    "bytes": 921,
+    "sha256": "9d85c41566d4dee0990f956ea98b49596d1fa80430040f470b2a1b5bff4e1d86"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleSmsSendReceivedAddress/meta.json",
+    "bytes": 1751,
+    "sha256": "24f227e93ed321b412fb7ed52610bca235e6c064e1dbfd8b286f9d7062ce5bf5"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SimpleSmsSendReceivedAddress/result.json",
+    "bytes": 813,
+    "sha256": "f096632e56bf99223c9c21673f6e1b2b145386b37acd79b1374b6fc64e23ca08"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SportsTrackerActivitiesCountForWeek/meta.json",
+    "bytes": 1924,
+    "sha256": "c8aefddf4bdec30dafe06226c7b20ab024ba6b7c7be0c0ccadf76d4993d1b7bd"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SportsTrackerActivitiesCountForWeek/result.json",
+    "bytes": 825,
+    "sha256": "f5cff098ce7883f63d3daf3fd19ba8e925d3182ef1bbadea7e2c963aee9e984a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SportsTrackerActivitiesOnDate/meta.json",
+    "bytes": 1942,
+    "sha256": "e7070c7de60def2a8b97fca7ba10448436001ee9dbf0c60a94187c9a0023560c"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SportsTrackerActivitiesOnDate/result.json",
+    "bytes": 2227,
+    "sha256": "1d686ad823f85ed231fa7b230bcc87abaf80f916659922125fe62536dda80307"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SportsTrackerActivityDuration/meta.json",
+    "bytes": 1884,
+    "sha256": "36377c831f9490f96bf779907c5e60704832c4c730db345fc22695a2f91986bb"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SportsTrackerActivityDuration/result.json",
+    "bytes": 809,
+    "sha256": "c0b7bb7dfb86108935ab069c90a2033b5d46172c8c7555e2c81b3661348dce33"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SportsTrackerLongestDistanceActivity/meta.json",
+    "bytes": 1995,
+    "sha256": "cae5b3a7d691a557dee0e9bee1d1834c54c757bc44e26fe6ec5aecfc7419063d"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SportsTrackerLongestDistanceActivity/result.json",
+    "bytes": 817,
+    "sha256": "e0890d83fb7b93c1f98e31fbc5e366d942b86c2ceed34eb4bcec017037be75f1"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SportsTrackerTotalDistanceForCategoryOverInterval/meta.json",
+    "bytes": 2023,
+    "sha256": "5525b0c728ba04ca35006b2084532dacb91089e65d96bdcc20e04302ed5729fe"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SportsTrackerTotalDistanceForCategoryOverInterval/result.json",
+    "bytes": 820,
+    "sha256": "b8641df2f62d3449299a1f8cfdb1c4fd8c0f7531ea1b23dc36915feb5f74d1e2"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SportsTrackerTotalDurationForCategoryThisWeek/meta.json",
+    "bytes": 1957,
+    "sha256": "7a594480933b3a7111e2e34e58bc7d6e32cb484ea8688f7f4e39c93081ce7b27"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SportsTrackerTotalDurationForCategoryThisWeek/result.json",
+    "bytes": 2243,
+    "sha256": "88cd81bc1e5ac7de00c9ee03e2b2ee3f06814332e9328f873a4fe398cdd3a584"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemBluetoothTurnOff/meta.json",
+    "bytes": 1557,
+    "sha256": "22193e6bb17752d94474dd537ccb9fcd9f1d12f8069398dd510b19475cd76e41"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemBluetoothTurnOff/result.json",
+    "bytes": 737,
+    "sha256": "662cc6d28cdffe60f2a8ef886056a5c2d95e45375a57470e163e2ebb4bfedffb"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemBluetoothTurnOffVerify/meta.json",
+    "bytes": 1561,
+    "sha256": "e453a3960e7ae983bc43b7b37f910d1cb6f20a0ce2e1c163eca4ae132f19aed3"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemBluetoothTurnOffVerify/result.json",
+    "bytes": 777,
+    "sha256": "4ddaad6aee262b9a22bd8aa3015e6c1124ebee1fcfbc5c4f61109cf1d5e37d66"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemBluetoothTurnOn/meta.json",
+    "bytes": 1554,
+    "sha256": "2fd5d356822b87ec5c4fbc48104586b6c77da47caee9e3041732cfa23216c02c"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemBluetoothTurnOn/result.json",
+    "bytes": 864,
+    "sha256": "7dea2c4f6a67f0c5f1e6311d2e75e614df32b82e05843a3ec3ec2f52acbf5dd6"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemBluetoothTurnOnVerify/meta.json",
+    "bytes": 1560,
+    "sha256": "df4f2fc22becf21bca9a63fa90473db67e0c3772ef6e48b003caff19ef2bec7e"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemBluetoothTurnOnVerify/result.json",
+    "bytes": 817,
+    "sha256": "0375d84e0936dc29e9b6eca964ea47f6162db04403d60c98ca53aacef03d2912"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemBrightnessMax/meta.json",
+    "bytes": 1569,
+    "sha256": "925f7d4fc899700627c14b9f7d5a3c0e241d7f97f251caf13857c0ce162cc4cf"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemBrightnessMax/result.json",
+    "bytes": 826,
+    "sha256": "142cdbbdc574d82c8d3294205a1d9dd62a925676cf5d4bab5d69172dc5f0d7f5"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemBrightnessMaxVerify/meta.json",
+    "bytes": 1573,
+    "sha256": "69099b88456a97a77175b5681f80d25aacfbe9906f9920ecbd272506e4107b29"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemBrightnessMaxVerify/result.json",
+    "bytes": 739,
+    "sha256": "bc16e8f1ded8bbd17201630ffff63b89811f2151aadb22c54abdee9919387be4"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemBrightnessMin/meta.json",
+    "bytes": 1569,
+    "sha256": "b496e176c2cd7a41cf66d7f13c7242553052880dd72978a812ea0b6ea4d2ed7b"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemBrightnessMin/result.json",
+    "bytes": 743,
+    "sha256": "29a1b19d5066e662a7425e82425097007cd677db66d723ac48dd4648b6c4dc1b"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemBrightnessMinVerify/meta.json",
+    "bytes": 1573,
+    "sha256": "6a01aa0f8d721dda2c370447cf67d49db19dd95c0f46c24b2e9486d0de453936"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemBrightnessMinVerify/result.json",
+    "bytes": 749,
+    "sha256": "fd6d4ec4d9d1b38f0744803563b788f0192feaafbcbbc48fd604bd7fd0c6d397"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemCopyToClipboard/meta.json",
+    "bytes": 1622,
+    "sha256": "7bbd12397b43a3b92c27f09232ebda8b0606e6e3999f8614698a2d1fa92dac67"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemCopyToClipboard/result.json",
+    "bytes": 788,
+    "sha256": "bbfcd3c130ceef4913be15282315d5cc98e8434e730de9405a576afcece36287"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemWifiTurnOff/meta.json",
+    "bytes": 1547,
+    "sha256": "1e9f18c8f04f874e814e3202713d591990009562f4ab394699ad99b8cf0ec9b1"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemWifiTurnOff/result.json",
+    "bytes": 741,
+    "sha256": "00e7aeae829643ba7decbaf412a52923bd788d0a3f0704b37d677808e9ce4bc7"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemWifiTurnOffVerify/meta.json",
+    "bytes": 1552,
+    "sha256": "c90f2889f47c9496f7169427163f23f9637ee890bc04230cf1dc54a0cf808f6e"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemWifiTurnOffVerify/result.json",
+    "bytes": 774,
+    "sha256": "ae4e101b08acbf4a0ecb908a90241b796f37a39bfa5cf4d5ab6058319f88aeef"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemWifiTurnOn/meta.json",
+    "bytes": 1544,
+    "sha256": "e8a1088bd0652303a2160a66445590bf86ebcb9cb806ee4989c6488bf41f28a0"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemWifiTurnOn/result.json",
+    "bytes": 753,
+    "sha256": "ac426621bf4bf24e303b71c52cceeb3a745efdc8586c7fe8c090d3e7d85a1147"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemWifiTurnOnVerify/meta.json",
+    "bytes": 1550,
+    "sha256": "f6285aa54d9c3ab28d0f06f4867bab66bbc7d86f1e3de9e2af950c1ffe1f3208"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/SystemWifiTurnOnVerify/result.json",
+    "bytes": 786,
+    "sha256": "85fde0f13fc2e538519a933eaab526c16bcf6fa00537e56cfc7e88a3b8df5fa6"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/TasksCompletedTasksForDate/meta.json",
+    "bytes": 1830,
+    "sha256": "35ba13a2f8548733ff353bb7aeb858d2e1c94ffcf740f703a9dad49a653f4c12"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/TasksCompletedTasksForDate/result.json",
+    "bytes": 2250,
+    "sha256": "9132cfd7d596e379053c8ae6b13e6153c4519126495ace9660143929c0e740bb"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/TasksDueNextWeek/meta.json",
+    "bytes": 1753,
+    "sha256": "efb9a35da85515ea893cc650767e82305ac0a1e92da127c5e26de273c407566c"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/TasksDueNextWeek/result.json",
+    "bytes": 2240,
+    "sha256": "9eb3483bb4b378644f936d9c76756bc77982f56899f0acc5f6a2d912bd39474c"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/TasksDueOnDate/meta.json",
+    "bytes": 1786,
+    "sha256": "0c977c0dac847169fd00d4ea3f1185d61f5a3d91ec5c6d4e787cc319ee40d314"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/TasksDueOnDate/result.json",
+    "bytes": 2238,
+    "sha256": "ad04646ff5b7beeaf01be18992f562a1b0975862b46cde1c41a1340165eb9e3a"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/TasksHighPriorityTasks/meta.json",
+    "bytes": 1834,
+    "sha256": "253b749283df5854d8a45bb4d4ff7ca749a56e8d8ca6e4b8a8efbee4415dc56f"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/TasksHighPriorityTasks/result.json",
+    "bytes": 2220,
+    "sha256": "9b5d6cd04fc819814432b7d4be84c28afc488dfcd748c8548125de9e7e1d364b"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/TasksHighPriorityTasksDueOnDate/meta.json",
+    "bytes": 1788,
+    "sha256": "c09255c799f0ef376a95ec593e40a4c8a7c42ff28c74f78984345b8ec358d9d5"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/TasksHighPriorityTasksDueOnDate/result.json",
+    "bytes": 2255,
+    "sha256": "5044c5e3c144eeb5e7cbf9fbef648721dbd7a2540d7257ba6c75fe930673dc0d"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/TasksIncompleteTasksOnDate/meta.json",
+    "bytes": 1850,
+    "sha256": "6b8d283b4b1eb4ceba8ecd180c7e9307a92b308f0b6e14857037159ed1ead638"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/TasksIncompleteTasksOnDate/result.json",
+    "bytes": 800,
+    "sha256": "c5f6f2370621eecaa47853b071a1544ee1f075bdbb925cc6dc62616c04d1e435"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/TurnOffWifiAndTurnOnBluetooth/meta.json",
+    "bytes": 1558,
+    "sha256": "cfb403a1f7ddb9a42aaa9530114725b61ee2efe956fb190b6b0988e3190d4485"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/TurnOffWifiAndTurnOnBluetooth/result.json",
+    "bytes": 809,
+    "sha256": "60a57a557d66133ee3d0be640048c6f4995037d08628ce0bd4c2200a9f67f74b"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/TurnOnWifiAndOpenApp/meta.json",
+    "bytes": 1579,
+    "sha256": "2e8d28d6cc6ffcd308b7bcc69fe43661e88e738b5fd768366465b6690391cdd7"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/TurnOnWifiAndOpenApp/result.json",
+    "bytes": 786,
+    "sha256": "a89654db21d9be3e4fb23712e55e4564e388af67611dbd42089277a671b0cb26"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/VlcCreatePlaylist/meta.json",
+    "bytes": 1881,
+    "sha256": "cc4cf40ae204b286734c8a30c5c60d1cba80bea936aaa1b5841844c26c4e96fb"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/VlcCreatePlaylist/result.json",
+    "bytes": 1366,
+    "sha256": "c37d5c2d4dd42f840a314ed128298617b2a847503545236cb1c2705d7c4102d6"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/VlcCreateTwoPlaylists/meta.json",
+    "bytes": 2550,
+    "sha256": "fa693e71d427f693a5a47aa64004e427a16afc4cb96ad1231457cd183bdedac6"
+  },
+  {
+    "path": "qwen3_results_20261102/records/episodes/FULL45/VlcCreateTwoPlaylists/result.json",
+    "bytes": 1502,
+    "sha256": "6bba5a5eb0ea948cc837dc2877f26a6a31eb58fb0274fcd1f781c7fcf68cc0c8"
+  },
+  {
+    "path": "qwen3_results_20261102/records/final_audit.json",
+    "bytes": 3034,
+    "sha256": "193864a6b673d7424ca3694566f07b1bb698e55daaf17f7b3109dbbdbcedc379"
+  },
+  {
+    "path": "qwen3_results_20261102/records/run_config.json",
+    "bytes": 46689,
+    "sha256": "79a2a0930446856785151e1c226a0d46343b3e4896b4db05e4474e2212d116c7"
+  },
+  {
+    "path": "qwen3_results_20261102/source_files.json",
+    "bytes": 283326,
+    "sha256": "04de4014905e6433383fd5824ebf0d8132189ea7a966ea7601f24b2e78267c7b"
+  },
+  {
+    "path": "qwen3_results_20261102/startup_history_files.json",
+    "bytes": 258159,
+    "sha256": "a235be5d1507e21b6487f12ddbc2d5c11473a18c1bb9f60a16fd81e04b9c0815"
+  },
+  {
+    "path": "qwen3_results_20261102/startup_history_logs.tar.gz",
+    "bytes": 630933,
+    "sha256": "fd0d49c85c6b1fd090f1199740d328884aa0afeb8f3e244a3442439a52a717c4"
+  },
+  {
+    "path": "qwen3_results_20261102/summarize.py",
+    "bytes": 3448,
+    "sha256": "0c4ad461712e992678a6169e382db46d641a9201b03ed5bda3e2ee533c532d7e"
+  },
+  {
+    "path": "qwen3_results_20261102/verify_archive.py",
+    "bytes": 2929,
+    "sha256": "0f5d27f86eabd574726699dd223f0f7f5512534235c574cf3654c8ac8e130afa"
   },
   {
     "path": "reference/README.md",

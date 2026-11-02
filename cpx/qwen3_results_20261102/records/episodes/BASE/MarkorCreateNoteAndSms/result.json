@@ -1,0 +1,1 @@
+{"task": "MarkorCreateNoteAndSms", "variant": "p0_pair", "mode": "agent", "steps": 13, "env_actions": 13, "agent_steps": 13, "done": true, "model_calls": 13, "final_cid": "0014_final", "n_probes": 0, "explore_disabled": "", "store_eps": 0, "m_calls": 13, "m_jump_absent": 0, "m_jump_mismatch": 0, "is_successful": 0.0, "wall_s": 140.95, "model_calls_internal": 13}

@@ -1,0 +1,1 @@
+{"task": "MarkorAddNoteHeader", "variant": "p0_pair", "mode": "agent", "steps": 12, "env_actions": 12, "agent_steps": 12, "done": false, "model_calls": 12, "final_cid": "0013_final", "n_probes": 0, "explore_disabled": "", "store_eps": 0, "m_calls": 12, "m_jump_absent": 0, "m_jump_mismatch": 0, "is_successful": 0.0, "wall_s": 112.12, "model_calls_internal": 12}

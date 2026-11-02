@@ -1,0 +1,1 @@
+{"task": "ExpenseDeleteDuplicates2", "variant": "p0_pair", "mode": "agent", "steps": 15, "env_actions": 15, "agent_steps": 15, "done": true, "model_calls": 15, "final_cid": "0016_final", "n_probes": 0, "explore_disabled": "", "store_eps": 0, "m_calls": 15, "m_jump_absent": 0, "m_jump_mismatch": 0, "is_successful": 0.0, "wall_s": 120.45, "model_calls_internal": 15}
